@@ -12,6 +12,11 @@ This game demos the passport login/logout feature
 
 ## Launch
 
-```bash
-endlessrun.uproject
-```
+* Open the project file `endlessrun.uproject`
+* Build project using Rider application
+* Run the MainMenu for game
+
+To test passport login functionality
+
+* Navigate to Content Browser -> Plugins -> Blueprints -> PassportBlueprintSample
+* Play game (should launch browser for authentication)

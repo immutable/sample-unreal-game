@@ -16,3 +16,6 @@ To pull new changes after cloned use the following command:
 git pull --recurse-submodules
 ```
 
+## Running the Game
+
+See corresponding game folder readme.md for instructions on how to run the game.

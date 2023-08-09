@@ -1,0 +1,3 @@
+[submodule "5.2/passport-features/Plugins/unreal-immutable-sdk"]
+	path = 5.2/passport-features/Plugins/unreal-immutable-sdk
+	url = git@github.com:immutable/unreal-immutable-sdk.git

@@ -13,7 +13,7 @@ This game demos the passport login/logout feature
 ## Launch
 
 * Open the project file `endlessrun.uproject`
-* Build project using Rider application
+* Build project using Jetbrains Rider or Visual Studio application
 * Run the MainMenu for game
 
 To test passport login functionality

@@ -4,6 +4,12 @@ Sample Unreal Game using Unified SDK features provided by <https://github.com/im
 
 ## Cloning this Repo
 
+Enable Symlinks in git repositories by running the following command:
+
+```bash
+git config --global core.symlinks true
+```
+
 This repo uses sub-modules, to clone including the correct sub-modules use the following command:
 
 ```bash

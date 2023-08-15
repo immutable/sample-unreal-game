@@ -24,4 +24,4 @@ git pull --recurse-submodules
 
 ## Running the Game
 
-See corresponding game folder readme.md for instructions on how to run the game.
+See corresponding game folder README.md for instructions on how to run the game.

@@ -1,7 +1,10 @@
 {
 	"SourceFiles": [
+		"/Users/natalie/Development/Unreal/sample-unreal-game/4.27/passport-features/Source/endlessrun/endlessrun.Build.cs",
 		"/Users/natalie/Development/Unreal/sample-unreal-game/4.27/passport-features/Plugins/unreal-immutable-sdk/Source/Immutable/Immutable.Build.cs",
-		"/Users/natalie/Development/Unreal/sample-unreal-game/4.27/passport-features/Plugins/unreal-immutable-sdk/Source/ImmutableEditor/ImmutableEditor.Build.cs"
+		"/Users/natalie/Development/Unreal/sample-unreal-game/4.27/passport-features/Plugins/unreal-immutable-sdk/Source/ImmutableEditor/ImmutableEditor.Build.cs",
+		"/Users/natalie/Development/Unreal/sample-unreal-game/4.27/passport-features/Source/endlessrun.Target.cs",
+		"/Users/natalie/Development/Unreal/sample-unreal-game/4.27/passport-features/Source/endlessrunEditor.Target.cs"
 	],
 	"EngineVersion": "4.27.2"
 }

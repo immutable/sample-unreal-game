@@ -26,3 +26,7 @@ This sample game demos the passport login/logout functionality using [unreal-imm
 
 * Navigate to Content Browser -> Plugins -> Blueprints -> PassportBlueprintSample
 * Play game (should launch browser for authentication)
+
+### Demo
+
+<video src="Sample%20UE5%20Game%20Demo.mp4" controls title="Sample UE5 Game Demo"></video>

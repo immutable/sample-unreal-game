@@ -36,6 +36,9 @@ git pull --recurse-submodules
 
 See corresponding game folder README.md for instructions on how to run the game.
 
+- [UE5.2 Passport Features Demo](5.2/passport-features/README.md)
+- [UE4.27 Passport Features Demo](4.27/passport-features/README.md)
+
 ## Changelog Management
 
 The following headings should be used as appropriate.

@@ -14,10 +14,6 @@
 		{
 			"Name": "Immutable",
 			"Enabled": true
-		},
-		{
-			"Name": "WebBrowserWidget",
-			"Enabled": true
 		}
 	]
 }

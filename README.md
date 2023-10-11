@@ -14,6 +14,8 @@ Sample Unreal Game using Unified SDK features provided by <https://github.com/im
 
 ## Cloning this Repo
 
+Before cloning this repo, ensure you have [git lfs](https://git-lfs.com/) installed.
+
 Enable Symlinks in git repositories by running the following command:
 
 ```bash

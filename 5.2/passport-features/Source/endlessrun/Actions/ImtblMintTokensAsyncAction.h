@@ -16,7 +16,7 @@ class UImtblMintTokensAsyncAction : public UImtblBlueprintAsyncAction
 {
     GENERATED_BODY()
 
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FImmutableMintTokenOutputPin, FString, ErrorMessage);
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FImmutableMintTokenOutputPin, FString, Message);
     
     
 public:
@@ -28,11 +28,14 @@ public:
 
 private:
 
-    void DoMintTokens(TWeakObjectPtr<class UImtblJSConnector> JSConnector);
-    void OnMintTokensResponse(const FImtblAPIResponse& Result);
+    void DoMintTokens();
+    void OnMintTokensResponse(FHttpRequestPtr pRequest, FHttpResponsePtr pResponse, bool connectedSuccessfully);
 
     FString WalletAddress;
     int Quantity;
+    FHttpModule& HttpModule = FHttpModule::Get();
+    FString MintServerBaseUrl = "http://localhost:6060";
+    FString ImxApiBaseUrl = "https://api.sandbox.x.immutable.com";
     
     UPROPERTY(BlueprintAssignable)
     FImmutableMintTokenOutputPin Success;

@@ -25,28 +25,41 @@ void UImtblMintTokensAsyncAction::Activate()
         Failed.Broadcast(Err);
         return;
     }
-    UImtblMintTokensAsyncAction::DoMintTokens(nullptr);
+    UImtblMintTokensAsyncAction::DoMintTokens();
 }    
 
 
-void UImtblMintTokensAsyncAction::DoMintTokens(TWeakObjectPtr<UImtblJSConnector> JSConnector)
+void UImtblMintTokensAsyncAction::DoMintTokens()
 {
-    TWeakObjectPtr<UImmutableApi> ImtblApi = NewObject<UImmutableApi>();
-    ImtblApi->MintTokens(Quantity, WalletAddress,
-        UImmutableApi::FImtblApiResponseDelegate::CreateUObject(this, &UImtblMintTokensAsyncAction::OnMintTokensResponse));
+    const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = HttpModule.CreateRequest();
+    Request->SetVerb("POST");
+    Request->SetHeader("Content-Type", TEXT("application/json"));
+    
+    const FString RequestContent = TEXT("toUserWallet=") + WalletAddress + TEXT("&number=") + FString::FromInt(Quantity);
+    // Set the POST content
+    Request->SetContentAsString(RequestContent);
+	
+    // Set the http URL
+    Request->SetURL(MintServerBaseUrl + FString("/mint/token"));
+
+    // Set the callback, which will execute when the HTTP call is complete
+    Request->OnProcessRequestComplete().BindUObject(this, &UImtblMintTokensAsyncAction::OnMintTokensResponse);
+
+    // Submit the request for processing
+    Request->ProcessRequest();
 }
 
-void UImtblMintTokensAsyncAction::OnMintTokensResponse(const FImtblAPIResponse& Result)
+void UImtblMintTokensAsyncAction::OnMintTokensResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
     FString Msg = "";
-    if (Result.ConnectedSuccessfully)
+    if (bConnectedSuccessfully)
     {
-        IMTBL_LOG("Mint Token Response: %s", *Result.Response->GetContentAsString())
-        Success.Broadcast(Msg);
+        IMTBL_LOG("Mint Token Response: %s", *Response->GetContentAsString())
+        Success.Broadcast(*Response->GetContentAsString());
     }
     else
     {
-        switch (Result.Request->GetStatus())
+        switch (Request->GetStatus())
         {
         case EHttpRequestStatus::Failed_ConnectionError:
             {

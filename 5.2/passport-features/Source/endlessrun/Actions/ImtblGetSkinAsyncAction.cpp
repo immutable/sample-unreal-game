@@ -4,6 +4,7 @@
 #include "ImtblGetSkinAsyncAction.h"
 #include "endlessrun/API/ImmutableApi.h"
 #include "Immutable/Misc/ImtblLogging.h"
+#include "JsonObjectConverter.h"
 
 UImtblGetSkinAsyncAction* UImtblGetSkinAsyncAction::GetSkin(UObject* WorldContextObject,
     const FString& WalletAddress, const FString& TokenAddress)
@@ -22,7 +23,8 @@ void UImtblGetSkinAsyncAction::Activate()
     {
         FString Err = "Get Skin failed due to missing world or world context object.";
         IMTBL_WARN("%s", *Err)
-        Failed.Broadcast(Err);
+		TArray<FSkinData> EmptyArr;
+        Failed.Broadcast(EmptyArr, Err);
         return;
     }
     UImtblGetSkinAsyncAction::DoGetSkin(nullptr);
@@ -31,32 +33,43 @@ void UImtblGetSkinAsyncAction::Activate()
 
 void UImtblGetSkinAsyncAction::DoGetSkin(TWeakObjectPtr<UImtblJSConnector> JSConnector)
 {
-    TWeakObjectPtr<UImmutableApi> ImtblApi = NewObject<UImmutableApi>();
-    ImtblApi->GetSkin(TokenAddress, WalletAddress,
-        UImmutableApi::FImtblApiResponseDelegate::CreateUObject(this, &UImtblGetSkinAsyncAction::OnGetSkinResponse));
+    FHttpModule& httpModule = FHttpModule::Get();
+    TSharedRef<IHttpRequest> Request = httpModule.CreateRequest();
+    Request->OnProcessRequestComplete().BindUObject(this, &UImtblGetSkinAsyncAction::OnResponseReceived);
+
+    Request->SetURL(ImxApiBaseUrl + "/v1/assets?collection=" + TokenAddress + "&user=" + WalletAddress);
+    Request->SetVerb("GET");
+    Request->ProcessRequest();
 }
 
-void UImtblGetSkinAsyncAction::OnGetSkinResponse(const FImtblAPIResponse& Result)
+void UImtblGetSkinAsyncAction::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-    FString Msg = "";
-    if (Result.ConnectedSuccessfully)
+    TArray<FSkinData> EmptyArr;
+    if (bWasSuccessful)
     {
-        IMTBL_LOG("Get Skin Response: %s", *Result.Response->GetContentAsString())
-        Success.Broadcast(Msg);
+        FString Content = Response->GetContentAsString();
+        TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Content);
+        FJsonObjectWrapper Wrapper;
+        Wrapper.JsonObject = MakeShared<FJsonObject>();
+
+        FGetSkins Result;
+        if (!FJsonSerializer::Deserialize(JsonReader, Wrapper.JsonObject) || !Wrapper.JsonObject.IsValid())
+        {
+            IMTBL_ERR("Could not parse response from JavaScript -- invalid JSON: %s", *Content)
+            Failed.Broadcast(EmptyArr, "Unable to get tokens");
+        }
+        else if(!FJsonObjectConverter::JsonObjectToUStruct(Wrapper.JsonObject.ToSharedRef(), &Result, 0, 0))
+        {
+            IMTBL_ERR("Could not parse response from JavaScript into the expected response object format: %s", *Content)
+            Failed.Broadcast(EmptyArr, "Unable to get tokens");
+        }
+        else
+        {
+            Success.Broadcast(Result.result, "");
+        }    
     }
     else
     {
-        switch (Result.Request->GetStatus())
-        {
-        case EHttpRequestStatus::Failed_ConnectionError:
-            {
-                Failed.Broadcast("Connection failed");
-                break;
-            }
-        default:
-            {
-                Failed.Broadcast("Request failed");
-            }
-        }
+        Failed.Broadcast(EmptyArr, "Unable to encode data");
     }
 }

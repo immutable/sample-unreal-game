@@ -4,6 +4,7 @@
 #include "ImtblGetTokensAsyncAction.h"
 #include "endlessrun/API/ImmutableApi.h"
 #include "Immutable/Misc/ImtblLogging.h"
+#include "JsonObjectConverter.h"
 
 UImtblGetTokensAsyncAction* UImtblGetTokensAsyncAction::GetTokens(UObject* WorldContextObject,
     const FString& WalletAddress, const FString& TokenAddress, const int Quantity)
@@ -23,7 +24,8 @@ void UImtblGetTokensAsyncAction::Activate()
     {
         FString Err = "Get Tokens failed due to missing world or world context object.";
         IMTBL_WARN("%s", *Err)
-        Failed.Broadcast(Err);
+        TArray<FTokenData> EmptyArr;
+        Failed.Broadcast(EmptyArr, Err);
         return;
     }
     UImtblGetTokensAsyncAction::DoGetTokens(nullptr);
@@ -32,32 +34,44 @@ void UImtblGetTokensAsyncAction::Activate()
 
 void UImtblGetTokensAsyncAction::DoGetTokens(TWeakObjectPtr<UImtblJSConnector> JSConnector)
 {
-    TWeakObjectPtr<UImmutableApi> ImtblApi = NewObject<UImmutableApi>();
-    ImtblApi->GetTokens(Quantity, TokenAddress, WalletAddress,
-        UImmutableApi::FImtblApiResponseDelegate::CreateUObject(this, &UImtblGetTokensAsyncAction::OnGetTokensResponse));
+    FHttpModule& httpModule = FHttpModule::Get();
+    TSharedRef<IHttpRequest> Request = httpModule.CreateRequest();
+    Request->OnProcessRequestComplete().BindUObject(this, &UImtblGetTokensAsyncAction::OnResponseReceived);
+
+    Request->SetURL(ImxApiBaseUrl + "/v1/assets?collection=" + TokenAddress + "&page_size=" + FString::FromInt(Quantity) + "&user=" + WalletAddress);
+    Request->SetVerb("GET");
+    Request->ProcessRequest();
 }
 
-void UImtblGetTokensAsyncAction::OnGetTokensResponse(const FImtblAPIResponse& Result)
+void UImtblGetTokensAsyncAction::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-    FString Msg = "";
-    if (Result.ConnectedSuccessfully)
+    TArray<FTokenData> EmptyArr;
+    if (bWasSuccessful)
     {
-        IMTBL_LOG("Get Tokens Response: %s", *Result.Response->GetContentAsString())
-        Success.Broadcast(Msg);
+        FString Content = Response->GetContentAsString();
+        IMTBL_LOG("Get Tokens Response0: %s", *Content);
+        const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Content);
+        FJsonObjectWrapper Wrapper;
+        Wrapper.JsonObject = MakeShared<FJsonObject>();
+
+        FGetTokens Result;
+        if (!FJsonSerializer::Deserialize(JsonReader, Wrapper.JsonObject) || !Wrapper.JsonObject.IsValid())
+        {
+            IMTBL_ERR("Could not parse response from JavaScript -- invalid JSON: %s", *Content)
+            Failed.Broadcast(EmptyArr, "Unable to get tokens");
+        }
+        else if(!FJsonObjectConverter::JsonObjectToUStruct(Wrapper.JsonObject.ToSharedRef(), &Result, 0, 0))
+        {
+            IMTBL_ERR("Could not parse response from JavaScript into the expected response object format: %s", *Content)
+            Failed.Broadcast(EmptyArr, "Unable to get tokens");
+        }
+        else
+        {
+            Success.Broadcast(Result.result, "");
+        }            
     }
     else
     {
-        switch (Result.Request->GetStatus())
-        {
-        case EHttpRequestStatus::Failed_ConnectionError:
-            {
-                Failed.Broadcast("Connection failed");
-                break;
-            }
-        default:
-            {
-                Failed.Broadcast("Request failed");
-            }
-        }
+        Failed.Broadcast(EmptyArr, "Unable to get tokens");
     }
 }

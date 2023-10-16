@@ -4,6 +4,7 @@
 #include "ImtblMintSkinAsyncAction.h"
 #include "endlessrun/API/ImmutableApi.h"
 #include "Immutable/Misc/ImtblLogging.h"
+#include "JsonObjectConverter.h"
 
 UImtblMintSkinAsyncAction* UImtblMintSkinAsyncAction::MintSkin(UObject* WorldContextObject,
     const FString& WalletAddress)
@@ -30,22 +31,36 @@ void UImtblMintSkinAsyncAction::Activate()
 
 void UImtblMintSkinAsyncAction::DoMintSkin(TWeakObjectPtr<UImtblJSConnector> JSConnector)
 {
-    TWeakObjectPtr<UImmutableApi> ImtblApi = NewObject<UImmutableApi>();
-    ImtblApi->MintSkin(WalletAddress,
-        UImmutableApi::FImtblApiResponseDelegate::CreateUObject(this, &UImtblMintSkinAsyncAction::OnMintSkinResponse));
+    const TSharedRef<IHttpRequest> Request = HttpModule.CreateRequest();
+    Request->SetVerb("POST");
+
+	// We'll need to tell the server what type of content to expect in the POST data
+	Request->SetHeader(TEXT("Content-Type"), TEXT("application/x-www-form-urlencoded"));
+
+	FString RequestContent = TEXT("toUserWallet=") + WalletAddress;
+	// Set the POST content
+	Request->SetContentAsString(RequestContent);
+
+    // Set the http URL
+    Request->SetURL(MintServerBaseUrl + FString("/mint/skin"));
+
+    // Set the callback, which will execute when the HTTP call is complete
+    Request->OnProcessRequestComplete().BindUObject(this, &UImtblMintSkinAsyncAction::OnResponseReceived);
+
+    // Submit the request for processing
+    Request->ProcessRequest();
 }
 
-void UImtblMintSkinAsyncAction::OnMintSkinResponse(const FImtblAPIResponse& Result)
+void UImtblMintSkinAsyncAction::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-    FString Msg = "";
-    if (Result.ConnectedSuccessfully)
+    if (bWasSuccessful)
     {
-        IMTBL_LOG("Mint Skin Response: %s", *Result.Response->GetContentAsString())
-        Success.Broadcast(Msg);
+        IMTBL_LOG("Mint Skin Response: %s", *Response->GetContentAsString())
+        Success.Broadcast("Mint Skin Success");
     }
     else
     {
-        switch (Result.Request->GetStatus())
+        switch (Request->GetStatus())
         {
         case EHttpRequestStatus::Failed_ConnectionError:
             {

@@ -4,6 +4,7 @@
 #include "ImtblMintTokensAsyncAction.h"
 #include "endlessrun/API/ImmutableApi.h"
 #include "Immutable/Misc/ImtblLogging.h"
+#include "JsonObjectConverter.h"
 
 UImtblMintTokensAsyncAction* UImtblMintTokensAsyncAction::MintTokens(UObject* WorldContextObject,
     const FString& WalletAddress, const int Quantity)
@@ -31,31 +32,32 @@ void UImtblMintTokensAsyncAction::Activate()
 
 void UImtblMintTokensAsyncAction::DoMintTokens()
 {
-    const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = HttpModule.CreateRequest();
+    const TSharedRef<IHttpRequest> Request = HttpModule.CreateRequest();
     Request->SetVerb("POST");
-    Request->SetHeader("Content-Type", TEXT("application/json"));
-    
-    const FString RequestContent = TEXT("toUserWallet=") + WalletAddress + TEXT("&number=") + FString::FromInt(Quantity);
-    // Set the POST content
-    Request->SetContentAsString(RequestContent);
-	
+
+	// We'll need to tell the server what type of content to expect in the POST data
+	Request->SetHeader(TEXT("Content-Type"), TEXT("application/x-www-form-urlencoded"));
+
+	FString RequestContent = TEXT("toUserWallet=") + WalletAddress + TEXT("&number=") + FString::FromInt(Quantity);
+	// Set the POST content
+	Request->SetContentAsString(RequestContent);
+
     // Set the http URL
     Request->SetURL(MintServerBaseUrl + FString("/mint/token"));
 
     // Set the callback, which will execute when the HTTP call is complete
-    Request->OnProcessRequestComplete().BindUObject(this, &UImtblMintTokensAsyncAction::OnMintTokensResponse);
+    Request->OnProcessRequestComplete().BindUObject(this, &UImtblMintTokensAsyncAction::OnResponseReceived);
 
     // Submit the request for processing
     Request->ProcessRequest();
 }
 
-void UImtblMintTokensAsyncAction::OnMintTokensResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
+void UImtblMintTokensAsyncAction::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
-    FString Msg = "";
     if (bConnectedSuccessfully)
     {
         IMTBL_LOG("Mint Token Response: %s", *Response->GetContentAsString())
-        Success.Broadcast(*Response->GetContentAsString());
+        Success.Broadcast("Mint Token Success");
     }
     else
     {

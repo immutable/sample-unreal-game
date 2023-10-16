@@ -16,8 +16,7 @@ class UImtblMintSkinAsyncAction : public UImtblBlueprintAsyncAction
 {
     GENERATED_BODY()
 
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FImmutableMintSkinOutputPin, FString, ErrorMessage);
-    
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FImmutableMintSkinOutputPin, const FString, ErrorMessage);
     
 public:
     UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Game")
@@ -26,12 +25,14 @@ public:
     virtual void Activate() override;
 
 private:
-
     void DoMintSkin(TWeakObjectPtr<class UImtblJSConnector> JSConnector);
-    void OnMintSkinResponse(const FImtblAPIResponse& Result);
+    void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 
     FString WalletAddress;
-    
+
+    FHttpModule& HttpModule = FHttpModule::Get();
+    FString MintServerBaseUrl = "http://localhost:6060";
+
     UPROPERTY(BlueprintAssignable)
     FImmutableMintSkinOutputPin Success;
     UPROPERTY(BlueprintAssignable)

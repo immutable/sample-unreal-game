@@ -7,6 +7,23 @@
 #include "endlessrun/API/ImmutableApi.h"
 #include "ImtblGetTokensAsyncAction.generated.h"
 
+USTRUCT(BlueprintType)
+struct FTokenData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly)
+    FString token_id;
+};
+
+USTRUCT()
+struct FGetTokens
+{
+    GENERATED_BODY()
+
+    UPROPERTY()
+    TArray<FTokenData> result;
+};
 
 /**
  * 
@@ -16,8 +33,7 @@ class UImtblGetTokensAsyncAction : public UImtblBlueprintAsyncAction
 {
     GENERATED_BODY()
 
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FImmutableMintTokenOutputPin, FString, ErrorMessage);
-    
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGetTokensOutputPin, const TArray<FTokenData>&, Tokens, FString, ErrorMessage);
     
 public:
     UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"), Category = "Game")
@@ -26,17 +42,19 @@ public:
 
     virtual void Activate() override;
 
-private:
+    UPROPERTY(BlueprintAssignable)
+    FGetTokensOutputPin Success;
+    UPROPERTY(BlueprintAssignable)
+    FGetTokensOutputPin Failed;
 
+private:
     void DoGetTokens(TWeakObjectPtr<class UImtblJSConnector> JSConnector);
-    void OnGetTokensResponse(const FImtblAPIResponse& Result);
+    void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
     FString WalletAddress;
     FString TokenAddress;
-    int Quantity;
+    int64 Quantity;
     
-    UPROPERTY(BlueprintAssignable)
-    FImmutableMintTokenOutputPin Success;
-    UPROPERTY(BlueprintAssignable)
-    FImmutableMintTokenOutputPin Failed;
+    FHttpModule& HttpModule = FHttpModule::Get();
+    FString ImxApiBaseUrl = "https://api.sandbox.x.immutable.com";
 };

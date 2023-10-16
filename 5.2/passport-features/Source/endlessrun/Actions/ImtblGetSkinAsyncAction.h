@@ -7,6 +7,23 @@
 #include "endlessrun/API/ImmutableApi.h"
 #include "ImtblGetSkinAsyncAction.generated.h"
 
+USTRUCT(BlueprintType)
+struct FSkinData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly)
+    FString token_id;
+};
+
+USTRUCT()
+struct FGetSkins
+{
+    GENERATED_BODY()
+
+    UPROPERTY()
+    TArray<FSkinData> result;
+};
 
 /**
  * 
@@ -16,7 +33,7 @@ class UImtblGetSkinAsyncAction : public UImtblBlueprintAsyncAction
 {
     GENERATED_BODY()
 
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FImmutableMintTokenOutputPin, FString, ErrorMessage);
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FImmutableMintTokenOutputPin, const TArray<FSkinData>&, Skins, FString, ErrorMessage);
     
     
 public:
@@ -29,11 +46,14 @@ public:
 private:
 
     void DoGetSkin(TWeakObjectPtr<class UImtblJSConnector> JSConnector);
-    void OnGetSkinResponse(const FImtblAPIResponse& Result);
+    void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
     FString WalletAddress;
     FString TokenAddress;
     
+    FHttpModule& HttpModule = FHttpModule::Get();
+    FString ImxApiBaseUrl = "https://api.sandbox.x.immutable.com";
+
     UPROPERTY(BlueprintAssignable)
     FImmutableMintTokenOutputPin Success;
     UPROPERTY(BlueprintAssignable)

@@ -2,9 +2,11 @@
 
 #pragma once
 
+#include "HttpModule.h"
+#include "Interfaces/IHttpRequest.h"
+#include "Interfaces/IHttpResponse.h"
 #include "CoreMinimal.h"
 #include "Immutable/Actions/ImtblBlueprintAsyncAction.h"
-#include "endlessrun/API/ImmutableApi.h"
 #include "ImtblGetTokensAsyncAction.generated.h"
 
 USTRUCT(BlueprintType)

@@ -25,7 +25,7 @@ git config --global core.symlinks true
 This repo uses sub-modules, to clone including the correct sub-modules use the following command:
 (**Note:** On Windows, you will need to use an elevated command prompt to ensure git can create the necessary symlinks)
 ```bash
-git clone --recurse-submodules git@github.com:immutable/sample-unreal-game.git
+git clone --recurse-submodules https://github.com/immutable/sample-unreal-game.git
 ```
 
 To pull new changes after cloned use the following command:

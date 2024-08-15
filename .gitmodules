@@ -1,0 +1,4 @@
+[submodule "4.27/passport-features/Plugins/unreal-immutable-sdk"]
+	path = 4.27/passport-features/Plugins/unreal-immutable-sdk
+	url = https://github.com/immutable/unreal-immutable-sdk.git
+	branch = feat/blui-enabled

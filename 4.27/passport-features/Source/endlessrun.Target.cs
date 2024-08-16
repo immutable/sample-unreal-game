@@ -12,6 +12,6 @@ public class endlessrunTarget : TargetRules
 
 		ExtraModuleNames.AddRange( new string[] { "endlessrun" } );
 		bOverrideBuildEnvironment = true;
-		AdditionalCompilerArguments = "-Wno-bitwise-instead-of-logical -Wno-unused-but-set-variable";
+		AdditionalCompilerArguments = "";
 	}
 }

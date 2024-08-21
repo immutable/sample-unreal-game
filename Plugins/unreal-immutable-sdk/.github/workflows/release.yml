@@ -1,0 +1,60 @@
+---
+name: 'Create Release'
+
+on:
+  workflow_run:
+    workflows: ["Tag Release"]
+    types:
+      - completed
+
+jobs:
+  release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+          
+      - name: Extract TS SDK version from index.js
+        id: extract_ts_sdk_version
+        run: |
+          version=$(grep -oP '"x-sdk-version":"ts-immutable-sdk-\K[0-9]+\.[0-9]+\.[0-9]+' ./Web/index.js | head -n 1)
+
+          if [[ -z "$version" ]]; then
+            echo "Error: Version not found in index.js" >&2
+            exit 1
+          fi
+
+          version=$(echo "$version" | tr -d '\r\n')
+
+          echo "VERSION=${version}" >> "$GITHUB_ENV"
+          
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v3
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          configurationJson: |
+            {
+              "pr_template": "- #{{TITLE}} (##{{NUMBER}})",
+              "categories": [
+                {
+                    "title": "## Features",
+                    "labels": ["feature", "feat"]
+                },
+                {
+                    "title": "## Fixes",
+                    "labels": ["fix"]
+                }
+              ]
+            }
+      - name: Create Release
+        uses: mikepenz/action-gh-release@v0.2.0-a03
+        with:
+            body: |
+              ${{steps.github_release.outputs.changelog}}
+
+              Game bridge built from Immutable Typescript SDK version ${{ env.VERSION }}
+            
+      

@@ -1,0 +1,5 @@
+feature: 'feat/*'
+fix: fix/*
+chore: chore/*
+performance: perf/*
+docs: docs/*

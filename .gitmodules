@@ -2,10 +2,6 @@
 	path = 4.27/passport-features/Plugins/unreal-immutable-sdk
 	url = git@github.com:immutable/unreal-immutable-sdk.git
 	branch = feat/blui-enabled
-[submodule "5.2/passport-features/Plugins/unreal-immutable-sdk"]
-	path = 5.2/passport-features/Plugins/unreal-immutable-sdk
-	url = git@github.com:immutable/unreal-immutable-sdk.git
-	branch = main
 [submodule "4.27/passport-features/Plugins/BLUI"]
 	path = 4.27/passport-features/Plugins/BLUI
 	url = git@github.com:immutable/immutable-BLUI.git

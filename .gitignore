@@ -78,6 +78,8 @@ Build/*/**
 **/Plugins/*/Intermediate/*
 **/Plugins/Developer/*
 **/BluCache
+**/Content/Collections/
+**/Content/Developers/
 
 # Cache files for the editor to use
 DerivedDataCache/*

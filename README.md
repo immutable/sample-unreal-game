@@ -8,24 +8,18 @@
 
 ---
 
-# sample-unreal-game
+# Unreal Engine Sample Game
 
-Sample Unreal Game using Unified SDK features provided by <https://github.com/immutable/unreal-immutable-sdk> plugin.
+This Unreal Engine sample game demoes features provided by the <https://github.com/immutable/unreal-immutable-sdk> plugin. It is built with Unreal Engine 4.26 (the min Unreal Engine version the Unreal SDK supports), so the sample blueprints are compatible with newer versions of Unreal Engine.
 
 ## Cloning this Repo
 
-Before cloning this repo, ensure you have [git lfs](https://git-lfs.com/) installed.
-
-Enable Symlinks in git repositories by running the following command:
-
-```bash
-git config --global core.symlinks true
-```
+> Before cloning this repo, ensure you have [git lfs](https://git-lfs.com/) installed.
 
 This repo uses sub-modules, to clone including the correct sub-modules use the following command:
-(**Note:** On Windows, you will need to use an elevated command prompt to ensure git can create the necessary symlinks)
+
 ```bash
-git clone --recurse-submodules https://github.com/immutable/sample-unreal-game.git
+git clone --recurse-submodules git@github.com:immutable/sample-unreal-game.git
 ```
 
 To pull new changes after cloned use the following command:
@@ -34,28 +28,34 @@ To pull new changes after cloned use the following command:
 git pull --recurse-submodules
 ```
 
+The submodules include the [BLUI](https://github.com/immutable/immutable-BLUI) and [unreal-immutable-sdk](https://github.com/immutable/unreal-immutable-sdk) repositories, which get cloned into the `Plugins` directory with the correct plugin settings configured for BLUI and the Unreal SDK to work out of the box without additional setup steps.
+
 # Running the Game
 
-> [!WARNING]  
-> This sample game is in development and login functionality does not work yet. Please use Unreal Engine 5.2 working sample if you can.
+## Pre-requisites
 
-This sample game demos the passport login/logout functionality using [unreal-immmutable-sdk](https://github.com/immutable/unreal-immutable-sdk) plugin
+* Unreal Engine 4.26 (or newer)
+* Visual Studio 2019
 
 ## Quick Start
 
-### Pre-requisites
+After cloning the repo, double click the `SampleGame426` uproject file in the file explorer will build the project and launch Unreal Engine 4.26.
 
-* Unreal Engine 4.27
-* Visual Studio 2019
-* Jet brains Rider (Recommended)
-
-## MacOSX issues
-
-* The game does not compile using UE 4.27.2 on MacOS Ventura 13.4.1 due to engine source code errors. To fix this, we added additional compiler arguments to the game's `*.Target.cs` files ([file 1](blob/main/4.27/passport-features/Source/endlessrun.Target.cs) and [file 2](blob/main/4.27/passport-features/Source/endlessrunEditor.Target.cs)).
-
-### Enable Plugin Content
+## Enable Plugin Content
 
 ![How to view plugin conent in Content Browser](Docs/how-to-view-plugin-conent.png)
+
+- Open the `Content Browser`
+- Click on `View Options` button in the bottom right corner of the `Content Browser` window
+- Select `Show Plugin Content`
+
+The `Immutable Content` folder includes sample blueprints from the `unreal-immutable-sdk` plugin.
+
+## BLUI
+
+For Unreal Engine 4.26 and 4.27, the Unreal SDK use BLUI plugin instead of `WebBrowserWidget` plugin. Normally when installing the Unreal SDK into a project there are additional requirements for setting up BLUI. This project comes with the `WebBroswerWidget` and BLUI setup correctly and should work without any additional configuration.
+
+More information about BLUI can be found on the [Unreal SDK installation](https://docs.immutable.com/sdks/zkEVM/unreal#installation) docs.
 
 ## Changelog Management
 

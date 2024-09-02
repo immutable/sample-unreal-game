@@ -6,3 +6,7 @@
 	path = Plugins/BLUI
 	url = git@github.com:immutable/immutable-BLUI.git
 	branch = immutable
+[submodule "Backend"]
+	path = Backend
+	url = git@github.com:immutable/unity-sdk-game-tutorial.git
+	branch = feat/list-asset

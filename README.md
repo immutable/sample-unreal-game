@@ -1,10 +1,13 @@
+<!-- markdownlint-disable MD041 -->
+<!-- markdownlint-disable MD033 -->
 <div align="center">
   <p align="center">
     <a  href="https://docs.x.immutable.com/docs">
-      <img src="https://cdn.dribbble.com/users/1299339/screenshots/7133657/media/837237d447d36581ebd59ec36d30daea.gif" width="280"/>
+      <img src="https://cdn.dribbble.com/users/1299339/screenshots/7133657/media/837237d447d36581ebd59ec36d30daea.gif" width="280" alt="Immutable Animation"/>
     </a>
   </p>
 </div>
+<!-- markdownlint-enable MD033 -->
 
 ---
 
@@ -30,6 +33,40 @@ git pull --recurse-submodules
 
 The submodules include the [BLUI](https://github.com/immutable/immutable-BLUI) and [unreal-immutable-sdk](https://github.com/immutable/unreal-immutable-sdk) repositories, which get cloned into the `Plugins` directory with the correct plugin settings configured for BLUI and the Unreal SDK to work out of the box without additional setup steps.
 
+### Backend Submodule
+
+The `Backend` folder is a submodule linked to the `feat/list-asset` branch of the [unity-sdk-game-tutorial](https://github.com/immutable/unity-sdk-game-tutorial/tree/feat/list-asset) repo so the Unreal sample game can re-use the `contracts`, `json-server`, and `mint-backend` modules from the tutorial repo. The tutorial repo includes a lot of Unity specific assets and files which are not used in the Unreal game game but they can be ignored by configuring sparse checkout with git.
+
+To configure sparse checkout and only clone the `contracts`, `json-server`, and `mint-backend` modules into the `Backend` folder:
+
+1. Create a `sparse-checkout` file in the `.git/modules/Backend/info` folder:
+
+    ```shell
+    # open a terminal at the root of the sample game repo
+    touch .git/modules/Backend/info/sparse-checkout
+    ```
+
+2. Add the folder paths from the tutorial repo you wish to clone:
+
+    ```shell
+    echo "contracts/*" >> .git/modules/Backend/info/sparse-checkout
+    echo "json-server/*" >> .git/modules/Backend/info/sparse-checkout
+    echo "mint-backend/*" >> .git/modules/Backend/info/sparse-checkout
+    ```
+
+3. Checkout the branch:
+
+    ```shell
+    cd Backend/
+    git checkout feat/list-asset
+    ```
+
+Now there should only be the `contracts`, `json-server`, and `mint-backend` folders in the sample game `Backend` folder.
+
+> Note: the sparse checkout config is local only and won't get pushed to remote, so this will need to be setup **once** the first time the repo is cloned.
+
+See the `README` files in the `contracts`, `json-server`, and `mint-backend` folders for how to use the backend servers for local development or to deploy contracts.
+
 # Running the Game
 
 ## Pre-requisites
@@ -45,9 +82,9 @@ After cloning the repo, double click the `SampleGame426` uproject file in the fi
 
 ![How to view plugin conent in Content Browser](Docs/how-to-view-plugin-conent.png)
 
-- Open the `Content Browser`
-- Click on `View Options` button in the bottom right corner of the `Content Browser` window
-- Select `Show Plugin Content`
+* Open the `Content Browser`
+* Click on `View Options` button in the bottom right corner of the `Content Browser` window
+* Select `Show Plugin Content`
 
 The `Immutable Content` folder includes sample blueprints from the `unreal-immutable-sdk` plugin.
 
@@ -61,11 +98,11 @@ More information about BLUI can be found on the [Unreal SDK installation](https:
 
 The following headings should be used as appropriate.
 
-- Added
-- Changed
-- Deprecated
-- Removed
-- Fixed
+* Added
+* Changed
+* Deprecated
+* Removed
+* Fixed
 
 What follows is an example with all the change headings, for real world use only use headings when appropriate.
 This goes at the top of the CHANGELOG.md above the most recent release.
@@ -102,7 +139,7 @@ for any bug fixes.
 
 If you would like to contribute, please read the following:
 
-- We use the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#specification) when writing our commit messages. Why use Conventional Commits? Read [here](https://www.conventionalcommits.org/en/v1.0.0/#why-use-conventional-commits).
+* We use the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#specification) when writing our commit messages. Why use Conventional Commits? Read [here](https://www.conventionalcommits.org/en/v1.0.0/#why-use-conventional-commits).
 
 ## Getting Help
 
@@ -127,4 +164,5 @@ You can also apply for marketing support for your project. Or, if you need help 
 [Contact support](https://support.immutable.com/hc/en-us/requests/new)
 
 ## License
+
 Immutable Unity SDK repository is distributed under the terms of the [Apache License (Version 2.0)](LICENSE).

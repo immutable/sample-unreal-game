@@ -21,13 +21,14 @@ public class SampleGame426 : ModuleRules
 			"SlateCore",
 			"Slate",
 			"UMG",
-			"GameplayTags"
+			"GameplayTags",
+			"DeveloperSettings"
 		});
 
 
 		PrivateIncludePaths.AddRange(new string[]
 		{
-			"SampleGame426/UI/Public"
+			"SampleGame426/Public/UI"
 
 		});
 	}

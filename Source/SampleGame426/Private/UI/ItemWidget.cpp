@@ -3,7 +3,7 @@
 
 #include "ItemWidget.h"
 
-#include "LogImmutableUI.h"
+#include "LogSampleGameUI.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 

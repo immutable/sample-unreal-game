@@ -2,14 +2,14 @@
 
 #include "Engine/DeveloperSettings.h"
 
-#include "GameSettings.generated.h"
+#include "SampleGameSettings.generated.h"
 
 
 /**
  * Game project settings
  */
-UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Immutable Game Settings"))
-class SAMPLEGAME426_API UGameSettings : public UDeveloperSettings
+UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Immutable Sample Game Settings"))
+class SAMPLEGAME426_API USampleGameSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 

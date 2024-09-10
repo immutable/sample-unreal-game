@@ -16,16 +16,44 @@ public:
 	UCustomLocalPlayer();
 	
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerControllerSetDelegate, UCustomLocalPlayer* LocalPlayer, APlayerController* PlayerController);
+	DECLARE_MULTICAST_DELEGATE(FPlayerPassportIsRunningDelegate);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerLoggedInDelegate, bool Success);
 
 	FDelegateHandle CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate);
+	FDelegateHandle CallAndRegister_OnPlayerLoggedIn(FPlayerLoggedInDelegate::FDelegate Delegate);
+	FDelegateHandle CallAndRegister_OnPlayerPassportIsRunning(FPlayerPassportIsRunningDelegate::FDelegate Delegate);
+
+	/* ULocalPlayer Interface */
+	virtual void PlayerAdded(class UGameViewportClient* InViewportClient, int32 InControllerID) override;
+	/* ULocalPlayer Interface */
+
+	class UPrimaryGameLayout* GetRootUILayout() const;
+
+	UFUNCTION(BlueprintCallable)
+	void LoginPassport();
+
+private:
+	void InitializePassport();
+	void OnPassportIsRunning(TWeakObjectPtr<class UImtblJSConnector> JSConnector);
+	void OnPassportInitialized(struct FImmutablePassportResult Result);
+	void OnPassportLoggedIn(struct FImmutablePassportResult Result);
+
+public:
+	/** Called when the Immutable passport functionality is ready to be used */
+	FPlayerPassportIsRunningDelegate OnPlayerPassportIsRunning;
+
+	friend class ACustomPlayerController;
 
 protected: 	
 	/** Called when the local player is assigned a player controller */
 	FPlayerControllerSetDelegate OnPlayerControllerSet;
 
-public:
-	class UPrimaryGameLayout* GetRootUILayout() const;
+	/** Called when the local player is logged into Immutable Passport */
+	FPlayerLoggedInDelegate OnPlayerLoggedIn;
 
-	friend class ACustomPlayerController;
+
+private:
+
+	TWeakObjectPtr<class UImmutablePassport> Passport;
 
 };

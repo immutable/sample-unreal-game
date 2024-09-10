@@ -22,7 +22,8 @@ public class SampleGame426 : ModuleRules
 			"Slate",
 			"UMG",
 			"GameplayTags",
-			"DeveloperSettings"
+			"DeveloperSettings",
+			"Immutable"
 		});
 
 

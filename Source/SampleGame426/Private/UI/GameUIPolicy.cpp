@@ -2,7 +2,7 @@
 
 #include "CustomLocalPlayer.h"
 #include "GameUIManagerSubsystem.h"
-#include "LogImmutableUI.h"
+#include "LogSampleGameUI.h"
 
 
 /* Static */ UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)

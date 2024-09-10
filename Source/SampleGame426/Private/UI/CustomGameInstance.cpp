@@ -2,7 +2,7 @@
 
 #include "CustomLocalPlayer.h"
 #include "GameUIManagerSubsystem.h"
-#include "LogImmutableUI.h"
+#include "LogSampleGameUI.h"
 
 void UCustomGameInstance::SendSystemMessage(FGameplayTag MessageType, FText TitleText, FText BodyText)
 {

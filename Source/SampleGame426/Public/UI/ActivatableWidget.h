@@ -1,6 +1,6 @@
  #pragma once
 
-#include "Blueprint/UserWidget.h"
+#include "CustomUserWidget.h"
 
 #include "ActivatableWidget.generated.h"
 
@@ -8,7 +8,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWidgetActivationChanged);
 
 
 UCLASS(meta = (DisableNativeTick))
-class UActivatableWidget : public UUserWidget
+class UActivatableWidget : public UCustomUserWidget
 {
 	GENERATED_BODY()
 

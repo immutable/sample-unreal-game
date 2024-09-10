@@ -1,7 +1,7 @@
 
 #include "ActivatableWidget.h"
 
-#include "LogImmutableUI.h"
+#include "LogSampleGameUI.h"
 
 
 void UActivatableWidget::NativeConstruct()

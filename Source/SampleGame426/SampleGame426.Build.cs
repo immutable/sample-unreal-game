@@ -13,7 +13,11 @@ public class SampleGame426 : ModuleRules
 			"Core", 
 			"CoreUObject", 
 			"Engine", 
-			"InputCore" 
+			"InputCore",
+			"Json",
+			"JsonUtilities",
+			"Projects",
+            "HTTP",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 
@@ -21,7 +25,7 @@ public class SampleGame426 : ModuleRules
 			"SlateCore",
 			"Slate",
 			"UMG",
-			"GameplayTags"
+			"GameplayTags",
 		});
 
 

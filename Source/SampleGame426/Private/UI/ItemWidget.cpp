@@ -3,7 +3,7 @@
 
 #include "ItemWidget.h"
 
-#include "LogSampleGameUI.h"
+#include "LogSampleGame.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
@@ -11,7 +11,7 @@ void UItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 {
 	if (!TextureNFT)
 	{
-		UE_LOG(LogImmutableUI, Error, LOG_UI_ITEM_WIDGET_TEXTURE_WIDGET_NULL);
+		UE_LOG(LogSampleGame, Error, TEXT("NFT texture widget is not assigned."));
 		
 		return;	
 	}
@@ -28,7 +28,7 @@ void UItemWidget::SetName(FName Name)
 {
 	if (!NameNFT)
 	{
-		UE_LOG(LogImmutableUI, Error, LOG_UI_ITEM_WIDGET_NAME_WIDGET_NULL);
+		UE_LOG(LogSampleGame, Error, TEXT("NFT text widget is not assigned."));
 		
 		return;
 	}
@@ -40,7 +40,7 @@ void UItemWidget::SetPrice(float Price)
 {
 	if (!PriceNFT)
 	{
-		UE_LOG(LogImmutableUI, Error, LOG_UI_ITEM_WIDGET_PRICE_WIDGET_NULL);
+		UE_LOG(LogSampleGame, Error, TEXT("NFT price widget is not assigned."));
 		
 		return;
 	}

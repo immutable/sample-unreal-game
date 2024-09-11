@@ -103,20 +103,20 @@ void UCustomLocalPlayer::OnPassportInitialized(FImmutablePassportResult Result)
 {
 	if (Result.Success)
 	{
-		UE_LOG(LogSampleGameGeneral, Log, TEXT("Immutable Passport initialized successfully"));
+		UE_LOG(LogSampleGame, Log, TEXT("Immutable Passport initialized successfully"));
 		OnPlayerPassportIsRunning.Broadcast();
 	}
 	else
 	{
 		// TODO Handle system error
-		UE_LOG(LogSampleGameGeneral, Log, TEXT("Immutable Passport is not initialized with error: %s"), *Result.Error);
+		UE_LOG(LogSampleGame, Log, TEXT("Immutable Passport is not initialized with error: %s"), *Result.Error);
 	}
 }
 
 void UCustomLocalPlayer::OnPassportLoggedIn(struct FImmutablePassportResult Result)
 {
 	OnPlayerLoggedIn.Broadcast(Result.Success);
-	if (Result.Success)
+	if (!Result.Success)
 	{
 		//TODO Handle system error	
 	}

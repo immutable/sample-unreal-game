@@ -2,19 +2,17 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "ButtonBase.h"
-#include "ButtonWithText.generated.h"
+#include "CustomButtonBase.h"
+
+#include "CustomButtonWithText.generated.h"
 
 /**
  *	
  */
 UCLASS(meta=(DisableNativeTick))
-class SAMPLEGAME426_API UButtonWithText : public UButtonBase
+class SAMPLEGAME426_API UCustomButtonWithText : public UCustomButtonBase
 {
 	GENERATED_BODY()
-
-public:
 
 protected:
 	virtual void NativePreConstruct() override;

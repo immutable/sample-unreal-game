@@ -17,7 +17,7 @@ public:
 	
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerControllerSetDelegate, UCustomLocalPlayer* LocalPlayer, APlayerController* PlayerController);
 	DECLARE_MULTICAST_DELEGATE(FPlayerPassportIsRunningDelegate);
-	DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerLoggedInDelegate, bool Success);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerLoggedInDelegate, bool IsLoggedIn);
 
 	FDelegateHandle CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate);
 	FDelegateHandle CallAndRegister_OnPlayerLoggedIn(FPlayerLoggedInDelegate::FDelegate Delegate);
@@ -51,9 +51,7 @@ protected:
 	/** Called when the local player is logged into Immutable Passport */
 	FPlayerLoggedInDelegate OnPlayerLoggedIn;
 
-
 private:
-
 	TWeakObjectPtr<class UImmutablePassport> Passport;
 
 };

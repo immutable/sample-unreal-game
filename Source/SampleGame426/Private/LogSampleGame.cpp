@@ -1,3 +1,3 @@
 ﻿#include "LogSampleGame.h"
 
-DEFINE_LOG_CATEGORY(LogSampleGameGeneral);
+DEFINE_LOG_CATEGORY(LogSampleGame);

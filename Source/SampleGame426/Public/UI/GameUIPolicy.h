@@ -29,7 +29,7 @@ public:
 private:
 	void NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer);
 	void NotifyPlayerDestroyed(UCustomLocalPlayer* LocalPlayer);
-	void AddFrontEndWidget();
+	void PushWidget(TSoftClassPtr<UActivatableWidget> WidgetClassPtr);
 
 	friend class UGameUIManagerSubsystem;
 
@@ -37,6 +37,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Immutable")
 	TSoftClassPtr<UPrimaryGameLayout> LayoutClass;
 
+	UPROPERTY(EditAnywhere, Category = "Immutable")
+	TSoftClassPtr<UActivatableWidget> LoginScreenWidgetClass;
+	
 	UPROPERTY(EditAnywhere, Category = "Immutable")
     TSoftClassPtr<UActivatableWidget> FrontEndWidgetClass;
 	

@@ -2,7 +2,8 @@
 
 #include "CustomLocalPlayer.h"
 #include "GameUIManagerSubsystem.h"
-#include "LogSampleGameUI.h"
+#include "LogSampleGame.h"
+#include "LogSampleGame.h"
 
 
 /* Static */ UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)
@@ -45,14 +46,13 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 		if (ensure(LayoutWidgetClass && !LayoutWidgetClass->HasAnyClassFlags(CLASS_Abstract)))
 		{
 			RootLayout = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass, TEXT("PrimaryGameLayout"));
-
 			RootLayout->SetPlayerContext(FLocalPlayerContext(LocalPlayer));
 			RootLayout->AddToPlayerScreen(1000);
 
-			// add first front end widget
-			AddFrontEndWidget();
+			// add login screen widget as an initial screen
+			PushWidget(LoginScreenWidgetClass);
 
-			UE_LOG(LogImmutableUI, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
+			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
 
 	#if WITH_EDITOR
 			if (GIsEditor)
@@ -61,6 +61,14 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 				FSlateApplication::Get().SetUserFocusToGameViewport(0);
 			}
 	#endif
+		}
+	}));
+
+	LocalPlayer->CallAndRegister_OnPlayerLoggedIn(UCustomLocalPlayer::FPlayerLoggedInDelegate::FDelegate::CreateWeakLambda(this, [this](bool IsLoggedIn)
+	{
+		if (IsLoggedIn)
+		{
+			PushWidget(FrontEndWidgetClass);
 		}
 	}));
 }
@@ -73,15 +81,19 @@ void UGameUIPolicy::NotifyPlayerDestroyed(UCustomLocalPlayer* LocalPlayer)
 	}
 	
 	RootLayout->RemoveFromParent();
-	UE_LOG(LogImmutableUI, Log, TEXT("Removing root layout from the viewport"));
+	UE_LOG(LogSampleGame, Log, TEXT("Removing root layout from the viewport"));
 }
 
-void UGameUIPolicy::AddFrontEndWidget()
+void UGameUIPolicy::PushWidget(TSoftClassPtr<UActivatableWidget> WidgetClassPtr)
 {
-	TSubclassOf<UActivatableWidget> LoadedClass = FrontEndWidgetClass.LoadSynchronous();
+	TSubclassOf<UActivatableWidget> LoadedClass = WidgetClassPtr.LoadSynchronous();
 	
 	if (ensure(LoadedClass && !LoadedClass->HasAnyClassFlags(CLASS_Abstract)))
 	{
 		RootLayout->PushWidgetToLayerStack(FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")), LoadedClass);	
+	}
+	else
+	{
+		UE_LOG(LogSampleGame, Error, TEXT("Widget class is not assigned."));
 	}
 }

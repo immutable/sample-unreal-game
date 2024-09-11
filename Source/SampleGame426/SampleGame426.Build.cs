@@ -23,13 +23,16 @@ public class SampleGame426 : ModuleRules
 			"UMG",
 			"GameplayTags",
 			"DeveloperSettings",
-			"Immutable"
+			"Immutable",
+			"Json",
+			"HTTP"
 		});
 
 
 		PrivateIncludePaths.AddRange(new string[]
 		{
-			"SampleGame426/Public/UI"
+			"SampleGame426/Public/UI",
+			"SampleGame426/Public/Online"
 
 		});
 	}

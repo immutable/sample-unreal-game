@@ -1,7 +1,7 @@
 
 #include "ActivatableWidget.h"
 
-#include "LogSampleGameUI.h"
+#include "LogSampleGame.h"
 
 
 void UActivatableWidget::NativeConstruct()
@@ -18,7 +18,7 @@ void UActivatableWidget::NativeConstruct()
 
 	if (bAutoActivate)
 	{
-		UE_LOG(LogImmutableUI, Verbose, TEXT("[%s] auto-activated"), *GetName());
+		UE_LOG(LogSampleGame, Verbose, TEXT("[%s] auto-activated"), *GetName());
 		ActivateWidget();
 	}
 }
@@ -59,7 +59,7 @@ void UActivatableWidget::ActivateWidget()
 
 void UActivatableWidget::InternalProcessActivation()
 {
-	UE_LOG(LogImmutableUI, Verbose, TEXT("[%s] -> Activated"), *GetName());
+	UE_LOG(LogSampleGame, Verbose, TEXT("[%s] -> Activated"), *GetName());
 
 	bIsActive = true;
 	NativeOnActivated();
@@ -75,7 +75,7 @@ void UActivatableWidget::DeactivateWidget()
 
 void UActivatableWidget::InternalProcessDeactivation()
 {
-	UE_LOG(LogImmutableUI, Verbose, TEXT("[%s] -> Deactivated"), *GetName());
+	UE_LOG(LogSampleGame, Verbose, TEXT("[%s] -> Deactivated"), *GetName());
 
 	bIsActive = false;
 	NativeOnDeactivated();
@@ -88,7 +88,7 @@ void UActivatableWidget::NativeOnActivated()
 		if (bSetVisibilityOnActivated)
 		{
 			SetVisibility(ActivatedVisibility);
-			UE_LOG(LogImmutableUI, Verbose, TEXT("[%s] set visibility to [%s] on activation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(ActivatedVisibility).ToString());
+			UE_LOG(LogSampleGame, Verbose, TEXT("[%s] set visibility to [%s] on activation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(ActivatedVisibility).ToString());
 		}
 
 		BP_OnActivated();
@@ -103,7 +103,7 @@ void UActivatableWidget::NativeOnDeactivated()
 		if (bSetVisibilityOnDeactivated)
 		{
 			SetVisibility(DeactivatedVisibility);
-			UE_LOG(LogImmutableUI, Verbose, TEXT("[%s] set visibility to [%d] on deactivation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(DeactivatedVisibility).ToString());
+			UE_LOG(LogSampleGame, Verbose, TEXT("[%s] set visibility to [%d] on deactivation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(DeactivatedVisibility).ToString());
 		}
 
 		BP_OnDeactivated();
@@ -118,7 +118,7 @@ bool UActivatableWidget::NativeOnHandleBackAction()
 		if (!BP_OnHandleBackAction())
 		{
 			// Default behavior is unconditional deactivation
-			UE_LOG(LogImmutableUI, Verbose, TEXT("[%s] handled back with default implementation. Deactivating immediately."), *GetName());
+			UE_LOG(LogSampleGame, Verbose, TEXT("[%s] handled back with default implementation. Deactivating immediately."), *GetName());
 			DeactivateWidget();
 		}
 		return true;

@@ -2,7 +2,7 @@
 
 #include "CustomLocalPlayer.h"
 #include "GameUIManagerSubsystem.h"
-#include "LogSampleGameUI.h"
+#include "LogSampleGame.h"
 
 void UCustomGameInstance::SendSystemMessage(FGameplayTag MessageType, FText TitleText, FText BodyText)
 {
@@ -11,7 +11,7 @@ void UCustomGameInstance::SendSystemMessage(FGameplayTag MessageType, FText Titl
 
 void UCustomGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Title, FText Message)
 {
-	UE_LOG(LogImmutableUI, Log, TEXT("HandleSystemMessage: Message  %s, %s, %s"), *MessageType.ToString(), *Title.ToString(), *Message.ToString());
+	UE_LOG(LogSampleGame, Log, TEXT("HandleSystemMessage: Message  %s, %s, %s"), *MessageType.ToString(), *Title.ToString(), *Message.ToString());
 	
 	// ULocalPlayer* FirstPlayer = GetFirstGamePlayer();
 	// // Forward severe ones to the error dialog for the first player
@@ -31,7 +31,7 @@ int32 UCustomGameInstance::AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUser
 	{
 		if (!PrimaryPlayer.IsValid())
 		{
-			UE_LOG(LogImmutableUI, Log, TEXT("AddLocalPlayer: Set %s to Player"), *NewPlayer->GetName());
+			UE_LOG(LogSampleGame, Log, TEXT("AddLocalPlayer: Set %s to Player"), *NewPlayer->GetName());
 			PrimaryPlayer = NewPlayer;
 		}
 		
@@ -46,7 +46,7 @@ bool UCustomGameInstance::RemoveLocalPlayer(ULocalPlayer* ExistingPlayer)
 	if (PrimaryPlayer == ExistingPlayer)
 	{
 		PrimaryPlayer.Reset();
-		UE_LOG(LogImmutableUI, Log, TEXT("RemoveLocalPlayer: Unsetting Primary Player from %s"), *ExistingPlayer->GetName());
+		UE_LOG(LogSampleGame, Log, TEXT("RemoveLocalPlayer: Unsetting Primary Player from %s"), *ExistingPlayer->GetName());
 		GetSubsystem<UGameUIManagerSubsystem>()->NotifyPlayerDestroyed(ExistingPlayer);
 	}
 

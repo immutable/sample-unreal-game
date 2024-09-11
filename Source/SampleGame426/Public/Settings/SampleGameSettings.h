@@ -15,6 +15,7 @@ class SAMPLEGAME426_API USampleGameSettings : public UDeveloperSettings
 
 public:
 
+	// Passport values:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Passport")
 	FString ClientID;
 
@@ -26,4 +27,8 @@ public:
 	
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Passport")
 	FString LogoutURI;
+
+	// Online values:
+
+	
 };

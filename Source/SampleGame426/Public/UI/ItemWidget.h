@@ -15,13 +15,11 @@ class SAMPLEGAME426_API UItemWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-
 	virtual void SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture);
 	virtual void SetName(FName Name);
 	virtual void SetPrice(float Price);
 
 protected:
-
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UTextBlock* NameNFT = nullptr;
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))

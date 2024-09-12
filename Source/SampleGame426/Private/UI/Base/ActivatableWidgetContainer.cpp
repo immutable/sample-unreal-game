@@ -1,11 +1,11 @@
 
-#include "ActivatableWidgetContainer.h"
+#include "Base/ActivatableWidgetContainer.h"
 #include "Widgets/SOverlay.h"
 #include "Widgets/Layout/SSpacer.h"
 #include "Stats/Stats.h"
 #include "TimerManager.h"
 #include "Containers/Ticker.h"
-#include "ActivatableWidget.h"
+#include "Base/ActivatableWidget.h"
 
 
 UActivatableWidget* ActivatableWidgetFromSlate(const TSharedPtr<SWidget>& SlateWidget)

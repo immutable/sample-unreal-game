@@ -45,6 +45,8 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 	
 		if (ensure(LayoutWidgetClass && !LayoutWidgetClass->HasAnyClassFlags(CLASS_Abstract)))
 		{
+			PlayerController->SetInputMode(FInputModeUIOnly());
+			
 			RootLayout = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass, TEXT("PrimaryGameLayout"));
 			RootLayout->SetPlayerContext(FLocalPlayerContext(LocalPlayer));
 			RootLayout->AddToPlayerScreen(1000);

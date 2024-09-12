@@ -3,7 +3,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Interfaces/ItemListInterface.h"
 
 #include "ItemListWidget.generated.h"
 
@@ -12,22 +11,20 @@
  * 
  */
 UCLASS(Abstract)
-class SAMPLEGAME426_API UItemListWidget : public UUserWidget, public IItemListInterface
+class SAMPLEGAME426_API UItemListWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	/* IItemListInterface */
-	virtual void RefreshItemList() override;
-	/* IItemListInterface */
+	int32 GetNumberOfColumns() const;
+	int32 GetNumberOfRows() const;
+	class UItemWidget* GetItem(int32 Column, int32 Row);
 
 protected:
 	/* UUserWidget */
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 	virtual void NativeConstruct() override;
 	/* UUserWidget */
-
-	void FillGrid();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Immutable")

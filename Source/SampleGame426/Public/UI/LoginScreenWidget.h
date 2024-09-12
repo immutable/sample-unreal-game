@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "ActivatableWidget.h"
+#include "Base/ActivatableWidget.h"
 
 #include "LoginScreenWidget.generated.h"
 

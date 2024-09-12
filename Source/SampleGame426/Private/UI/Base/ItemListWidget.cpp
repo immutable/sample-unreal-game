@@ -1,12 +1,22 @@
-#include "ItemListWidget.h"
+#include "Base/ItemListWidget.h"
 
-#include "ItemWidget.h"
+#include "Base/ItemWidget.h"
 #include "Components/UniformGridPanel.h"
 
 
-void UItemListWidget::RefreshItemList()
+int32 UItemListWidget::GetNumberOfColumns() const
 {
-	FillGrid();
+	return NumberOfColumns;
+}
+
+int32 UItemListWidget::GetNumberOfRows() const
+{
+	return NumberOfRows;
+}
+
+UItemWidget* UItemListWidget::GetItem(int32 Column, int32 Row)
+{
+	return CachedItems[Column * NumberOfRows + Row];
 }
 
 TSharedRef<SWidget> UItemListWidget::RebuildWidget()
@@ -47,26 +57,4 @@ TSharedRef<SWidget> UItemListWidget::RebuildWidget()
 void UItemListWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	FillGrid();
-}
-
-void UItemListWidget::FillGrid()
-{
-	if (!bInitialized)
-	{
-		return;
-	}
-	
-	for (int32 Column = 0; Column < NumberOfColumns; ++Column)
-	{
-		for (int32 Row = 0; Row < NumberOfRows; ++Row)
-		{
-			auto ItemWidget = CachedItems[Column * NumberOfRows + Row];
-
-			// ItemWidget->SetName();
-			// ItemWidget->SetPrice();
-			// ItemWidget->SetTextureNFT();
-		}
-	}
 }

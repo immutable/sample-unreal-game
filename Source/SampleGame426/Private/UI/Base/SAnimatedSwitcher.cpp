@@ -1,6 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
-#include "SAnimatedSwitcher.h"
+#include "Base/SAnimatedSwitcher.h"
 
 
 void SAnimatedSwitcher::Construct(const FArguments& InArgs)

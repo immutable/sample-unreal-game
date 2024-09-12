@@ -1,7 +1,7 @@
 
 #include "PrimaryGameLayout.h"
 
-#include "ActivatableWidgetContainer.h"
+#include "Base/ActivatableWidgetContainer.h"
 #include "GameUIManagerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 

@@ -35,6 +35,17 @@ FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerPassportIsRunning(
 	return OnPlayerPassportIsRunning.Add(Delegate);
 }
 
+FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerPassportDataObtained(
+	FPlayerPassportDataObtained::FDelegate Delegate)
+{
+	if (CheckAllPassportDataObtained())
+	{
+		Delegate.Execute();
+	}
+
+	return OnPlayerPassportDataObtained.Add(Delegate);
+}
+
 void UCustomLocalPlayer::PlayerAdded(class UGameViewportClient* InViewportClient, int32 InControllerID)
 {
 	Super::PlayerAdded(InViewportClient, InControllerID);
@@ -44,10 +55,17 @@ void UCustomLocalPlayer::PlayerAdded(class UGameViewportClient* InViewportClient
 
 void UCustomLocalPlayer::LoginPassport()
 {
-	if (Passport.IsValid())
-	{
-		Passport->Connect(true, true, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));
-	}
+	// if (Passport.IsValid())
+	// {
+	// 	Passport->Connect(true, false, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));
+	// }
+
+	OnPlayerLoggedIn.Broadcast(true);
+}
+
+FString UCustomLocalPlayer::GetPassportWalletAddress()
+{
+	return PassportWalletAddress;
 }
 
 UPrimaryGameLayout* UCustomLocalPlayer::GetRootUILayout() const
@@ -120,4 +138,46 @@ void UCustomLocalPlayer::OnPassportLoggedIn(struct FImmutablePassportResult Resu
 	{
 		//TODO Handle system error	
 	}
+	else
+	{
+		CollectPassportData();
+	}
+}
+
+void UCustomLocalPlayer::CollectPassportData()
+{
+	if (Passport.IsValid())
+	{
+		Passport->GetAddress(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
+		{
+			if (Result.Success)
+			{
+				PassportWalletAddress = UImmutablePassport::GetResponseResultAsString(Result.Response);	
+			}
+			else
+			{
+				
+			}
+		}));
+	}
+}
+
+bool UCustomLocalPlayer::CheckAllPassportDataObtained()
+{
+	if (PassportWalletAddress.IsEmpty())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void UCustomLocalPlayer::NotifyIfAllPassportDataObtained()
+{
+	if (!CheckAllPassportDataObtained())
+	{
+		return;
+	}
+
+	OnPlayerPassportDataObtained.Broadcast();
 }

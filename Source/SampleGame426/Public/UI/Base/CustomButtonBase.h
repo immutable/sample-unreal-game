@@ -27,9 +27,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = UCustomButtonBase, meta = (DisplayName = "On Button Clicked"))
 	void BP_OnButtonCLicked();
-
-	UPROPERTY(BlueprintAssignable, Category = "Immutable", meta = (AllowPrivateAccess = true))
-	FOnCustomButtonClicked OnCustomButtonClicked;
+	//
+	// UPROPERTY(BlueprintAssignable, Category = "Immutable", meta = (AllowPrivateAccess = true))
+	// FOnCustomButtonClicked OnCustomButtonClicked;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))

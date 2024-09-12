@@ -3,8 +3,8 @@
 #include "GameplayTagContainer.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/StreamableManager.h"
-#include "ActivatableWidget.h"
-#include "ActivatableWidgetContainer.h"
+#include "Base/ActivatableWidget.h"
+#include "Base/ActivatableWidgetContainer.h"
 
 #include "PrimaryGameLayout.generated.h"
 

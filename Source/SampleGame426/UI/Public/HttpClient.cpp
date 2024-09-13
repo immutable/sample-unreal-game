@@ -15,7 +15,7 @@ UHttpClient::~UHttpClient()
 {
 }
 
-void UHttpClient::MakeHttpRequest(const FString& Url, const FString& Method)
+void UHttpClient::MakeHttpRequest(const FString& Url, const FString& Method, TFunction<void(FString)> CallbackFunction)
 {
 	UE_LOG(LogTemp, Log, TEXT("Make HTTP Request: %s"), *Url)
 
@@ -24,23 +24,36 @@ void UHttpClient::MakeHttpRequest(const FString& Url, const FString& Method)
 	HttpRequest->SetURL(Url);
 	HttpRequest->SetVerb(Method);
 
-    HttpRequest->OnProcessRequestComplete().BindUObject(this, &UHttpClient::OnResponseReceived);
+    HttpRequest->OnProcessRequestComplete().BindLambda([this, CallbackFunction](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful) {
+        if (bWasSuccessful && Response.IsValid())
+        {
+            FString ResponseString = Response->GetContentAsString();
+            UE_LOG(LogTemp, Log, TEXT("HTTP Request Completed: %s"), *ResponseString);
+            // Handle the successful response
+            CallbackFunction(ResponseString);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("HTTP Request failed"));
+        }
+    });
 
 	HttpRequest->ProcessRequest();
 
 }
 
-void UHttpClient::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
-{
-    if (bWasSuccessful && Response.IsValid())
-    {
-        // Handle the successful response
-        FString ResponseContent = Response->GetContentAsString();
-        UE_LOG(LogTemp, Log, TEXT("Response: %s"), *ResponseContent);
-    }
-    else
-    {
-        // Handle the error
-        UE_LOG(LogTemp, Error, TEXT("HTTP Request failed"));
-    }
-}
+// Old method for binding on HttpRequest->OnProcessRequestComplete()
+// void UHttpClient::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+// {
+//     if (bWasSuccessful && Response.IsValid())
+//     {
+//         // Handle the successful response
+//         ResponseContent = Response->GetContentAsString();
+//         UE_LOG(LogTemp, Log, TEXT("Response: %s"), *ResponseContent);
+//     }
+//     else
+//     {
+//         // Handle the error
+//         UE_LOG(LogTemp, Error, TEXT("HTTP Request failed"));
+//     }
+// }

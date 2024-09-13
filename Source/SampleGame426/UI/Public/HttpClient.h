@@ -20,9 +20,10 @@ public:
 	UHttpClient();
 	~UHttpClient();
 
-	UFUNCTION(BlueprintCallable, Category="HTTP")
-	void MakeHttpRequest(const FString& Url, const FString& Method);
+	FString ResponseContent;
 
-protected:
-	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	void MakeHttpRequest(const FString& Url, const FString& Method, TFunction<void(FString)> CallbackFunction);
+
+// protected:
+// 	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 };

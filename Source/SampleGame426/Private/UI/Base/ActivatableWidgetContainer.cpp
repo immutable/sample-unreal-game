@@ -87,17 +87,54 @@ void UActivatableWidgetContainer::ClearWidgets()
 
 TSharedRef<SWidget> UActivatableWidgetContainer::RebuildWidget()
 {
+	MySwitcher = SNew(SAnimatedSwitcher)
+		.TransitionCurveType(TransitionCurveType)
+		.TransitionDuration(TransitionDuration)
+		.TransitionType(TransitionType)
+		.OnActiveIndexChanged_UObject(this, &UActivatableWidgetContainer::HandleActiveIndexChanged)
+		.OnIsTransitioningChanged_UObject(this, &UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged);
+
+	TSharedPtr<SWidget> InternalWidget = StaticCastSharedPtr<SWidget>(MySwitcher);
+
+	if (bWithTopPanelSlot && !TopPanelContentWidget && TopPanelContentWidgetClass)
+	{
+		TopPanelContentWidget = CreateWidget<UActivatableWidget>(this, TopPanelContentWidgetClass);
+		TopPanelContentWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+		MyVerticalBox = SNew(SVerticalBox)
+			+ SVerticalBox::Slot()
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			.AutoHeight()
+			[
+				SAssignNew(MyPanelSlot, SBox)
+				.MaxDesiredHeight(TopPanelHeight)	
+				.Content()
+				[
+					TopPanelContentWidget->TakeWidget()
+				]
+			]
+			+ SVerticalBox::Slot()
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			.FillHeight(1.0f)
+			[
+				MySwitcher.ToSharedRef()
+			];
+
+		InternalWidget = StaticCastSharedPtr<SWidget>(MyVerticalBox); 
+	}
+	
 	MyOverlay = SNew(SOverlay)
 		+ SOverlay::Slot()
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Fill)
 		[
-			SAssignNew(MySwitcher, SAnimatedSwitcher)
-			.TransitionCurveType(TransitionCurveType)
-			.TransitionDuration(TransitionDuration)
-			.TransitionType(TransitionType)
-			.OnActiveIndexChanged_UObject(this, &UActivatableWidgetContainer::HandleActiveIndexChanged)
-			.OnIsTransitioningChanged_UObject(this, &UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged)
+			InternalWidget.ToSharedRef()
 		]
 		+ SOverlay::Slot()
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Fill)
 		[
 			SAssignNew(MyInputGuard, SSpacer)
 			.Visibility(EVisibility::Collapsed)
@@ -321,3 +358,4 @@ void UActivatableWidgetStack::OnWidgetAddedToList(UActivatableWidget& AddedWidge
 		SetSwitcherIndex(MySwitcher->GetNumWidgets() - 1);
 	}
 }
+

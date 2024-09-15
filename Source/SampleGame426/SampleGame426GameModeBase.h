@@ -13,5 +13,9 @@ UCLASS()
 class SAMPLEGAME426_API ASampleGame426GameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+
+public:
+
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	
 };

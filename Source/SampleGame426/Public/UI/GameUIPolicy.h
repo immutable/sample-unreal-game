@@ -29,7 +29,7 @@ public:
 private:
 	void NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer);
 	void NotifyPlayerDestroyed(UCustomLocalPlayer* LocalPlayer);
-	void PushWidget(TSoftClassPtr<UActivatableWidget> WidgetClassPtr);
+	UActivatableWidget* PushWidget(TSoftClassPtr<UActivatableWidget> WidgetClassPtr, FGameplayTag LayerTag);
 
 	friend class UGameUIManagerSubsystem;
 
@@ -45,4 +45,7 @@ private:
 	
 	UPROPERTY(Transient)
 	UPrimaryGameLayout* RootLayout = nullptr;
+
+	UPROPERTY(Transient)
+	UActivatableWidget* LoginScreenWidget = nullptr;
 };

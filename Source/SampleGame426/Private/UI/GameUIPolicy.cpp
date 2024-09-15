@@ -50,11 +50,14 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 			RootLayout = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass, TEXT("PrimaryGameLayout"));
 			RootLayout->SetPlayerContext(FLocalPlayerContext(LocalPlayer));
 			RootLayout->AddToPlayerScreen(1000);
+			
+			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
 
 			// add login screen widget as an initial screen
-			PushWidget(LoginScreenWidgetClass);
-
-			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
+			if (!LoginScreenWidget && LoginScreenWidgetClass)
+			{
+				LoginScreenWidget = PushWidget(LoginScreenWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Modal")));
+			}
 
 	#if WITH_EDITOR
 			if (GIsEditor)
@@ -70,7 +73,11 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 	{
 		if (IsLoggedIn)
 		{
-			PushWidget(FrontEndWidgetClass);
+			if (LoginScreenWidget)
+			{
+				RootLayout->FindAndRemoveWidgetFromLayer(LoginScreenWidget);	
+			}
+			PushWidget(FrontEndWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")));
 		}
 	}));
 }
@@ -86,16 +93,17 @@ void UGameUIPolicy::NotifyPlayerDestroyed(UCustomLocalPlayer* LocalPlayer)
 	UE_LOG(LogSampleGame, Log, TEXT("Removing root layout from the viewport"));
 }
 
-void UGameUIPolicy::PushWidget(TSoftClassPtr<UActivatableWidget> WidgetClassPtr)
+UActivatableWidget* UGameUIPolicy::PushWidget(TSoftClassPtr<UActivatableWidget> WidgetClassPtr, FGameplayTag LayerTag)
 {
 	TSubclassOf<UActivatableWidget> LoadedClass = WidgetClassPtr.LoadSynchronous();
 	
 	if (ensure(LoadedClass && !LoadedClass->HasAnyClassFlags(CLASS_Abstract)))
 	{
-		RootLayout->PushWidgetToLayerStack(FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")), LoadedClass);	
+		return RootLayout->PushWidgetToLayerStack(LayerTag, LoadedClass);	
 	}
 	else
 	{
 		UE_LOG(LogSampleGame, Error, TEXT("Widget class is not assigned."));
+		return nullptr;
 	}
 }

@@ -96,6 +96,18 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Transition)
 	float TransitionDuration = 0.4f;
 
+	UPROPERTY(EditAnywhere, Category = TopPanel)
+	bool bWithTopPanelSlot = false;
+
+	UPROPERTY(EditAnywhere, Category = TopPanel, meta = (EditCondition = "bWithTopPanelSlot"))
+	float TopPanelHeight = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category = TopPanel, meta = (EditCondition = "bWithTopPanelSlot"))
+	TSubclassOf<UActivatableWidget> TopPanelContentWidgetClass;
+
+	UPROPERTY(Transient)
+	UActivatableWidget* TopPanelContentWidget;
+
 	UPROPERTY(Transient)
 	TArray<UActivatableWidget*> WidgetList;
 
@@ -107,6 +119,8 @@ protected:
 
 	TSharedPtr<SOverlay> MyOverlay;
 	TSharedPtr<SSpacer> MyInputGuard;
+	TSharedPtr<SVerticalBox> MyVerticalBox;
+	TSharedPtr<SBox> MyPanelSlot;
 	TSharedPtr<class SAnimatedSwitcher> MySwitcher;
 
 private:

@@ -6,6 +6,10 @@
 
 #include "MarketplaceWidget.generated.h"
 
+namespace ImmutableQuery
+{
+	struct FMP_SearchStacksRequestData;
+}
 
 UCLASS(Abstract)
 class SAMPLEGAME426_API UMarketplaceWidget : public UActivatableWidget, public IItemListInterface
@@ -14,14 +18,21 @@ class SAMPLEGAME426_API UMarketplaceWidget : public UActivatableWidget, public I
 
 public:
 	virtual void RefreshItemList() override;
+	
 
 protected:
-	/* UUserWidget */
-	virtual void NativeConstruct() override;
-	/* UUserWidget */
+	/* UActivatableWidget */
+	virtual void NativeOnActivated() override;
+	/* UActivatableWidget */
+
+private:
+	TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> BuildRequestData(const FString& PageCursor);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UItemListWidget* ListPanel = nullptr;
+
+private:
+	int32 PageSize = 10;
 	
 };

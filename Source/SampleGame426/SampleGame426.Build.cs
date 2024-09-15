@@ -25,7 +25,8 @@ public class SampleGame426 : ModuleRules
 			"DeveloperSettings",
 			"Immutable",
 			"Json",
-			"HTTP"
+			"HTTP",
+			"OpenAPI"
 		});
 
 

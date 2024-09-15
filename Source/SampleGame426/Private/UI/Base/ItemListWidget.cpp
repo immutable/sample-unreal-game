@@ -14,9 +14,14 @@ int32 UItemListWidget::GetNumberOfRows() const
 	return NumberOfRows;
 }
 
+class UItemWidget* UItemListWidget::GetItem(int32 id)
+{
+	return CachedItems[id];
+}
+
 UItemWidget* UItemListWidget::GetItem(int32 Column, int32 Row)
 {
-	return CachedItems[Column * NumberOfRows + Row];
+	return CachedItems[Row * NumberOfColumns + Column];
 }
 
 TSharedRef<SWidget> UItemListWidget::RebuildWidget()
@@ -38,14 +43,13 @@ TSharedRef<SWidget> UItemListWidget::RebuildWidget()
 
 				CachedItems.Add(NewItemWidgetObject);
 				ListPanel->AddChildToUniformGrid(NewItemWidgetObject, Column, Row);
+				NewItemWidgetObject->SetVisibility(ESlateVisibility::Hidden);
 #if WITH_EDITOR
 				// In editor, always make visible all items to ease design 
-				if (!IsDesignTime())
+				if (IsDesignTime())
 				{
 					NewItemWidgetObject->SetVisibility(ESlateVisibility::Visible);
 				}
-#else
-				NewItemWidgetObject->SetVisibility(ESlateVisibility::Hidden);
 #endif
 			}
 		}

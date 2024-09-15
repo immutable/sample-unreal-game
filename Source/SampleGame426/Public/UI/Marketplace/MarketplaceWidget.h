@@ -3,6 +3,7 @@
 #include "Base/ActivatableWidget.h"
 #include "Base/ItemListWidget.h"
 #include "Interfaces/ItemListInterface.h"
+#include "NFT/NFT_TableRowBase.h"
 
 #include "MarketplaceWidget.generated.h"
 
@@ -18,7 +19,6 @@ class SAMPLEGAME426_API UMarketplaceWidget : public UActivatableWidget, public I
 
 public:
 	virtual void RefreshItemList() override;
-	
 
 protected:
 	/* UActivatableWidget */
@@ -28,9 +28,14 @@ protected:
 private:
 	TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> BuildRequestData(const FString& PageCursor);
 
+	FNFT_TableRowBase* FindTextureRow(FName RowName);
+
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UItemListWidget* ListPanel = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = NFT, meta = (RequiredAssetDataTags = "RowStructure=NFT_TableRowBase"))
+	class UDataTable* NFT_DataSet;
 
 private:
 	int32 PageSize = 10;

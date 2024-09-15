@@ -21,7 +21,7 @@ void UItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 	}
 }
 
-void UItemWidget::SetName(FName Name)
+void UItemWidget::SetName(const FString& Name)
 {
 	if (!NameNFT)
 	{
@@ -30,17 +30,17 @@ void UItemWidget::SetName(FName Name)
 		return;
 	}
 	
-	NameNFT->SetText(FText::FromName(Name));
+	NameNFT->SetText(FText::FromString(Name));
 }
 
-void UItemWidget::SetPrice(float Price)
+void UItemWidget::SetTotalCount(int32 Count)
 {
-	if (!PriceNFT)
+	if (!TotalCount)
 	{
-		UE_LOG(LogSampleGame, Error, TEXT("NFT price widget is not assigned."));
+		UE_LOG(LogSampleGame, Error, TEXT("NFT total count widget is not assigned."));
 		
 		return;
 	}
 
-	PriceNFT->SetText(FText::AsCurrency(Price));
+	TotalCount->SetText(FText::AsNumber(Count));
 }

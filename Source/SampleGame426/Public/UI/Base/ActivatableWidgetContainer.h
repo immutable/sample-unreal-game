@@ -77,6 +77,7 @@ public:
 
 protected:
 	virtual TSharedRef<SWidget> RebuildWidget() override;
+	virtual void SynchronizeProperties() override;
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 	virtual void OnWidgetRebuilt() override;
 
@@ -100,9 +101,6 @@ protected:
 	bool bWithTopPanelSlot = false;
 
 	UPROPERTY(EditAnywhere, Category = TopPanel, meta = (EditCondition = "bWithTopPanelSlot"))
-	float TopPanelHeight = 0.0f;
-
-	UPROPERTY(EditAnywhere, Category = TopPanel, meta = (EditCondition = "bWithTopPanelSlot"))
 	TSubclassOf<UActivatableWidget> TopPanelContentWidgetClass;
 
 	UPROPERTY(Transient)
@@ -120,7 +118,6 @@ protected:
 	TSharedPtr<SOverlay> MyOverlay;
 	TSharedPtr<SSpacer> MyInputGuard;
 	TSharedPtr<SVerticalBox> MyVerticalBox;
-	TSharedPtr<SBox> MyPanelSlot;
 	TSharedPtr<class SAnimatedSwitcher> MySwitcher;
 
 private:

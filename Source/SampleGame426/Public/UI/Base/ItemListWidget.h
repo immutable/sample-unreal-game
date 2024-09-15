@@ -18,6 +18,7 @@ class SAMPLEGAME426_API UItemListWidget : public UUserWidget
 public:
 	int32 GetNumberOfColumns() const;
 	int32 GetNumberOfRows() const;
+	class UItemWidget* GetItem(int32 id);
 	class UItemWidget* GetItem(int32 Column, int32 Row);
 
 protected:

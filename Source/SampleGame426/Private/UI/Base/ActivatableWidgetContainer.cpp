@@ -87,50 +87,24 @@ void UActivatableWidgetContainer::ClearWidgets()
 
 TSharedRef<SWidget> UActivatableWidgetContainer::RebuildWidget()
 {
-	MySwitcher = SNew(SAnimatedSwitcher)
-		.TransitionCurveType(TransitionCurveType)
-		.TransitionDuration(TransitionDuration)
-		.TransitionType(TransitionType)
-		.OnActiveIndexChanged_UObject(this, &UActivatableWidgetContainer::HandleActiveIndexChanged)
-		.OnIsTransitioningChanged_UObject(this, &UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged);
-
-	TSharedPtr<SWidget> InternalWidget = StaticCastSharedPtr<SWidget>(MySwitcher);
-
-	if (bWithTopPanelSlot && !TopPanelContentWidget && TopPanelContentWidgetClass)
-	{
-		TopPanelContentWidget = CreateWidget<UActivatableWidget>(this, TopPanelContentWidgetClass);
-		TopPanelContentWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-
-		MyVerticalBox = SNew(SVerticalBox)
-			+ SVerticalBox::Slot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
-			.AutoHeight()
-			[
-				SAssignNew(MyPanelSlot, SBox)
-				.MaxDesiredHeight(TopPanelHeight)	
-				.Content()
-				[
-					TopPanelContentWidget->TakeWidget()
-				]
-			]
-			+ SVerticalBox::Slot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
-			.FillHeight(1.0f)
-			[
-				MySwitcher.ToSharedRef()
-			];
-
-		InternalWidget = StaticCastSharedPtr<SWidget>(MyVerticalBox); 
-	}
-	
 	MyOverlay = SNew(SOverlay)
 		+ SOverlay::Slot()
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
 		[
-			InternalWidget.ToSharedRef()
+			SAssignNew(MyVerticalBox, SVerticalBox)
+			+ SVerticalBox::Slot()
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			.FillHeight(1.0f)
+			[
+				SAssignNew(MySwitcher, SAnimatedSwitcher)
+					.TransitionCurveType(TransitionCurveType)
+					.TransitionDuration(TransitionDuration)
+					.TransitionType(TransitionType)
+					.OnActiveIndexChanged_UObject(this, &UActivatableWidgetContainer::HandleActiveIndexChanged)
+					.OnIsTransitioningChanged_UObject(this, &UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged)
+			]
 		]
 		+ SOverlay::Slot()
 		.HAlign(HAlign_Fill)
@@ -149,6 +123,36 @@ TSharedRef<SWidget> UActivatableWidgetContainer::RebuildWidget()
 	}
 
 	return MyOverlay.ToSharedRef();
+}
+
+void UActivatableWidgetContainer::SynchronizeProperties()
+{
+	Super::SynchronizeProperties();
+
+#if WITH_EDITOR
+	if (IsDesignTime() &&  TopPanelContentWidget && (!bWithTopPanelSlot || TopPanelContentWidget->GetClass() != TopPanelContentWidgetClass))
+	{
+		if (TopPanelContentWidget->GetCachedWidget())
+		{
+			MyVerticalBox->RemoveSlot(TopPanelContentWidget->GetCachedWidget().ToSharedRef());
+		}
+
+		TopPanelContentWidget = nullptr;
+	}
+#endif
+
+	if (bWithTopPanelSlot && !TopPanelContentWidget && TopPanelContentWidgetClass)
+	{
+		TopPanelContentWidget = CreateWidget<UActivatableWidget>(this, TopPanelContentWidgetClass);
+		TopPanelContentWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		MyVerticalBox->InsertSlot(0)
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Fill)
+		.AutoHeight()
+		[
+			TopPanelContentWidget->TakeWidget()
+		];
+	}
 }
 
 void UActivatableWidgetContainer::ReleaseSlateResources(bool bReleaseChildren)

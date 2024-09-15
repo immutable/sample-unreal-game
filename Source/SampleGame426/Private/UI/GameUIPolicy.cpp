@@ -54,9 +54,9 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
 
 			// add login screen widget as an initial screen
-			if (!LoginScreenWidget && LoginScreenWidgetClass)
+			if (LoginScreenWidgetClass)
 			{
-				LoginScreenWidget = PushWidget(LoginScreenWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Modal")));
+				PushWidget(LoginScreenWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Modal")));
 			}
 
 	#if WITH_EDITOR
@@ -73,10 +73,6 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 	{
 		if (IsLoggedIn)
 		{
-			if (LoginScreenWidget)
-			{
-				RootLayout->FindAndRemoveWidgetFromLayer(LoginScreenWidget);	
-			}
 			PushWidget(FrontEndWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")));
 		}
 	}));

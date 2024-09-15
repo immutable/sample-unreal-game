@@ -16,14 +16,16 @@ class SAMPLEGAME426_API UItemWidget : public UUserWidget
 
 public:
 	virtual void SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture);
-	virtual void SetName(FName Name);
-	virtual void SetPrice(float Price);
+	virtual void SetName(const FString& Name);
+	virtual void SetTotalCount(int32 Count);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UTextBlock* NameNFT = nullptr;
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UImage* TextureNFT  = nullptr;
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UTextBlock* TotalCount  = nullptr;
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UTextBlock* PriceNFT = nullptr;
 

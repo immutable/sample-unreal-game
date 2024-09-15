@@ -45,7 +45,4 @@ private:
 	
 	UPROPERTY(Transient)
 	UPrimaryGameLayout* RootLayout = nullptr;
-
-	UPROPERTY(Transient)
-	UActivatableWidget* LoginScreenWidget = nullptr;
 };

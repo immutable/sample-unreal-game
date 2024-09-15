@@ -24,7 +24,7 @@ void UMarketplaceWidget::RefreshItemList()
 		return;	
 	}
 
-	ImmutableQuery::ExecuteQuery(BuildRequestData(TEXT("")), FOnImmutableQueryComplete::CreateLambda([this] (bool Success, TSharedPtr<OpenAPI::Model> Result) 
+	ImmutableQuery::ExecuteQuery<ImmutableQuery::FMP_SearchStacksRequestData>(BuildRequestData(TEXT("")), FOnImmutableQueryComplete::CreateLambda([this] (bool Success, TSharedPtr<OpenAPI::Model> Result) 
 	{
 		if (!Success)
 		{

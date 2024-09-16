@@ -28,14 +28,9 @@ protected:
 private:
 	TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> BuildRequestData(const FString& PageCursor);
 
-	FNFT_TableRowBase* FindTextureRow(FName RowName);
-
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UItemListWidget* ListPanel = nullptr;
-
-	UPROPERTY(EditAnywhere, Category = NFT, meta = (RequiredAssetDataTags = "RowStructure=NFT_TableRowBase"))
-	class UDataTable* NFT_DataSet;
 
 private:
 	int32 PageSize = 10;

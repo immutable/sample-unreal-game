@@ -19,11 +19,6 @@ void UMarketplaceWidget::RefreshItemList()
 		return;
 	}
 	
-	if (!NFT_DataSet)
-	{
-		return;	
-	}
-
 	ImmutableQuery::ExecuteQuery<ImmutableQuery::FMP_SearchStacksRequestData>(BuildRequestData(TEXT("")), FOnImmutableQueryComplete::CreateLambda([this] (bool Success, TSharedPtr<OpenAPI::Model> Result) 
 	{
 		if (!Success)
@@ -49,41 +44,11 @@ void UMarketplaceWidget::RefreshItemList()
 			int32 Row = ResultId / NumberOfColumns;
 			int32 Column = ResultId - Row * NumberOfColumns;
 			auto ItemWidget = ListPanel->GetItem(Column, Row);
-			auto Name = Data->Result[ResultId].Stack.Name;
 
-			if (Name.IsSet())
-			{
-				FName RowName = FName(*Name->Replace(TEXT(" "),TEXT("_")));
-				auto DatatableRow = FindTextureRow(RowName);
-				
-				if (!DatatableRow)
-				{
-					UE_LOG(LogSampleGame, Error, TEXT("No data row was not found in %s"), *(NFT_DataSet->GetName()));
-					break;
-				}
-
-				ItemWidget->SetTextureNFT(DatatableRow->Thumbnail);
-				ItemWidget->SetName(DatatableRow->Name);
-				ItemWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-			}
-			else
-			{
-				UE_LOG(LogSampleGame, Error, TEXT("OpenAPISearchStacksResult stack name was not set %s"), *(Data->Result[ResultId].Stack.StackId.ToString()));
-			}
+			ItemWidget->ProcessModel(&Data->Result[ResultId]);
+			
 		}
 	}));
-}
-
-FNFT_TableRowBase* UMarketplaceWidget::FindTextureRow(FName RowName)
-{
-	if (NFT_DataSet)
-	{
-		FString ContextString;
-
-		return NFT_DataSet->FindRow<FNFT_TableRowBase>(RowName, ContextString, true);
-	}
-	
-	return nullptr;
 }
 
 TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> UMarketplaceWidget::BuildRequestData(const FString& PageCursor)

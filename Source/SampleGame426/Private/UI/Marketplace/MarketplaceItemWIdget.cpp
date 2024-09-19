@@ -1,5 +1,7 @@
 ﻿#include "Marketplace/MarketplaceItemWIdget.h"
 
+#include "CustomLocalPlayer.h"
+#include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
 #include "OpenAPIStackBundle.h"
 #include "Components/Image.h"
@@ -7,13 +9,15 @@
 #include "Engine/DataTable.h"
 #include "Math/BigInt.h"
 #include "NFT/NFT_TableRowBase.h"
+#include "Marketplace/MarketplaceItemFullWidget.h"
+#include "Marketplace/MarketplaceUtility.h"
 
 
 void UMarketplaceItemWidget::ProcessModel(const OpenAPI::Model* Data)
 {
-	auto StackBundle = static_cast<const OpenAPI::OpenAPIStackBundle*>(Data);
+	StackBundle = MakeShareable(new OpenAPI::OpenAPIStackBundle(*(static_cast<const OpenAPI::OpenAPIStackBundle*>(Data))));
 
-	if (!StackBundle || !NFT_DataSet)
+	if (!StackBundle.IsValid() || !NFT_DataSet)
 	{
 		return;
 	}
@@ -52,6 +56,19 @@ void UMarketplaceItemWidget::ProcessModel(const OpenAPI::Model* Data)
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
+FReply UMarketplaceItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry,
+	const FPointerEvent& InMouseEvent)
+{
+	FReply Reply = Super::NativeOnMouseButtonDoubleClick(InGeometry,InMouseEvent);
+
+	if (auto Widget = Cast<UMarketplaceItemFullWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")), MarketplaceItemFullWidgetClass.LoadSynchronous())))
+	{
+		Widget->ProcessModel(StackBundle.Get());
+	}
+	
+	return Reply; 
+}
+
 void UMarketplaceItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 {
 	if (NFTThumbnail)
@@ -77,13 +94,7 @@ void UMarketplaceItemWidget::SetPrice(const OpenAPI::OpenAPIPriceDetails& PriceD
 {
 	if (NFTLowestPrice && PriceDetails.Token.Decimals.IsSet())
 	{
-		int32 Decimals = PriceDetails.Token.Decimals.GetValue();
-		int256 Value(PriceDetails.Amount.Value);
-		int256 DecimalsValue(10);
-
-		for (int32 i = 0; i < Decimals; ++i, DecimalsValue *= 10);
-
-		FString Price = (Value / DecimalsValue).ToString(); 
+		FString Price = FMarketplaceUtility::ConvertMarketplaceTokenValue(PriceDetails.Token.Decimals.GetValue(), PriceDetails.Amount.Value);  
 
 		NFTLowestPrice->SetText(FText::FromString(Price));
 

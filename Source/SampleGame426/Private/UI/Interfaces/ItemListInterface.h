@@ -1,9 +1,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/ObjectMacros.h"
-#include "UObject/ScriptMacros.h"
 #include "UObject/Interface.h"
 
 #include "ItemListInterface.generated.h"
@@ -23,5 +20,5 @@ class SAMPLEGAME426_API IItemListInterface
 
 public:
 	/**  */
-	virtual void RefreshItemList() = 0;;
+	virtual void RefreshItemList() = 0;
 };

@@ -2,8 +2,7 @@
 
 #include "Base/ActivatableWidget.h"
 #include "Base/ItemListWidget.h"
-#include "Interfaces/ItemListInterface.h"
-#include "NFT/NFT_TableRowBase.h"
+#include "UI/Interfaces/ItemListInterface.h"
 
 #include "MarketplaceWidget.generated.h"
 
@@ -26,7 +25,7 @@ protected:
 	/* UActivatableWidget */
 
 private:
-	TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> BuildRequestData(const FString& PageCursor);
+	TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> BuildRequestData(const FString& PageCursor, const FString& Account) const;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))

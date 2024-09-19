@@ -47,6 +47,12 @@ void UGameUIManagerSubsystem::SwitchToPolicy(UGameUIPolicy* InPolicy)
 
 UActivatableWidget* UGameUIManagerSubsystem::PushWidgetToLayer(const ULocalPlayer* LocalPlayer, FGameplayTag LayerName, TSubclassOf<UActivatableWidget> WidgetClass)
 {
+	if (!LocalPlayer)
+	{
+		//UE_LOG ERROR
+		return nullptr;
+	}
+
 	if (!WidgetClass)
 	{
 		//UE_LOG ERROR

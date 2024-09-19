@@ -7,13 +7,14 @@ public class SampleGame426 : ModuleRules
 	public SampleGame426(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		
 	
 		PublicDependencyModuleNames.AddRange(new string[] 
 		{ 
 			"Core", 
 			"CoreUObject", 
 			"Engine", 
-			"InputCore" 
+			"InputCore",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 

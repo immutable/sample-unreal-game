@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Blueprint/UserWidget.h"
+#include "CustomUserWidget.h"
 
 #include "ItemWidget.generated.h"
 
@@ -14,7 +14,7 @@ namespace OpenAPI
  * 
  */
 UCLASS(Abstract, BlueprintType)
-class SAMPLEGAME426_API UItemWidget : public UUserWidget
+class SAMPLEGAME426_API UItemWidget : public UCustomUserWidget
 {
 	GENERATED_BODY()
 

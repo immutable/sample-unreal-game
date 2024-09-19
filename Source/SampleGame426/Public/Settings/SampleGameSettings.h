@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/DeveloperSettings.h"
+#include "Marketplace/NFTMetadataAttributeDataAsset.h"
 
 #include "SampleGameSettings.generated.h"
 
@@ -29,6 +30,13 @@ public:
 	FString LogoutURI;
 
 	// Online values:
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Marketplace|Search NFT stacks")
+	TArray<FString> ContractAddress;
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Marketplace|Search NFT stacks")
+	TSoftObjectPtr<UNFTMetadataAttributeDataAsset> SearchMetaAttributes;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Marketplace|Search NFT stacks")
+	int32 NumberFractionalDigits = 4;
 	
 };

@@ -10,8 +10,6 @@ void ASampleGame426GameModeBase::InitGame(const FString& MapName, const FString&
 	
 }
 
-
-
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FJsonParserTest, "JsonParserTest", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
 
 bool FJsonParserTest::RunTest(const FString& Parameters)

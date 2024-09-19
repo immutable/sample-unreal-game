@@ -5,6 +5,7 @@
 #include "OpenAPISearchStacksResult.h"
 #include "Online/ImmutableQuery.h"
 #include "Base/ItemWidget.h"
+#include "Settings/SampleGameSettings.h"
 
 
 void UMarketplaceWidget::RefreshItemList()
@@ -18,8 +19,10 @@ void UMarketplaceWidget::RefreshItemList()
 	{
 		return;
 	}
+
+	auto RequestData = BuildRequestData(TEXT(""), TEXT(""));
 	
-	ImmutableQuery::ExecuteQuery<ImmutableQuery::FMP_SearchStacksRequestData>(BuildRequestData(TEXT("")), FOnImmutableQueryComplete::CreateLambda([this] (bool Success, TSharedPtr<OpenAPI::Model> Result) 
+	ImmutableQuery::ExecuteQuery<ImmutableQuery::FMP_SearchStacksRequestData>(RequestData, FOnImmutableQueryComplete::CreateLambda([this] (bool Success, TSharedPtr<OpenAPI::Model> Result) 
 	{
 		if (!Success)
 		{
@@ -46,17 +49,29 @@ void UMarketplaceWidget::RefreshItemList()
 			auto ItemWidget = ListPanel->GetItem(Column, Row);
 
 			ItemWidget->ProcessModel(&Data->Result[ResultId]);
-			
 		}
 	}));
 }
 
-TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> UMarketplaceWidget::BuildRequestData(const FString& PageCursor)
+TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> UMarketplaceWidget::BuildRequestData(const FString& PageCursor, const FString& Account) const
 {
+	auto Settings = GetDefault<USampleGameSettings>();
+
+	if (!Settings->ContractAddress.Num())
+	{
+		UE_LOG(LogSampleGame, Error, TEXT("Immutable Settings: List of contact addresses are empty"));
+
+		return nullptr;
+	}
+
 	TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> Data = MakeShareable(new ImmutableQuery::FMP_SearchStacksRequestData());
 
-	//Data.AccountAddress = TEXT("0x8c864b96826f3b897cc125a23bc93ab3ebb173ab");
-	Data->ContactAddress = { TEXT("0xcdbee7935e1b0eaabdee64219182602df0d8d094") };
+	if (!Account.IsEmpty())
+	{
+		Data->AccountAddress = Account;	
+	}
+	
+	Data->ContactAddress = Settings->ContractAddress;
 	Data->PageSize = PageSize;
 	Data->PageCursor = PageCursor;
 

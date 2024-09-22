@@ -21,7 +21,7 @@ enum ENFTMetadataAttribute_DisplayType
 	Custom				UMETA(DisplayName="Custom"),
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, meta=(HasNativeMake="/Script/SampleGame426.UI.UIBlueprintFunctionLibrary.MakeNFTMetadataAttribute_TraitType"))
 struct SAMPLEGAME426_API FNFTMetadataAttribute_TraitType
 {
 	GENERATED_BODY()
@@ -32,7 +32,6 @@ struct SAMPLEGAME426_API FNFTMetadataAttribute_TraitType
 	UPROPERTY(EditAnywhere)
 	TArray<FString> Values;
 };
-
 
 UCLASS(BlueprintType, Const)
 class SAMPLEGAME426_API UNFTMetadataAttributeDataAsset : public UDataAsset

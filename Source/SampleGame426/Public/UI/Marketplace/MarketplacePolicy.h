@@ -1,12 +1,13 @@
 ﻿#pragma once
 
-#include "Marketplace/NFTMetadataAttributeDataAsset.h"
+#include "Data/NFTMetadataAttributeDataAsset.h"
 
 #include "MarketplacePolicy.generated.h"
 
 
 namespace ImmutableQuery
 {
+	struct FMP_SearchStacksRequestTraitData;
 	struct FMP_SearchStacksRequestData;
 }
 
@@ -24,6 +25,7 @@ public:
 	void SetPageCursor(const FString& PageCursor);
 	void SetAccount(const FString& Account);
 	void SetKeyword(const FString& Keyword);
+	void SetTraits(const TArray<ImmutableQuery::FMP_SearchStacksRequestTraitData>& Traits);
 	void SetOnlyIncludeOwnerListings(bool OnlyIncludeOwnerListings);
 	
 	TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> GetSearchData() const;

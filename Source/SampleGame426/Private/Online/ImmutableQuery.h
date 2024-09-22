@@ -84,7 +84,7 @@ namespace ImmutableQuery
 				{
 					TraitsJson.AppendChar(TEXT(','));
 				}
-				TraitsJson += "\"" + Trait.TraitType + "\": {\"values\": [" + ValuesJson + "], \"condition\": \"eq\"},";
+				TraitsJson += "\"" + Trait.TraitType + "\": {\"values\": [" + ValuesJson + "], \"condition\": \"eq\"}";
 			}
 
 			return "{" + TraitsJson + "}";

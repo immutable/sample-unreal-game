@@ -30,6 +30,11 @@ void UMarketplacePolicy::SetKeyword(const FString& Keyword)
 	SearchData->Keyword = Keyword;
 }
 
+void UMarketplacePolicy::SetTraits(const TArray<ImmutableQuery::FMP_SearchStacksRequestTraitData>& Traits)
+{
+	SearchData->Trait = Traits;
+}
+
 void UMarketplacePolicy::SetOnlyIncludeOwnerListings(bool OnlyIncludeOwnerListings)
 {
 	SearchData->OnlyIncludeOwnerListings = OnlyIncludeOwnerListings;

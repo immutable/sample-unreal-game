@@ -1,4 +1,4 @@
-﻿#include "Marketplace/MarketplaceWidget.h"
+﻿#include "Marketplace/MarketplaceStacksWidget.h"
 
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
@@ -10,7 +10,7 @@
 #include "Base/ItemWidget.h"
 
 
-void UMarketplaceWidget::RefreshItemList()
+void UMarketplaceStacksWidget::RefreshItemList()
 {
 	if (!bInitialized)
 	{
@@ -64,7 +64,7 @@ void UMarketplaceWidget::RefreshItemList()
 	}));
 }
 
-void UMarketplaceWidget::NativeOnActivated()
+void UMarketplaceStacksWidget::NativeOnActivated()
 {
 	Super::NativeOnActivated();
 

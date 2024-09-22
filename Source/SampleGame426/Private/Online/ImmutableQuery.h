@@ -3,6 +3,7 @@
 #include "HttpModule.h"
 #include "LogSampleGame.h"
 #include "OpenAPISearchStacksResult.h"
+#include "GenericPlatform/GenericPlatformHttp.h"
 
 namespace OpenAPI
 {
@@ -87,7 +88,7 @@ namespace ImmutableQuery
 				TraitsJson += "\"" + Trait.TraitType + "\": {\"values\": [" + ValuesJson + "], \"condition\": \"eq\"}";
 			}
 
-			return "{" + TraitsJson + "}";
+			return FGenericPlatformHttp::UrlEncode("{" + TraitsJson + "}");
 		}
 
 		return FString();
@@ -165,36 +166,41 @@ namespace ImmutableQuery
 		HttpRequest->SetHeader(TEXT("Accept"), TEXT("application/json"));
 		HttpRequest->OnProcessRequestComplete().BindLambda([OnMarketplaceQueryComplete](FHttpRequestPtr Request, FHttpResponsePtr Response, bool IsSuccessful)
 		{
-			if (IsSuccessful)
+			if (!IsSuccessful)
 			{
-				TSharedPtr<FJsonValue> JsonValue;
-				const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-	
-				if (!FJsonSerializer::Deserialize(JsonReader, JsonValue))
-				{
-					UE_LOG(LogSampleGame, Log, TEXT("Marketplace - Search NFT stacks: Failed to deserialize json value"));
-					OnMarketplaceQueryComplete.Execute(false, nullptr);
+				UE_LOG(LogSampleGame, Log, TEXT("Marketplace - Search NFT stacks: Failed to process http request"));
+            	OnMarketplaceQueryComplete.Execute(false, nullptr);
 
-					return;
-				}
-				
-				if (!JsonValue)
-				{
-					UE_LOG(LogSampleGame, Log, TEXT("Marketplace - Search NFT stacks: Json value in nullptr"));
-					OnMarketplaceQueryComplete.Execute(false, nullptr);
-
-					return;
-				}
-	
-				TSharedPtr<OpenAPI::OpenAPISearchStacksResult> SearchStacksResult = MakeShareable(new OpenAPI::OpenAPISearchStacksResult());
-	
-				if (SearchStacksResult->FromJson(JsonValue))
-				{
-					UE_LOG(LogSampleGame, Log, TEXT("Marketplace - Search NFT stacks: Failed to parse SearchStacksResult from json value"));
-				}
-
-				OnMarketplaceQueryComplete.Execute(true, SearchStacksResult);
+            	return;
 			}
+			
+			TSharedPtr<FJsonValue> JsonValue;
+			const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+
+			if (!FJsonSerializer::Deserialize(JsonReader, JsonValue))
+			{
+				UE_LOG(LogSampleGame, Log, TEXT("Marketplace - Search NFT stacks: Failed to deserialize json value"));
+				OnMarketplaceQueryComplete.Execute(false, nullptr);
+
+				return;
+			}
+			
+			if (!JsonValue)
+			{
+				UE_LOG(LogSampleGame, Log, TEXT("Marketplace - Search NFT stacks: Json value in nullptr"));
+				OnMarketplaceQueryComplete.Execute(false, nullptr);
+
+				return;
+			}
+
+			TSharedPtr<OpenAPI::OpenAPISearchStacksResult> SearchStacksResult = MakeShareable(new OpenAPI::OpenAPISearchStacksResult());
+
+			if (SearchStacksResult->FromJson(JsonValue))
+			{
+				UE_LOG(LogSampleGame, Log, TEXT("Marketplace - Search NFT stacks: Failed to parse SearchStacksResult from json value"));
+			}
+
+			OnMarketplaceQueryComplete.Execute(true, SearchStacksResult);
 		});
 		HttpRequest->ProcessRequest();
 	}

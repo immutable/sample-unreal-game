@@ -4,7 +4,7 @@
 #include "Base/ItemListWidget.h"
 #include "UI/Interfaces/ItemListInterface.h"
 
-#include "MarketplaceWidget.generated.h"
+#include "MarketplaceStacksWidget.generated.h"
 
 namespace ImmutableQuery
 {
@@ -12,7 +12,7 @@ namespace ImmutableQuery
 }
 
 UCLASS(Abstract)
-class SAMPLEGAME426_API UMarketplaceWidget : public UActivatableWidget, public IItemListInterface
+class SAMPLEGAME426_API UMarketplaceStacksWidget : public UActivatableWidget, public IItemListInterface
 {
 	GENERATED_BODY()
 

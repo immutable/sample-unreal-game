@@ -24,14 +24,8 @@ protected:
 	virtual void NativeOnActivated() override;
 	/* UActivatableWidget */
 
-private:
-	TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> BuildRequestData(const FString& PageCursor, const FString& Account) const;
-
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UItemListWidget* ListPanel = nullptr;
-
-private:
-	int32 PageSize = 10;
 	
 };

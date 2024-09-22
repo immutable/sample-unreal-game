@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PrimaryGameLayout.h"
+#include "Marketplace/MarketplacePolicy.h"
 
 #include "GameUIPolicy.generated.h"
 
@@ -20,11 +21,10 @@ public:
 	}
 
 	static UGameUIPolicy* GetGameUIPolicy(const UObject* WorldContextObject);
-
-public:
 	virtual UWorld* GetWorld() const override;
 	class UGameUIManagerSubsystem* GetOwningUIManager() const;
 	UPrimaryGameLayout* GetRootLayout() const;
+	UMarketplacePolicy* GetMarketplacePolicy() const;
 
 private:
 	void NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer);
@@ -42,7 +42,13 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = "Immutable")
     TSoftClassPtr<UActivatableWidget> FrontEndWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "Marketplace")
+	TSoftClassPtr<UMarketplacePolicy> MarketplacePolicyClass;
 	
 	UPROPERTY(Transient)
 	UPrimaryGameLayout* RootLayout = nullptr;
+
+	UPROPERTY(Transient)
+	UMarketplacePolicy* MarketplacePolicy = nullptr;
 };

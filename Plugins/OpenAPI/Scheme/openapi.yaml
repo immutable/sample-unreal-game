@@ -70,15 +70,14 @@ paths:
           example: true
           type: boolean
         style: form
-      - description: Traits to filter by
+      - description: "JSON encoded traits to filter by. e.g. encodeURIComponent(JSON.stringify({\"\
+          rarity\": {\"values\": [\"common\", \"rare\"], \"condition\": \"eq\"}}))"
         explode: true
         in: query
         name: trait
         required: false
         schema:
-          items:
-            $ref: '#/components/schemas/AttributeQuery'
-          type: array
+          type: string
         style: form
       - description: Keyword to search NFT name and description. Alphanumeric characters
           only.
@@ -172,6 +171,7 @@ paths:
         name: contract_address
         required: true
         schema:
+          pattern: "^0x[a-fA-F0-9]{40}$"
           type: string
         style: simple
       - description: List of stack ids to get pricing data for
@@ -182,6 +182,7 @@ paths:
         schema:
           items:
             example: 7053e765-c119-4efb-b5cf-405ccccaf6c4
+            format: uuid
             type: string
           maxItems: 20
           minItems: 1
@@ -261,6 +262,7 @@ paths:
         name: contract_address
         required: true
         schema:
+          pattern: "^0x[a-fA-F0-9]{40}$"
           type: string
         style: simple
       - description: List of token ids to get pricing data for
@@ -476,18 +478,6 @@ components:
       maximum: 200
       minimum: 1
       type: integer
-    AttributeQuery:
-      properties:
-        trait_type:
-          example: attack
-          type: string
-        value:
-          example: "1"
-          type: string
-      required:
-      - trait_type
-      - value
-      type: object
     SearchStacksResult:
       description: Search stacks result
       example:
@@ -579,15 +569,13 @@ components:
             chain:
               name: imtbl-zkevm-testnet
               id: eip155:13372
-            animation_url: https://some-url
-            total_count: 1
-            created_at: 2022-08-16T17:43:26.991388Z
-            description: 2022-08-16T17:43:26.991388Z
-            contract_address: contract_address
             external_url: https://some-url
+            animation_url: https://some-url
             updated_at: 2022-08-16T17:43:26.991388Z
             stack_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
             name: Sword
+            created_at: 2022-08-16T17:43:26.991388Z
+            description: 2022-08-16T17:43:26.991388Z
             attributes:
             - display_type: number
               value: Happy
@@ -595,6 +583,7 @@ components:
             - display_type: number
               value: Happy
               trait_type: Aqua Power
+            contract_address: contract_address
             youtube_url: https://some-url
           stack_count: 1
         - market: ""
@@ -684,15 +673,13 @@ components:
             chain:
               name: imtbl-zkevm-testnet
               id: eip155:13372
-            animation_url: https://some-url
-            total_count: 1
-            created_at: 2022-08-16T17:43:26.991388Z
-            description: 2022-08-16T17:43:26.991388Z
-            contract_address: contract_address
             external_url: https://some-url
+            animation_url: https://some-url
             updated_at: 2022-08-16T17:43:26.991388Z
             stack_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
             name: Sword
+            created_at: 2022-08-16T17:43:26.991388Z
+            description: 2022-08-16T17:43:26.991388Z
             attributes:
             - display_type: number
               value: Happy
@@ -700,6 +687,7 @@ components:
             - display_type: number
               value: Happy
               trait_type: Aqua Power
+            contract_address: contract_address
             youtube_url: https://some-url
           stack_count: 1
         page:
@@ -807,15 +795,13 @@ components:
           chain:
             name: imtbl-zkevm-testnet
             id: eip155:13372
-          animation_url: https://some-url
-          total_count: 1
-          created_at: 2022-08-16T17:43:26.991388Z
-          description: 2022-08-16T17:43:26.991388Z
-          contract_address: contract_address
           external_url: https://some-url
+          animation_url: https://some-url
           updated_at: 2022-08-16T17:43:26.991388Z
           stack_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           name: Sword
+          created_at: 2022-08-16T17:43:26.991388Z
+          description: 2022-08-16T17:43:26.991388Z
           attributes:
           - display_type: number
             value: Happy
@@ -823,6 +809,7 @@ components:
           - display_type: number
             value: Happy
             trait_type: Aqua Power
+          contract_address: contract_address
           youtube_url: https://some-url
         stack_count: 1
       properties:
@@ -885,7 +872,7 @@ components:
                   value: "9750000000000000000"
               created_at: 2022-08-16T17:43:26.991388Z
             floor_listing: ""
-          stack_id: stack_id
+          stack_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           market_stack:
             last_trade:
               amount: "1"
@@ -949,7 +936,7 @@ components:
                   value: "9750000000000000000"
               created_at: 2022-08-16T17:43:26.991388Z
             floor_listing: ""
-          stack_id: stack_id
+          stack_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           market_stack:
             last_trade:
               amount: "1"
@@ -1031,7 +1018,7 @@ components:
                 value: "9750000000000000000"
             created_at: 2022-08-16T17:43:26.991388Z
           floor_listing: ""
-        stack_id: stack_id
+        stack_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
         market_stack:
           last_trade:
             amount: "1"
@@ -1066,6 +1053,7 @@ components:
         chain:
           $ref: '#/components/schemas/Chain'
         stack_id:
+          format: uuid
           type: string
         market_stack:
           $ref: '#/components/schemas/Market'
@@ -1406,15 +1394,13 @@ components:
         chain:
           name: imtbl-zkevm-testnet
           id: eip155:13372
-        animation_url: https://some-url
-        total_count: 1
-        created_at: 2022-08-16T17:43:26.991388Z
-        description: 2022-08-16T17:43:26.991388Z
-        contract_address: contract_address
         external_url: https://some-url
+        animation_url: https://some-url
         updated_at: 2022-08-16T17:43:26.991388Z
         stack_id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
         name: Sword
+        created_at: 2022-08-16T17:43:26.991388Z
+        description: 2022-08-16T17:43:26.991388Z
         attributes:
         - display_type: number
           value: Happy
@@ -1422,6 +1408,7 @@ components:
         - display_type: number
           value: Happy
           trait_type: Aqua Power
+        contract_address: contract_address
         youtube_url: https://some-url
       properties:
         stack_id:
@@ -1479,10 +1466,6 @@ components:
             $ref: '#/components/schemas/NFTMetadataAttribute'
           nullable: true
           type: array
-        total_count:
-          description: Total count of NFTs in the stack matching the filter params
-          example: 1
-          type: integer
       required:
       - animation_url
       - attributes
@@ -1494,7 +1477,6 @@ components:
       - image
       - name
       - stack_id
-      - total_count
       - updated_at
       - youtube_url
       type: object
@@ -1566,7 +1548,6 @@ components:
       required:
       - floor_listing
       - last_trade
-      - top_bid
       type: object
     LastTrade:
       description: Last trade
@@ -1704,6 +1685,7 @@ components:
         contract_address:
           description: Address of ERC20 token
           example: 0x0165878A594ca255338adfa4d48449f69242Eb8F
+          pattern: "^0x[a-fA-F0-9]{40}$"
           type: string
         symbol:
           description: The symbol of token

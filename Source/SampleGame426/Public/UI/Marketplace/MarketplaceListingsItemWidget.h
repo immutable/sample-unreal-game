@@ -14,6 +14,5 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
 	void OnProcessPrice(const FString& TokenID, const FString& Amount, const FString& FeeProtocol, const FString& FeeRoyalty, const FString& Price, const FString& Currency, bool IsToBuy = true);
-
 	
 };

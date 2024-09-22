@@ -1,11 +1,13 @@
 ﻿#include "Marketplace/MarketplaceWidget.h"
 
+#include "CustomLocalPlayer.h"
+#include "GameUIPolicy.h"
 #include "IContentBrowserSingleton.h"
 #include "LogSampleGame.h"
+#include "UI/Marketplace/MarketplacePolicy.h"
 #include "OpenAPISearchStacksResult.h"
 #include "Online/ImmutableQuery.h"
 #include "Base/ItemWidget.h"
-#include "Settings/SampleGameSettings.h"
 
 
 void UMarketplaceWidget::RefreshItemList()
@@ -20,7 +22,16 @@ void UMarketplaceWidget::RefreshItemList()
 		return;
 	}
 
-	auto RequestData = BuildRequestData(TEXT(""), TEXT(""));
+	UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
+
+	if (!Policy)
+	{
+		return;
+	}
+
+	Policy->SetPageSize(ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows()); 
+
+	auto RequestData = Policy->GetSearchData();
 	
 	ImmutableQuery::ExecuteQuery<ImmutableQuery::FMP_SearchStacksRequestData>(RequestData, FOnImmutableQueryComplete::CreateLambda([this] (bool Success, TSharedPtr<OpenAPI::Model> Result) 
 	{
@@ -53,38 +64,9 @@ void UMarketplaceWidget::RefreshItemList()
 	}));
 }
 
-TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> UMarketplaceWidget::BuildRequestData(const FString& PageCursor, const FString& Account) const
-{
-	auto Settings = GetDefault<USampleGameSettings>();
-
-	if (!Settings->ContractAddress.Num())
-	{
-		UE_LOG(LogSampleGame, Error, TEXT("Immutable Settings: List of contact addresses are empty"));
-
-		return nullptr;
-	}
-
-	TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> Data = MakeShareable(new ImmutableQuery::FMP_SearchStacksRequestData());
-
-	if (!Account.IsEmpty())
-	{
-		Data->AccountAddress = Account;	
-	}
-	
-	Data->ContactAddress = Settings->ContractAddress;
-	Data->PageSize = PageSize;
-	Data->PageCursor = PageCursor;
-
-	return Data;
-}
-
 void UMarketplaceWidget::NativeOnActivated()
 {
 	Super::NativeOnActivated();
 
-	int32 TotalNumberItems = ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows();
-
-	PageSize = TotalNumberItems;// + (10 - TotalNumberItems % 10); 
-	
 	RefreshItemList();
 }

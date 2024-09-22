@@ -32,7 +32,7 @@ public:
 	void WriteJson(JsonWriter& Writer) const final;
 
 	OpenAPIChain Chain;
-	FString StackId;
+	FGuid StackId;
 	OpenAPIMarket MarketStack;
 	OpenAPIMarket MarketCollection;
 };

@@ -34,15 +34,15 @@ struct SAMPLEGAME426_API FNFTMetadataAttribute_TraitType
 };
 
 
-UCLASS()
+UCLASS(BlueprintType, Const)
 class SAMPLEGAME426_API UNFTMetadataAttributeDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Immutable Marketplace")
 	TArray<FNFTMetadataAttribute_TraitType> TraitType;
 	 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Immutable Marketplace")
 	TEnumAsByte<ENFTMetadataAttribute_DisplayType> DisplayType; 
 };

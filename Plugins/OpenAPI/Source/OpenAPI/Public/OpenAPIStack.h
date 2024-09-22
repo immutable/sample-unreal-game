@@ -54,8 +54,6 @@ public:
 	TOptional<FString> YoutubeUrl;
 	/* List of Metadata attributes */
 	TOptional<TArray<OpenAPINFTMetadataAttribute>> Attributes;
-	/* Total count of NFTs in the stack matching the filter params */
-	int32 TotalCount = 0;
 };
 
 }

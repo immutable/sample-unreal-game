@@ -56,7 +56,6 @@ void OpenAPIStack::WriteJson(JsonWriter& Writer) const
 	{
 		Writer->WriteIdentifierPrefix(TEXT("attributes")); WriteJsonValue(Writer, Attributes.GetValue());
 	}
-	Writer->WriteIdentifierPrefix(TEXT("total_count")); WriteJsonValue(Writer, TotalCount);
 	Writer->WriteObjectEnd();
 }
 
@@ -80,7 +79,6 @@ bool OpenAPIStack::FromJson(const TSharedPtr<FJsonValue>& JsonValue)
 	ParseSuccess &= TryGetJsonValue(*Object, TEXT("animation_url"), AnimationUrl);
 	ParseSuccess &= TryGetJsonValue(*Object, TEXT("youtube_url"), YoutubeUrl);
 	ParseSuccess &= TryGetJsonValue(*Object, TEXT("attributes"), Attributes);
-	ParseSuccess &= TryGetJsonValue(*Object, TEXT("total_count"), TotalCount);
 
 	return ParseSuccess;
 }

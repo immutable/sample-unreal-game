@@ -3,7 +3,6 @@
 #include "CustomLocalPlayer.h"
 #include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
-#include "LogSampleGame.h"
 
 
 /* Static */ UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)
@@ -35,6 +34,11 @@ UWorld* UGameUIPolicy::GetWorld() const
 UPrimaryGameLayout* UGameUIPolicy::GetRootLayout() const
 {
 	return RootLayout;
+}
+
+UMarketplacePolicy* UGameUIPolicy::GetMarketplacePolicy() const
+{
+	return MarketplacePolicy;
 }
 
 void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
@@ -71,6 +75,9 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 		if (IsLoggedIn)
 		{
 			PushWidget(FrontEndWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")));
+
+			// create marketplace policy
+			MarketplacePolicy = NewObject<UMarketplacePolicy>(this, MarketplacePolicyClass.LoadSynchronous());
 		}
 	}));
 }

@@ -1,5 +1,4 @@
-﻿
-#pragma once
+﻿#pragma once
 
 #include "OpenAPIBaseModel.h"
 #include "UObject/Interface.h"

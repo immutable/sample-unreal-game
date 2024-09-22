@@ -70,12 +70,19 @@ FString UCustomLocalPlayer::GetPassportWalletAddress()
 
 UPrimaryGameLayout* UCustomLocalPlayer::GetRootUILayout() const
 {
+	if (UGameUIPolicy* Policy = GetGameUIPolicy())
+	{
+		return Policy->GetRootLayout();
+	}
+
+	return nullptr;
+}
+
+UGameUIPolicy* UCustomLocalPlayer::GetGameUIPolicy() const
+{
 	if (UGameUIManagerSubsystem* UIManager = GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
 	{
-		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
-		{
-			return Policy->GetRootLayout();
-		}
+		return UIManager->GetCurrentUIPolicy();
 	}
 
 	return nullptr;

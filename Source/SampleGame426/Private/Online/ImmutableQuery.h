@@ -19,7 +19,7 @@ namespace ImmutableQuery
 	struct FMP_SearchStacksRequestTraitData
 	{
 		FString TraitType;
-		FString Value;
+		TArray<FString> Values;
 	};
 	
 	struct FMP_SearchStacksRequestData : public FImmutableQueryRequestData
@@ -59,8 +59,41 @@ namespace ImmutableQuery
 
 		return FString();
 	}
+
+	inline FString TraitDataToJson(const TArray<FMP_SearchStacksRequestTraitData>& Traits)
+	{
+		// {"Colour": {"values": ["Tropical Indigo"], "condition": "eq"}}
+		
+		if (Traits.Num())
+		{
+			FString TraitsJson;
+
+			for (auto Trait : Traits)
+			{
+				FString ValuesJson;
+
+				for (auto Value : Trait.Values)
+				{
+					if (!ValuesJson.IsEmpty())
+					{
+						ValuesJson.AppendChar(TEXT(','));
+					}
+					ValuesJson += "\"" + Value + "\"";
+				}
+				if (!TraitsJson.IsEmpty())
+				{
+					TraitsJson.AppendChar(TEXT(','));
+				}
+				TraitsJson += "\"" + Trait.TraitType + "\": {\"values\": [" + ValuesJson + "], \"condition\": \"eq\"},";
+			}
+
+			return "{" + TraitsJson + "}";
+		}
+
+		return FString();
+	}
 	
-	template<> FString BuildGETQueryString(TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> RequestData)
+	template<> inline FString BuildGETQueryString<FMP_SearchStacksRequestData>(TSharedPtr<ImmutableQuery::FMP_SearchStacksRequestData> RequestData)
 	{
 		const FString ContactAddress = TEXT("contract_address");
 		const FString AccountAddress = TEXT("account_address");
@@ -87,6 +120,13 @@ namespace ImmutableQuery
 			Content += TEXT("&") + Keyword + TEXT("=") + RequestData->Keyword;	
 		}
 
+		FString TraitJson = TraitDataToJson(RequestData->Trait);
+
+		if (!TraitJson.IsEmpty())
+		{
+			Content += TEXT("&") + Trait + TEXT("=") + TraitJson;
+		}
+
 		if (!RequestData->PageCursor.IsEmpty())
 		{
 			Content += TEXT("&") + PageCursor + TEXT("=") + RequestData->PageCursor;
@@ -105,7 +145,7 @@ namespace ImmutableQuery
 	}
 	
 
-	template<typename TQueryData = FImmutableQueryRequestData>
+	template<typename TQueryData>
 	void ExecuteQuery(TSharedPtr<TQueryData> Data, const FOnImmutableQueryComplete& OnMarketplaceQueryComplete)
 	// static void ExecuteQuery(TSharedPtr<TQueryData> Data, TFunction<bool /*bWasSuccessful*/, TSharedPtr<OpenAPI::Model> /*ResultData*/>(void) OnMarketplaceQueryComplete)
 	{
@@ -113,13 +153,13 @@ namespace ImmutableQuery
 		static_assert(!TIsSame<OpenAPI::Model, TQueryData>::Value, "This function must be specialized to use with the specified type");
 	}
 
-	template<> void ExecuteQuery(TSharedPtr<FMP_SearchStacksRequestData> Data, const FOnImmutableQueryComplete& OnMarketplaceQueryComplete)
+	template<> inline void ExecuteQuery<FMP_SearchStacksRequestData>(TSharedPtr<FMP_SearchStacksRequestData> Data, const FOnImmutableQueryComplete& OnMarketplaceQueryComplete)
 	{
 		const FString URL = GetMarketplaceUrl() + "?" + BuildGETQueryString(Data);
 		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
-	
+
 		UE_LOG(LogSampleGame, Log, TEXT("GET Marketplace stacks from URL: %s"), *URL)
-	
+
 		HttpRequest->SetURL(URL);
 		HttpRequest->SetVerb(TEXT("GET"));
 		HttpRequest->SetHeader(TEXT("Accept"), TEXT("application/json"));
@@ -129,19 +169,30 @@ namespace ImmutableQuery
 			{
 				TSharedPtr<FJsonValue> JsonValue;
 				const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-			
+	
 				if (!FJsonSerializer::Deserialize(JsonReader, JsonValue))
 				{
 					UE_LOG(LogSampleGame, Log, TEXT("Marketplace - Search NFT stacks: Failed to deserialize json value"));
+					OnMarketplaceQueryComplete.Execute(false, nullptr);
+
+					return;
 				}
-			
+				
+				if (!JsonValue)
+				{
+					UE_LOG(LogSampleGame, Log, TEXT("Marketplace - Search NFT stacks: Json value in nullptr"));
+					OnMarketplaceQueryComplete.Execute(false, nullptr);
+
+					return;
+				}
+	
 				TSharedPtr<OpenAPI::OpenAPISearchStacksResult> SearchStacksResult = MakeShareable(new OpenAPI::OpenAPISearchStacksResult());
-			
+	
 				if (SearchStacksResult->FromJson(JsonValue))
 				{
 					UE_LOG(LogSampleGame, Log, TEXT("Marketplace - Search NFT stacks: Failed to parse SearchStacksResult from json value"));
 				}
-	
+
 				OnMarketplaceQueryComplete.Execute(true, SearchStacksResult);
 			}
 		});
@@ -173,5 +224,3 @@ namespace ImmutableQuery
 	// }
 	
 }
-
-template<> void ImmutableQuery::ExecuteQuery<ImmutableQuery::FMP_SearchStacksRequestData>(TSharedPtr<FMP_SearchStacksRequestData> Data, const FOnImmutableQueryComplete& OnMarketplaceQueryComplete);;

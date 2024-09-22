@@ -30,6 +30,7 @@ public:
 	/* ULocalPlayer Interface */
 
 	class UPrimaryGameLayout* GetRootUILayout() const;
+	class UGameUIPolicy* GetGameUIPolicy() const;
 
 	UFUNCTION(BlueprintCallable)
 	void LoginPassport();

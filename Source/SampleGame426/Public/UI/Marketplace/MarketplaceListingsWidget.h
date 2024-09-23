@@ -7,7 +7,7 @@
 #include "MarketplaceListingsWidget.generated.h"
 
 
-namespace OpenAPI
+namespace ImmutableOpenAPI
 {
 	class OpenAPIListing;
 }
@@ -18,7 +18,7 @@ class UMarketplaceListingsWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void AddItem(const OpenAPI::OpenAPIListing& Listing);
+	void AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Marketplace")

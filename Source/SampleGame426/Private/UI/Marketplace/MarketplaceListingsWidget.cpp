@@ -4,7 +4,7 @@
 #include "Components/ScrollBox.h"
 #include "Marketplace/MarketplaceUtility.h"
 
-void UMarketplaceListingsWidget::AddItem(const OpenAPI::OpenAPIListing& Listing)
+void UMarketplaceListingsWidget::AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing)
 {
 	if (ScrollBoxListings)
 	{
@@ -23,10 +23,10 @@ void UMarketplaceListingsWidget::AddItem(const OpenAPI::OpenAPIListing& Listing)
 				{
 					switch(Fee.Type)
 					{
-					case OpenAPI::OpenAPIFee::TypeEnum::Protocol:
+					case ImmutableOpenAPI::OpenAPIFee::TypeEnum::Protocol:
 						FeeProtocol = FMarketplaceUtility::ConvertMarketplaceTokenValue(Decimals.GetValue(), Fee.Amount);	
 					break;
-					case OpenAPI::OpenAPIFee::TypeEnum::Royalty:
+					case ImmutableOpenAPI::OpenAPIFee::TypeEnum::Royalty:
 						FeeRoyalty = FMarketplaceUtility::ConvertMarketplaceTokenValue(Decimals.GetValue(), Fee.Amount);
 					break;
 					default:;

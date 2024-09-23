@@ -7,9 +7,8 @@
 #include "MarketplaceItemWidget.generated.h"
 
 
-namespace OpenAPI
+namespace ImmutableOpenAPI
 {
-	class Model;
 	class OpenAPIStackBundle;
 	class OpenAPIPriceDetails;
 }
@@ -23,7 +22,7 @@ class SAMPLEGAME426_API UMarketplaceItemWidget : public UItemWidget, public IOpe
 	GENERATED_BODY()
 
 public:
-	virtual void ProcessModel(const OpenAPI::Model* Data) override;
+	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
 
 protected:
 	/* UUserWidget */
@@ -33,7 +32,7 @@ protected:
 	void SetListingCount(int32 Count);
 	void SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture);
 	void SetName(const FString& Name);
-	void SetPrice(const OpenAPI::OpenAPIPriceDetails& PriceDetails);
+	void SetPrice(const ImmutableOpenAPI::OpenAPIPriceDetails& PriceDetails);
 	void SetPriceTokenName(const FString& Name);
 
 private:
@@ -56,6 +55,6 @@ protected:
 	class UDataTable* NFT_DataSet;
 
 private:
-	TSharedPtr<OpenAPI::OpenAPIStackBundle> StackBundle;
+	TSharedPtr<ImmutableOpenAPI::OpenAPIStackBundle> StackBundle;
 	
 };

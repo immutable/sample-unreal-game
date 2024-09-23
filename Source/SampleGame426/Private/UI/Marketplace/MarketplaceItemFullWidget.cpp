@@ -4,16 +4,39 @@
 #include "OpenAPIStackBundle.h"
 #include "Marketplace/MarketplaceListingsWidget.h"
 
-void UMarketplaceItemFullWidget::ProcessModel(const OpenAPI::Model* Data)
+#define MP_DESCRIPTION_DESCRIPTION TEXT("Description")
+#define MP_DESCRIPTION_CREATED_AT TEXT("Created at")
+#define MP_DESCRIPTION_UPDATED_AT TEXT("Updated at")
+
+
+void UMarketplaceItemFullWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 {
-	auto StackBundle = static_cast<const OpenAPI::OpenAPIStackBundle*>(Data);
+	auto StackBundle = static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data);
 
-	if (!StackBundle)
+	FString StackName = StackBundle.Stack.Name.GetValue();
+
+	SetThumbnail(StackName);
+	SetName(StackName);
+
+	FString Description = StackBundle.Stack.Description.IsSet() ? StackBundle.Stack.Description.GetValue() : TEXT("");
+	
+	AddDescriptionRecord(MP_DESCRIPTION_DESCRIPTION, Description);
+	AddDescriptionRecord(MP_DESCRIPTION_CREATED_AT, StackBundle.Stack.CreatedAt.ToString());
+	AddDescriptionRecord(MP_DESCRIPTION_UPDATED_AT, StackBundle.Stack.UpdatedAt.ToString());
+
+	if (StackBundle.Stack.Attributes.IsSet())
 	{
-		return;
-	}
+		for (auto Attribute : StackBundle.Stack.Attributes.GetValue())
+		{
+			TSharedPtr<FJsonValue> Value;
 
-	for (const auto& Listing : StackBundle->Listings)
+			Attribute.Value.FromJson(Value);
+			AddMetadataAttribute(Attribute.TraitType, Value->AsString());
+		}
+	}
+	
+
+	for (const auto& Listing : StackBundle.Listings)
 	{
 		Listings->AddItem(Listing);
 	}

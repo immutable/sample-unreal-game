@@ -13,9 +13,9 @@
 #include "Marketplace/MarketplaceUtility.h"
 
 
-void UMarketplaceItemWidget::ProcessModel(const OpenAPI::Model* Data)
+void UMarketplaceItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 {
-	StackBundle = MakeShareable(new OpenAPI::OpenAPIStackBundle(*(static_cast<const OpenAPI::OpenAPIStackBundle*>(Data))));
+	StackBundle = MakeShareable(new ImmutableOpenAPI::OpenAPIStackBundle(static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data)));
 
 	if (!StackBundle.IsValid() || !NFT_DataSet)
 	{
@@ -56,14 +56,13 @@ void UMarketplaceItemWidget::ProcessModel(const OpenAPI::Model* Data)
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
-FReply UMarketplaceItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry,
-	const FPointerEvent& InMouseEvent)
+FReply UMarketplaceItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	FReply Reply = Super::NativeOnMouseButtonDoubleClick(InGeometry,InMouseEvent);
 
 	if (auto Widget = Cast<UMarketplaceItemFullWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")), MarketplaceItemFullWidgetClass.LoadSynchronous())))
 	{
-		Widget->ProcessModel(StackBundle.Get());
+		Widget->ProcessModel(*StackBundle);
 	}
 	
 	return Reply; 
@@ -90,7 +89,7 @@ void UMarketplaceItemWidget::SetName(const FString& Name)
 	}
 }
 
-void UMarketplaceItemWidget::SetPrice(const OpenAPI::OpenAPIPriceDetails& PriceDetails)
+void UMarketplaceItemWidget::SetPrice(const ImmutableOpenAPI::OpenAPIPriceDetails& PriceDetails)
 {
 	if (NFTLowestPrice && PriceDetails.Token.Decimals.IsSet())
 	{

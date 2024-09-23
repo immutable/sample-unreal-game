@@ -1,14 +1,10 @@
 #pragma once
 
 #include "CustomUserWidget.h"
+#include "OpenAPIBaseModel.h"
 
 #include "ItemWidget.generated.h"
 
-
-namespace OpenAPI
-{
-	class Model;
-}
 
 /**
  * 
@@ -19,6 +15,6 @@ class SAMPLEGAME426_API UItemWidget : public UCustomUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void ProcessModel(const OpenAPI::Model* Data) {};
+	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) {};
 
 };

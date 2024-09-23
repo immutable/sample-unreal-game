@@ -3,7 +3,6 @@
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "Marketplace/MarketplacePolicy.h"
-#include "Online/ImmutableQuery.h"
 
 
 void UMarketplaceSearchOptionWidget::NativeOnActivated()
@@ -31,13 +30,6 @@ void UMarketplaceSearchOptionWidget::SetTraits(const TArray<FNFTMetadataAttribut
 {
 	if (UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy())
 	{
-		TArray<ImmutableQuery::FMP_SearchStacksRequestTraitData> SearchTraits;
-		
-		for (const auto Trait : Traits)
-		{
-			SearchTraits.Add({ Trait.Name, Trait.Values });
-		}
-		
-		Policy->SetTraits(SearchTraits);
+		Policy->SetTraits(Traits);
 	}
 }

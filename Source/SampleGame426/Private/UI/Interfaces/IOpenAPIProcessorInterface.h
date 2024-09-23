@@ -21,5 +21,5 @@ class SAMPLEGAME426_API IOpenAPIProcessorInterface
 
 public:
 	/**  */
-	virtual void ProcessModel(const OpenAPI::Model* Data) = 0;
+	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) = 0;
 };

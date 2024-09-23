@@ -44,7 +44,7 @@ public:
 	TOptional<DisplayTypeEnum> DisplayType;
 	/* The metadata trait type */
 	FString TraitType;
-	OpenAPINFTMetadataAttributeValue Value;
+	FString Value;
 };
 
 }

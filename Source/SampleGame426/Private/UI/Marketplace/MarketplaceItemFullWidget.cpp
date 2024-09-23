@@ -30,8 +30,7 @@ void UMarketplaceItemFullWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 		{
 			TSharedPtr<FJsonValue> Value;
 
-			Attribute.Value.FromJson(Value);
-			AddMetadataAttribute(Attribute.TraitType, Value->AsString());
+			AddMetadataAttribute(Attribute.TraitType, Attribute.Value);
 		}
 	}
 	

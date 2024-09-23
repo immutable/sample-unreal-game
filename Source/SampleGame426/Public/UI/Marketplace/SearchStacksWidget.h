@@ -5,14 +5,14 @@
 #include "Base/ItemListWidget.h"
 #include "UI/Interfaces/ItemListInterface.h"
 
-#include "MarketplaceStacksWidget.generated.h"
+#include "SearchStacksWidget.generated.h"
 
 
 /*
  * 
  */
 UCLASS(Abstract)
-class SAMPLEGAME426_API UMarketplaceStacksWidget : public UActivatableWidget, public IItemListInterface
+class SAMPLEGAME426_API USearchStacksWidget : public UActivatableWidget, public IItemListInterface
 {
 	GENERATED_BODY()
 

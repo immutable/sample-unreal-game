@@ -17,6 +17,7 @@ void UMarketplacePolicy::PostInitProperties()
 	HttpRetryManager = MakeUnique<ImmutableOpenAPI::HttpRetryManager>(RetryLimitCount, RetryTimeoutRelativeSeconds);
 	
 	SearchAPI->SetURL(URL);
+	SearchAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
 	SearchAPI->SetHttpRetryManager(*HttpRetryManager);
 	SearchStacksRequestData->ChainName = SearchStacksChainName;
 }

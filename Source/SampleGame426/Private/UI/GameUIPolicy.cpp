@@ -3,7 +3,6 @@
 #include "CustomLocalPlayer.h"
 #include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
-#include "LogSampleGame.h"
 
 
 /* Static */ UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)
@@ -37,6 +36,11 @@ UPrimaryGameLayout* UGameUIPolicy::GetRootLayout() const
 	return RootLayout;
 }
 
+UMarketplacePolicy* UGameUIPolicy::GetMarketplacePolicy() const
+{
+	return MarketplacePolicy;
+}
+
 void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 {
 	LocalPlayer->CallAndRegister_OnPlayerControllerSet(UCustomLocalPlayer::FPlayerControllerSetDelegate::FDelegate::CreateWeakLambda(this, [this](UCustomLocalPlayer* LocalPlayer, APlayerController* PlayerController)
@@ -54,10 +58,7 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
 
 			// add login screen widget as an initial screen
-			if (LoginScreenWidgetClass)
-			{
-				PushWidget(LoginScreenWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Modal")));
-			}
+			PushWidget(LoginScreenWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Modal")));
 
 	#if WITH_EDITOR
 			if (GIsEditor)
@@ -74,6 +75,9 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 		if (IsLoggedIn)
 		{
 			PushWidget(FrontEndWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")));
+
+			// create marketplace policy
+			MarketplacePolicy = NewObject<UMarketplacePolicy>(this, MarketplacePolicyClass.LoadSynchronous());
 		}
 	}));
 }

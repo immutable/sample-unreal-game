@@ -1,0 +1,91 @@
+﻿#include "Marketplace/SearchStacksWidget.h"
+
+#include "CustomLocalPlayer.h"
+#include "GameUIPolicy.h"
+#include "IContentBrowserSingleton.h"
+#include "OpenAPISearchApiOperations.h"
+#include "UIGameplayTags.h"
+#include "UI/Marketplace/MarketplacePolicy.h"
+#include "Base/ItemWidget.h"
+
+
+void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
+{
+	if (!bInitialized)
+	{
+		return;
+	}
+
+	if (!ListPanel)
+	{
+		return;
+	}
+
+	ListPanel->ResetPanelItems();
+
+	UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
+
+	if (!Policy)
+	{
+		return;
+	}
+
+	Policy->SetPageSize(ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows());
+	Policy->SetPageCursor(PageCursor);
+	Policy->GetOpenAPISearchApi()->SearchStacks(*Policy->GetSearchStacksRequest(), ImmutableOpenAPI::OpenAPISearchApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
+}
+
+void USearchStacksWidget::NativeOnActivated()
+{
+	Super::NativeOnActivated();
+
+	RefreshItemList(TOptional<FString>());
+}
+
+void USearchStacksWidget::OnWidgetRebuilt()
+{
+	Super::OnWidgetRebuilt();
+	
+	PreviousPageButton = AddButtonToLeft(FUIControlPanelButtons::PreviousPage);
+	NextPageButton = AddButtonToRight(FUIControlPanelButtons::NextPage);
+}
+
+void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPISearchApi::SearchStacksResponse& Response)
+{
+	if (Response.IsSuccessful())
+	{
+		int32 NumberOfColumns = ListPanel->GetNumberOfColumns();
+		int32 NumberOfRows = ListPanel->GetNumberOfRows();
+		int32 NumberOfResults = Response.Content.Result.Num();
+
+		HandlePageData(Response.Content.Page);
+		for (int32 ResultId = 0; ResultId < NumberOfResults; ResultId++)
+		{
+			int32 Row = ResultId / NumberOfColumns;
+			int32 Column = ResultId - Row * NumberOfColumns;
+			auto ItemWidget = ListPanel->GetItem(Column, Row);
+
+			ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
+		}
+	}
+}
+
+void USearchStacksWidget::OnControlButtonClicked_Implementation(FGameplayTag ButtonTag)
+{
+	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::PreviousPage))
+	{
+		RefreshItemList(PageCursors.PreviousCursor);
+	}
+	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::NextPage))
+	{
+		RefreshItemList(PageCursors.NextCursor);
+	}
+}
+
+void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData)
+{
+	PageCursors = PageData;
+
+	PageCursors.NextCursor.IsSet() ? NextPageButton->Enable() : NextPageButton->Disable(); 
+	PageCursors.PreviousCursor.IsSet() ? PreviousPageButton->Enable() : PreviousPageButton->Disable(); 
+}

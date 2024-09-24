@@ -1,5 +1,7 @@
 ﻿#include "Marketplace/MarketplaceItemWIdget.h"
 
+#include "CustomLocalPlayer.h"
+#include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
 #include "OpenAPIStackBundle.h"
 #include "Components/Image.h"
@@ -7,13 +9,15 @@
 #include "Engine/DataTable.h"
 #include "Math/BigInt.h"
 #include "NFT/NFT_TableRowBase.h"
+#include "Marketplace/MarketplaceItemFullWidget.h"
+#include "Marketplace/MarketplaceUtility.h"
 
 
-void UMarketplaceItemWidget::ProcessModel(const OpenAPI::Model* Data)
+void UMarketplaceItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 {
-	auto StackBundle = static_cast<const OpenAPI::OpenAPIStackBundle*>(Data);
+	StackBundle = MakeShareable(new ImmutableOpenAPI::OpenAPIStackBundle(static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data)));
 
-	if (!StackBundle || !NFT_DataSet)
+	if (!StackBundle.IsValid() || !NFT_DataSet)
 	{
 		return;
 	}
@@ -39,7 +43,6 @@ void UMarketplaceItemWidget::ProcessModel(const OpenAPI::Model* Data)
 	SetTextureNFT(DatatableRow->Thumbnail);
 	SetName(DatatableRow->Name);
 
-
 	int32 NumberOfListing = StackBundle->Listings.Num();
 	
 	SetListingCount(NumberOfListing);
@@ -48,8 +51,24 @@ void UMarketplaceItemWidget::ProcessModel(const OpenAPI::Model* Data)
 	{
 		SetPrice(StackBundle->Listings[0].PriceDetails);
 	}
-
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}
+
+void UMarketplaceItemWidget::SetOriginalState()
+{
+	Super::SetOriginalState();
+}
+
+FReply UMarketplaceItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FReply Reply = Super::NativeOnMouseButtonDoubleClick(InGeometry,InMouseEvent);
+
+	if (auto Widget = Cast<UMarketplaceItemFullWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")), MarketplaceItemFullWidgetClass.LoadSynchronous())))
+	{
+		Widget->ProcessModel(*StackBundle);
+	}
+	
+	return Reply; 
 }
 
 void UMarketplaceItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
@@ -73,17 +92,11 @@ void UMarketplaceItemWidget::SetName(const FString& Name)
 	}
 }
 
-void UMarketplaceItemWidget::SetPrice(const OpenAPI::OpenAPIPriceDetails& PriceDetails)
+void UMarketplaceItemWidget::SetPrice(const ImmutableOpenAPI::OpenAPIPriceDetails& PriceDetails)
 {
 	if (NFTLowestPrice && PriceDetails.Token.Decimals.IsSet())
 	{
-		int32 Decimals = PriceDetails.Token.Decimals.GetValue();
-		int256 Value(PriceDetails.Amount.Value);
-		int256 DecimalsValue(10);
-
-		for (int32 i = 0; i < Decimals; ++i, DecimalsValue *= 10);
-
-		FString Price = (Value / DecimalsValue).ToString(); 
+		FString Price = FMarketplaceUtility::ConvertMarketplaceTokenValue(PriceDetails.Token.Decimals.GetValue(), PriceDetails.Amount.Value);  
 
 		NFTLowestPrice->SetText(FText::FromString(Price));
 

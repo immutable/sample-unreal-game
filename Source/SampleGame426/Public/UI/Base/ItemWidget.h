@@ -1,24 +1,24 @@
 #pragma once
 
-#include "Blueprint/UserWidget.h"
+#include "CustomUserWidget.h"
+#include "OpenAPIBaseModel.h"
 
 #include "ItemWidget.generated.h"
 
-
-namespace OpenAPI
-{
-	class Model;
-}
 
 /**
  * 
  */
 UCLASS(Abstract, BlueprintType)
-class SAMPLEGAME426_API UItemWidget : public UUserWidget
+class SAMPLEGAME426_API UItemWidget : public UCustomUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	virtual void ProcessModel(const OpenAPI::Model* Data) {};
+	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) {};
+	virtual void SetOriginalState();
+
+protected:
+	virtual bool Initialize() override; 
 
 };

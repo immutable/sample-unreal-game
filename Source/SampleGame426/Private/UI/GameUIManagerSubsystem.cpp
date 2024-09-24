@@ -1,6 +1,7 @@
 #include "GameUIManagerSubsystem.h"
 
 #include "CustomLocalPlayer.h"
+#include "UIGameplayTags.h"
 
 
 void UGameUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -12,6 +13,8 @@ void UGameUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		TSubclassOf<UGameUIPolicy> PolicyClass = DefaultUIPolicyClass.LoadSynchronous();
 		SwitchToPolicy(NewObject<UGameUIPolicy>(this, PolicyClass));
 	}
+
+	FUIControlPanelButtons::InitUIGameplayTags_IconButtons();
 }
 
 void UGameUIManagerSubsystem::Deinitialize()
@@ -47,6 +50,12 @@ void UGameUIManagerSubsystem::SwitchToPolicy(UGameUIPolicy* InPolicy)
 
 UActivatableWidget* UGameUIManagerSubsystem::PushWidgetToLayer(const ULocalPlayer* LocalPlayer, FGameplayTag LayerName, TSubclassOf<UActivatableWidget> WidgetClass)
 {
+	if (!LocalPlayer)
+	{
+		//UE_LOG ERROR
+		return nullptr;
+	}
+
 	if (!WidgetClass)
 	{
 		//UE_LOG ERROR

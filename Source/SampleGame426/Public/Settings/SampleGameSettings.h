@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/DeveloperSettings.h"
+#include "UI/Marketplace/MarketplacePolicy.h"
 
 #include "SampleGameSettings.generated.h"
 
@@ -27,8 +28,4 @@ public:
 	
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Passport")
 	FString LogoutURI;
-
-	// Online values:
-
-	
 };

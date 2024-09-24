@@ -30,8 +30,6 @@ public:
 	FSimpleMulticastDelegate& OnDeactivated() const { return OnDeactivatedEvent; }
 
 public:
-	
-	bool IsModal() const { return bIsModal; }
 	bool SetsVisibilityOnActivated() const { return bSetVisibilityOnActivated; }
 	bool SetsVisibilityOnDeactivated() const { return bSetVisibilityOnDeactivated; }
 
@@ -60,34 +58,9 @@ protected:
 	void BP_OnDeactivated();
 	virtual void NativeOnDeactivated();
 
-	/** 
-	 * Override in BP implementations to provide custom behavior when receiving a back action 
-	 * Note: Only called if native code in the base class hasn't handled it in NativeOnHandleBackAction 
-	 */
-	UFUNCTION(BlueprintImplementableEvent, Category = ActivatableWidget, meta = (DisplayName = "On Handle Back Action"))
-	bool BP_OnHandleBackAction();
-	virtual bool NativeOnHandleBackAction();
-
-	void HandleBackAction();
-
-	/** True to receive "Back" actions automatically. Custom back handler behavior can be provided, default is to deactivate. */
-	UPROPERTY(EditAnywhere, Category = Back)
-	bool bIsBackHandler = false;
-
-	/** True to receive "Back" actions automatically. Custom back handler behavior can be provided, default is to deactivate. */
-	UPROPERTY(EditAnywhere, Category = Back)
-	bool bIsBackActionDisplayedInActionBar = false;
-
 	/** True to automatically activate upon construction */
 	UPROPERTY(EditAnywhere, Category = Activation)
 	bool bAutoActivate = false;
-
-	/** 
-	 * True to have this widget be treated as a root node for input routing, regardless of its actual parentage.
-	 * Should seldom be needed, but useful in cases where a child widget should prevent all action processing by parents, even though they remain active (ex: modal popup menu).
-	 */
-	UPROPERTY(EditAnywhere, Category = Activation, meta = (EditCondition = bSupportsActivationFocus))
-	bool bIsModal = false;
 
 private:
 	/** Fires when the widget is activated. */

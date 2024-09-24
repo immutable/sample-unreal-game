@@ -1,6 +1,7 @@
 #include "GameUIManagerSubsystem.h"
 
 #include "CustomLocalPlayer.h"
+#include "UIGameplayTags.h"
 
 
 void UGameUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -12,6 +13,8 @@ void UGameUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		TSubclassOf<UGameUIPolicy> PolicyClass = DefaultUIPolicyClass.LoadSynchronous();
 		SwitchToPolicy(NewObject<UGameUIPolicy>(this, PolicyClass));
 	}
+
+	FUIControlPanelButtons::InitUIGameplayTags_IconButtons();
 }
 
 void UGameUIManagerSubsystem::Deinitialize()

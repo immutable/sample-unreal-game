@@ -16,6 +16,7 @@ class SAMPLEGAME426_API UItemListWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	void ResetPanelItems();
 	int32 GetNumberOfColumns() const;
 	int32 GetNumberOfRows() const;
 	class UItemWidget* GetItem(int32 id);

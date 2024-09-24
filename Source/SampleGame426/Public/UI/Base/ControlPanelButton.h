@@ -16,6 +16,8 @@ class SAMPLEGAME426_API UControlPanelButton : public UUserWidget
 public:
 	void SetIcon(const FSlateBrush& InBrush);
 	void SetButtonTag(FGameplayTag& InTag);
+	void Enable();
+	void Disable();
 
 	/* UUserWidget */
 	virtual bool Initialize() override;

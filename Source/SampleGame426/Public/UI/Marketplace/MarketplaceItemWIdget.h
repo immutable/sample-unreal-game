@@ -23,6 +23,7 @@ class SAMPLEGAME426_API UMarketplaceItemWidget : public UItemWidget, public IOpe
 
 public:
 	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
+	virtual void SetOriginalState() override;
 
 protected:
 	/* UUserWidget */

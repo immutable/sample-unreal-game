@@ -13,26 +13,32 @@ class UActivatableWidgetWithControls : public UActivatableWidget
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
-	void AddButtonToLeft(FGameplayTag ButtonTag);
+	UControlPanelButton* AddButtonToLeft(FGameplayTag ButtonTag);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
-	void AddButtonToRight(FGameplayTag ButtonTag);
+	UControlPanelButton* AddButtonToRight(FGameplayTag ButtonTag);
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintNativeEvent)
 	void OnControlButtonClicked(FGameplayTag ButtonTag);
+	virtual void OnControlButtonClicked_Implementation(FGameplayTag ButtonTag);
 
 protected:
 	/* UUserWidget interface */
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 	virtual void SynchronizeProperties() override;
+	//virtual void NativeOnInitialized() override;
+	virtual void OnWidgetRebuilt() override;
 	/* UUserWidget interface */
 
 private:
-	void AddButton(FGameplayTag ButtonTag, SHorizontalBox::FSlot* HorizontalSlot);
+	UControlPanelButton* AddButton(FGameplayTag ButtonTag, SHorizontalBox::FSlot* HorizontalSlot);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Metadata")
 	TSoftObjectPtr<UControlPanelButtonDataAsset> ControlPanelButtonDefaults;
+
+	UPROPERTY(EditAnywhere, Category = "Window Settings")
+	bool bIsSwitchBetweenWidgetsHandler = false;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float LeftPanelHorizontalWidthFill = 0.05f;
@@ -47,4 +53,10 @@ protected:
 
 	UPROPERTY()
 	TArray<UControlPanelButton*> Buttons;
+
+	UPROPERTY(Transient)
+	UControlPanelButton* NextWidgetButton = nullptr;
+
+	UPROPERTY(Transient)
+	UControlPanelButton* PreviousWidgetButton = nullptr;
 };

@@ -4,6 +4,19 @@
 #include "Components/UniformGridPanel.h"
 
 
+void UItemListWidget::ResetPanelItems()
+{
+	int32 Number = ListPanel->GetChildrenCount();
+
+	for (int32 i = 0; i < Number; ++i)
+	{
+		if (auto Item = Cast<UItemWidget>(ListPanel->GetChildAt(i)))
+		{
+			Item->SetOriginalState();
+		}
+	}
+}
+
 int32 UItemListWidget::GetNumberOfColumns() const
 {
 	return NumberOfColumns;
@@ -43,14 +56,6 @@ TSharedRef<SWidget> UItemListWidget::RebuildWidget()
 
 				CachedItems.Add(NewItemWidgetObject);
 				ListPanel->AddChildToUniformGrid(NewItemWidgetObject, Row, Column);
-				NewItemWidgetObject->SetVisibility(ESlateVisibility::Hidden);
-#if WITH_EDITOR
-				// In editor, always make visible all items to ease design 
-				if (IsDesignTime())
-				{
-					NewItemWidgetObject->SetVisibility(ESlateVisibility::Visible);
-				}
-#endif
 			}
 		}
 	}

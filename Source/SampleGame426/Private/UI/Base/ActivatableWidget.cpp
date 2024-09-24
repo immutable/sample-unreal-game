@@ -8,14 +8,6 @@ void UActivatableWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// if (bIsBackHandler)
-	// {
-	// 	FBindUIActionArgs BindArgs(ICommonInputModule::GetSettings().GetDefaultBackAction(), FSimpleDelegate::CreateUObject(this, &UActivatableWidget::HandleBackAction));
-	// 	BindArgs.bDisplayInActionBar = bIsBackActionDisplayedInActionBar;
-	//
-	// 	DefaultBackActionHandle = RegisterUIActionBinding(BindArgs);
-	// }
-
 	if (bAutoActivate)
 	{
 		UE_LOG(LogSampleGame, Verbose, TEXT("[%s] auto-activated"), *GetName());
@@ -32,11 +24,6 @@ void UActivatableWidget::NativeDestruct()
 		DeactivateWidget();
 	}
 	Super::NativeDestruct();
-
-	// if (DefaultBackActionHandle.IsValid())
-	// {
-	// 	DefaultBackActionHandle.Unregister();
-	// }
 }
 
 UWidget* UActivatableWidget::GetDesiredFocusTarget() const
@@ -109,26 +96,6 @@ void UActivatableWidget::NativeOnDeactivated()
 		BP_OnDeactivated();
 		BP_OnWidgetDeactivated.Broadcast();
 	}
-}
-
-bool UActivatableWidget::NativeOnHandleBackAction()
-{
-	if (bIsBackHandler)
-	{
-		if (!BP_OnHandleBackAction())
-		{
-			// Default behavior is unconditional deactivation
-			UE_LOG(LogSampleGame, Verbose, TEXT("[%s] handled back with default implementation. Deactivating immediately."), *GetName());
-			DeactivateWidget();
-		}
-		return true;
-	}
-	return false;
-}
-
-void UActivatableWidget::HandleBackAction()
-{
-	NativeOnHandleBackAction();
 }
 
 void UActivatableWidget::Reset()

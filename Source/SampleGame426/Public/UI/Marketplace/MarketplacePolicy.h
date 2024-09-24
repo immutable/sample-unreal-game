@@ -30,7 +30,7 @@ public:
 	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> GetSearchStacksRequest();
 
 	void SetPageSize(int32 PageSize);
-	void SetPageCursor(const FString& PageCursor);
+	void SetPageCursor(TOptional<FString> PageCursor);
 	void SetAccount(const FString& Account);
 	void SetKeyword(const FString& Keyword);
 	void SetTraits(const TArray<FNFTMetadataAttribute_TraitType>& Traits);

@@ -20,5 +20,5 @@ class SAMPLEGAME426_API IItemListInterface
 
 public:
 	/**  */
-	virtual void RefreshItemList() = 0;
+	virtual void RefreshItemList(TOptional<FString> PageCursor) = 0;
 };

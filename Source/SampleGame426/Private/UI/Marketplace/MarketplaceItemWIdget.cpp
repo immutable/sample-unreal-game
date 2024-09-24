@@ -43,7 +43,6 @@ void UMarketplaceItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 	SetTextureNFT(DatatableRow->Thumbnail);
 	SetName(DatatableRow->Name);
 
-
 	int32 NumberOfListing = StackBundle->Listings.Num();
 	
 	SetListingCount(NumberOfListing);
@@ -52,8 +51,12 @@ void UMarketplaceItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 	{
 		SetPrice(StackBundle->Listings[0].PriceDetails);
 	}
-
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+}
+
+void UMarketplaceItemWidget::SetOriginalState()
+{
+	Super::SetOriginalState();
 }
 
 FReply UMarketplaceItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

@@ -17,6 +17,14 @@ void UControlPanelButton::SetButtonTag(FGameplayTag& InTag)
 	ButtonTag = InTag;
 }
 
+void UControlPanelButton::Enable()
+{
+}
+
+void UControlPanelButton::Disable()
+{
+}
+
 bool UControlPanelButton::Initialize()
 {
 	bool IsInitialized = Super::Initialize();

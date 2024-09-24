@@ -39,7 +39,7 @@ void UMarketplacePolicy::SetPageSize(int32 PageSize)
 	SearchStacksRequestData->PageSize = PageSize;
 }
 
-void UMarketplacePolicy::SetPageCursor(const FString& PageCursor)
+void UMarketplacePolicy::SetPageCursor(TOptional<FString> PageCursor)
 {
 	SearchStacksRequestData->PageCursor = PageCursor;
 }

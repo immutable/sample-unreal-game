@@ -16,5 +16,9 @@ class SAMPLEGAME426_API UItemWidget : public UCustomUserWidget
 
 public:
 	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) {};
+	virtual void SetOriginalState();
+
+protected:
+	virtual bool Initialize() override; 
 
 };

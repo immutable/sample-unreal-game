@@ -1,21 +1,22 @@
 ﻿#include "Base/ActivatableWidgetWithControls.h"
 
+#include "UIGameplayTags.h"
 #include "Components/Button.h"
 
-inline void UActivatableWidgetWithControls::AddButton(FGameplayTag ButtonTag, SHorizontalBox::FSlot* HorizontalSlot)
+inline UControlPanelButton* UActivatableWidgetWithControls::AddButton(FGameplayTag ButtonTag, SHorizontalBox::FSlot* HorizontalSlot)
 {
 	UControlPanelButtonDataAsset* Data = ControlPanelButtonDefaults.LoadSynchronous();
 	
 	if (!Data)
 	{
-		return;
+		return nullptr;
 	}
 
 	UClass* ButtonClass = Data->ControlButtonClass.LoadSynchronous();
 
 	if (!ButtonClass)
 	{
-		return;
+		return nullptr;
 	}
 
 	UControlPanelButton* Button = Cast<UControlPanelButton>(CreateWidget(this, ButtonClass, TEXT("ControlPanelButton")));
@@ -39,16 +40,30 @@ inline void UActivatableWidgetWithControls::AddButton(FGameplayTag ButtonTag, SH
 	];
 	
 	Buttons.Add(Button);
+
+	return Button;
 }
 
-void UActivatableWidgetWithControls::AddButtonToLeft(FGameplayTag ButtonTag)
+UControlPanelButton* UActivatableWidgetWithControls::AddButtonToLeft(FGameplayTag ButtonTag)
 {
-	AddButton(ButtonTag, LeftPanelVerticalBoxSlot);
+	return AddButton(ButtonTag, LeftPanelVerticalBoxSlot);
 }
 
-void UActivatableWidgetWithControls::AddButtonToRight(FGameplayTag ButtonTag)
+UControlPanelButton* UActivatableWidgetWithControls::AddButtonToRight(FGameplayTag ButtonTag)
 {
-	AddButton(ButtonTag, RightPanelVerticalBoxSlot);
+	return AddButton(ButtonTag, RightPanelVerticalBoxSlot);
+}
+
+void UActivatableWidgetWithControls::OnControlButtonClicked_Implementation(FGameplayTag ButtonTag)
+{
+	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::Back))
+	{
+		DeactivateWidget();
+	}
+	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::Forward))
+	{
+		
+	}
 }
 
 TSharedRef<SWidget> UActivatableWidgetWithControls::RebuildWidget()
@@ -91,4 +106,12 @@ void UActivatableWidgetWithControls::SynchronizeProperties()
 	LeftPanelVerticalBoxSlot->FillWidth(LeftPanelHorizontalWidthFill);
 	CenterPanelVerticalBoxSlot->FillWidth(CenterPanelHorizontalWidthFill);
 	RightPanelVerticalBoxSlot->FillWidth(RightPanelHorizontalWidthFill);
+}
+
+void UActivatableWidgetWithControls::OnWidgetRebuilt()
+{
+	Super::OnWidgetRebuilt();
+
+	NextWidgetButton = AddButtonToRight(FUIControlPanelButtons::Forward);
+	PreviousWidgetButton = AddButtonToLeft(FUIControlPanelButtons::Back);
 }

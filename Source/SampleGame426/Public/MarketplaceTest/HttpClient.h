@@ -15,5 +15,20 @@ class SAMPLEGAME426_API UHttpClient : public UObject
 public:
 	FString ResponseContent;
 
-	void MakeHttpRequest(const FString& Uri, const FString& Method, TFunction<void(const FString&)> Callback);
+	/**
+	 * MakeHttpRequest
+	 * @param Uri Request URI
+	 * @param Method Request method
+	 * @param Callback Request completed callback delegate
+	 */
+	void MakeHttpRequest(const FString& Uri, TFunction<void(const FString&)> Callback);
+
+	/**
+	 * MakeHttpPostRequest
+	 * @param Uri Request URI
+	 * @param Method Request method
+	 * @param Body JSON string for the POST request body
+	 * @param Callback Request completed callback delegate
+	 */
+	void MakeHttpPostRequest(const FString& Uri, const FString& Body, TFunction<void(const FString&)> Callback);
 };

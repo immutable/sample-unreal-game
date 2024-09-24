@@ -3,8 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MarketplaceClientTypes.h"
 #include "UObject/Object.h"
+#include "Immutable/ImmutablePassport.h"
+
 #include "MarketplaceClient.generated.h"
+
+// delegate that takes an array
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFulfillOrderReturned, const TArray<FAction>&, OrderActions);
 
 /**
  * 
@@ -16,10 +22,18 @@ class SAMPLEGAME426_API UMarketplaceClient : public UObject
 
 public:
 	// Get market listings
+	// TODO
 
-	// Buy a fox skin NFT
+	// Get Unsigned Fulfill Order Transaction
+	UFUNCTION(BlueprintCallable, Category = "MarketplaceClient")
+	void GetUnsignedFulfillOrderTransactions(const FString& ListingId, const FString& TakerAddress);
 
 	// List a fox skin NFT for sale
+	// TODO
 
 	// Cancel item for sale
+	// TODO
+
+	UPROPERTY(BlueprintAssignable, Category = "MarketplaceClient")
+	FOnFulfillOrderReturned OnFulfillOrderReturned;
 };

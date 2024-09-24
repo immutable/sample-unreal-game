@@ -15,11 +15,11 @@ void UGetBalance::GetTokenBalance(const FString& Address)
 	UHttpClient* HttpClient = NewObject<UHttpClient>();
 
 	const FString Uri = FString::Printf(TEXT("http://localhost:6060/balance?address=%s"), *Address);
-	const FString Method = "GET";
 
 	// Make HTTP request
-	HttpClient->MakeHttpRequest(Uri, Method, [this](FString ResponseString)
+	HttpClient->MakeHttpRequest(Uri, [this](FString ResponseString)
 	{
+		UE_LOG(LogSampleGame, Display, TEXT("HttpClient->MakeHttpRequest()"));
 		FGetBalanceResponse GetBalanceResponse;
 		FJsonObjectConverter::JsonObjectStringToUStruct<FGetBalanceResponse>(ResponseString, &GetBalanceResponse, 0, 0);
 

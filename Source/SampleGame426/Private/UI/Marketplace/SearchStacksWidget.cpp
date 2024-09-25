@@ -9,6 +9,12 @@
 #include "Base/ItemWidget.h"
 
 
+USearchStacksWidget::USearchStacksWidget()
+{
+	ControlPanelButtonsData.Add(FUIControlPanelButtons::NextPage, EAWStackControlPanelSide::Right);
+	ControlPanelButtonsData.Add(FUIControlPanelButtons::PreviousPage, EAWStackControlPanelSide::Left);
+}
+
 void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 {
 	if (!bInitialized)
@@ -45,9 +51,6 @@ void USearchStacksWidget::NativeOnActivated()
 void USearchStacksWidget::OnWidgetRebuilt()
 {
 	Super::OnWidgetRebuilt();
-	
-	PreviousPageButton = AddButtonToLeft(FUIControlPanelButtons::PreviousPage);
-	NextPageButton = AddButtonToRight(FUIControlPanelButtons::NextPage);
 }
 
 void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPISearchApi::SearchStacksResponse& Response)
@@ -70,7 +73,39 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 	}
 }
 
-void USearchStacksWidget::OnControlButtonClicked_Implementation(FGameplayTag ButtonTag)
+void USearchStacksWidget::SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons)
+{
+	for (auto Button : Buttons)
+	{
+		if (Button.Key.MatchesTagExact(FUIControlPanelButtons::PreviousPage))
+		{
+			PreviousPageButton = Button.Value;
+		}
+		if (Button.Key.MatchesTagExact(FUIControlPanelButtons::NextPage))
+		{
+			NextPageButton = Button.Value;
+		}
+		Button.Value->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnPageDirectionButtonClicked);
+	}
+	
+	Super::SetupControlButtons(Buttons);
+}
+
+void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData)
+{
+	PageCursors = PageData;
+
+	if (NextPageButton)
+	{
+		PageCursors.NextCursor.IsSet() ? NextPageButton->Show() : NextPageButton->Hide();	
+	}
+	if (PreviousPageButton)
+	{
+		PageCursors.PreviousCursor.IsSet() ? PreviousPageButton->Show() : PreviousPageButton->Hide();
+	}
+}
+
+void USearchStacksWidget::OnPageDirectionButtonClicked(FGameplayTag ButtonTag)
 {
 	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::PreviousPage))
 	{
@@ -80,12 +115,4 @@ void USearchStacksWidget::OnControlButtonClicked_Implementation(FGameplayTag But
 	{
 		RefreshItemList(PageCursors.NextCursor);
 	}
-}
-
-void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData)
-{
-	PageCursors = PageData;
-
-	PageCursors.NextCursor.IsSet() ? NextPageButton->Enable() : NextPageButton->Disable(); 
-	PageCursors.PreviousCursor.IsSet() ? PreviousPageButton->Enable() : PreviousPageButton->Disable(); 
 }

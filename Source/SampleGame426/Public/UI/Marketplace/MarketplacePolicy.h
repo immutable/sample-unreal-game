@@ -41,13 +41,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	FString URL;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Onlie")
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	FString SearchStacksChainName;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Onlie")
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	uint32 RetryLimitCount = 0;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Onlie")
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	double RetryTimeoutRelativeSeconds = 1.0;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Search NFT stacks")

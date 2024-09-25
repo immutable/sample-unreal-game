@@ -1,6 +1,6 @@
 ﻿#include "Base/ControlPanelButton.h"
 
-#include "Base/ActivatableWidgetWithControls.h"
+#include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 
@@ -19,10 +19,22 @@ void UControlPanelButton::SetButtonTag(FGameplayTag& InTag)
 
 void UControlPanelButton::Enable()
 {
+	ButtonHitbox->SetIsEnabled(true);
 }
 
 void UControlPanelButton::Disable()
 {
+	ButtonHitbox->SetIsEnabled(false);
+}
+
+void UControlPanelButton::Hide()
+{
+	SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UControlPanelButton::Show()
+{
+	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
 bool UControlPanelButton::Initialize()
@@ -33,15 +45,20 @@ bool UControlPanelButton::Initialize()
 	{
 		ButtonTag = FGameplayTag::RequestGameplayTag(TEXT("UI.ControlPanel.Button.Empty"));
 		ButtonHitbox->OnClicked.AddUniqueDynamic(this, &UControlPanelButton::HandleButtonClicked);
+		Hide();
 	}
 	
 	return IsInitialized;
 }
 
+void UControlPanelButton::NativeDestruct()
+{
+	OnPanelButtonClicked.Clear();
+	
+	Super::NativeDestruct();
+}
+
 void UControlPanelButton::HandleButtonClicked()
 {
-	if (UActivatableWidgetWithControls* ControlPanel = Cast<UActivatableWidgetWithControls>(GetOuter()->GetOuter()))
-	{
-		ControlPanel->OnControlButtonClicked(ButtonTag);
-	}
+	OnPanelButtonClicked.Broadcast(ButtonTag);
 }

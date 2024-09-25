@@ -5,6 +5,7 @@
 
 struct SAMPLEGAME426_API FUIControlPanelButtons
 {
+	static FGameplayTag Empty;
 	static FGameplayTag NextPage;
 	static FGameplayTag PreviousPage;
 	static FGameplayTag Back;

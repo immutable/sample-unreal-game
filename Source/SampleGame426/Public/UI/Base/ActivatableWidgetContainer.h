@@ -75,9 +75,12 @@ public:
 	DECLARE_EVENT_TwoParams(UActivatableWidgetContainer, FTransitioningChanged, UActivatableWidgetContainer* /*Widget*/, bool /*bIsTransitioning*/);
 	FTransitioningChanged OnTransitioningChanged;
 
+#if WITH_EDITOR
+	virtual const FText GetPaletteCategory() override;
+#endif
+
 protected:
 	virtual TSharedRef<SWidget> RebuildWidget() override;
-	virtual void SynchronizeProperties() override;
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 	virtual void OnWidgetRebuilt() override;
 
@@ -97,15 +100,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Transition)
 	float TransitionDuration = 0.4f;
 
-	UPROPERTY(EditAnywhere, Category = TopPanel)
-	bool bWithTopPanelSlot = false;
-
-	UPROPERTY(EditAnywhere, Category = TopPanel, meta = (EditCondition = "bWithTopPanelSlot"))
-	TSubclassOf<UActivatableWidget> TopPanelContentWidgetClass;
-
-	UPROPERTY(Transient)
-	UActivatableWidget* TopPanelContentWidget;
-
 	UPROPERTY(Transient)
 	TArray<UActivatableWidget*> WidgetList;
 
@@ -116,8 +110,6 @@ protected:
 	FUserWidgetPool GeneratedWidgetsPool;
 
 	TSharedPtr<SOverlay> MyOverlay;
-	TSharedPtr<SSpacer> MyInputGuard;
-	TSharedPtr<SVerticalBox> MyVerticalBox;
 	TSharedPtr<class SAnimatedSwitcher> MySwitcher;
 
 private:
@@ -176,19 +168,7 @@ class UActivatableWidgetStack : public UActivatableWidgetContainer
 {
 	GENERATED_BODY()
 
-public:
-	//@todo DanH: Allow the root content class to be restricted by metadata
-	UActivatableWidget* GetRootContent() const;
-
 protected:
-	virtual void SynchronizeProperties() override;
 	virtual void OnWidgetAddedToList(UActivatableWidget& AddedWidget) override;
 	
-private:
-	/** Optional widget to auto-generate as the permanent root element of the stack */
-	UPROPERTY(EditAnywhere, Category = Content)
-	TSubclassOf<UActivatableWidget> RootContentWidgetClass;
-
-	UPROPERTY(Transient)
-	UActivatableWidget* RootContentWidget;
 };

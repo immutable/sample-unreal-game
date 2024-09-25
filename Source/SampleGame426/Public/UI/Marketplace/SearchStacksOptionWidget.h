@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-#include "Base/ActivatableWidgetWithControls.h"
+#include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
 
-#include "MarketplaceSearchOptionWidget.generated.h"
+#include "SearchStacksOptionWidget.generated.h"
 
 
 UCLASS(Abstract)
-class SAMPLEGAME426_API UMarketplaceSearchOptionWidget : public UActivatableWidgetWithControls
+class SAMPLEGAME426_API USearchStacksOptionWidget : public UActivatableWidgetWithControlPanels
 {
 	GENERATED_BODY()
 
@@ -22,6 +22,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void SetTraits(const TArray<FNFTMetadataAttribute_TraitType>& Traits);
+
+private:
+	// UFUNCTION()
+	// virtual void OnForwardButtonClicked(FGameplayTag ButtonTag) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Metadata")

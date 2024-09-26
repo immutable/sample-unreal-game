@@ -68,7 +68,7 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 	}
 
 	int32 NumberOfColumns = ListPanel->GetNumberOfColumns();
-	int32 NumberOfRows = ListPanel->GetNumberOfRows();
+	// int32 NumberOfRows = ListPanel->GetNumberOfRows();
 	int32 NumberOfResults = Response.Content.Result.Num();
 
 	HandlePageData(Response.Content.Page);

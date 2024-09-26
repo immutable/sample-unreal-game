@@ -23,10 +23,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void SetTraits(const TArray<FNFTMetadataAttribute_TraitType>& Traits);
 
-private:
-	// UFUNCTION()
-	// virtual void OnForwardButtonClicked(FGameplayTag ButtonTag) override;
-
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Metadata")
 	TSoftObjectPtr<UNFTMetadataAttributeDataAsset> AttributeMetadata;

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Data/NFTMetadataAttributeDataAsset.h"
+#include "Dialog/Dialog.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 
 #include "UIBlueprintFunctionLibrary.generated.h"

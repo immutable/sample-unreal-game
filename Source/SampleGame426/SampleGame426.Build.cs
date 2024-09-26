@@ -7,7 +7,6 @@ public class SampleGame426 : ModuleRules
 	public SampleGame426(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-		
 	
 		PublicDependencyModuleNames.AddRange(new string[] 
 		{ 
@@ -29,9 +28,7 @@ public class SampleGame426 : ModuleRules
 			"Json",
 			"JsonUtilities",
 			"HTTP",
-			"OpenAPI"
 		});
-
 
 		PrivateIncludePaths.AddRange(new string[]
 		{

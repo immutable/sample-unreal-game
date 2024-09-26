@@ -7,7 +7,7 @@
 #include "Containers/Ticker.h"
 #include "Base/ActivatableWidget.h"
 
-#define LOCTEXT_NAMESPACE "IMMUTABLE_UI"
+#define LOCTEXT_NAMESPACE "ImmutableUI"
 
 UActivatableWidget* ActivatableWidgetFromSlate(const TSharedPtr<SWidget>& SlateWidget)
 {
@@ -283,3 +283,4 @@ void UActivatableWidgetStack::OnWidgetAddedToList(UActivatableWidget& AddedWidge
 	}
 }
 
+#undef LOCTEXT_NAMESPACE

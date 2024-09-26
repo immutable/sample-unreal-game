@@ -33,21 +33,3 @@ void USearchStacksOptionWidget::SetTraits(const TArray<FNFTMetadataAttribute_Tra
 		Policy->SetTraits(Traits);
 	}
 }
-
-// void USearchStacksOptionWidget::SetupControlButtons_Implementation(TMap<FGameplayTag, UControlPanelButton*>& Buttons)
-// {
-// 	Super::SetupControlButtons_Implementation(Buttons);
-//
-// 	for (auto Button : Buttons)
-// 	{
-// 		Button.Value->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksOptionWidget::OnPageDirectionButtonClicked);
-// 	}
-// 	
-// }
-//
-// void USearchStacksOptionWidget::OnForwardButtonClicked(FGameplayTag ButtonTag)
-// {
-// 	Super::OnForwardButtonClicked(ButtonTag);
-//
-// 	
-// }

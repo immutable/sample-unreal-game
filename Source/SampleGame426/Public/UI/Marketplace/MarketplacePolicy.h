@@ -54,9 +54,6 @@ protected:
 	TArray<FString> ContractAddress;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Search NFT stacks")
-	TSoftObjectPtr<UNFTMetadataAttributeDataAsset> SearchMetaAttributes;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Search NFT stacks")
 	int32 NumberFractionalDigits = 4;
 
 private:

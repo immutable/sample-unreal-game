@@ -2,6 +2,13 @@
 
 #include "GameplayTagContainer.h"
 
+struct SAMPLEGAME426_API FUILayers
+{
+	static FGameplayTag Menu;
+	static FGameplayTag Modal;
+
+	static void InitUIGameplayTags_Layers();
+};
 
 struct SAMPLEGAME426_API FUIControlPanelButtons
 {
@@ -12,7 +19,15 @@ struct SAMPLEGAME426_API FUIControlPanelButtons
 	static FGameplayTag Forward;
 	static FGameplayTag Buy;
 
-	static void InitUIGameplayTags_IconButtons();
+	static void InitUIGameplayTags_ControlPanelButtons();
+};
+
+struct SAMPLEGAME426_API FUIDialogTypes
+{
+	static FGameplayTag Error;
+	static FGameplayTag Confirmation;
+
+	static void InitUIGameplayTags_DialogTypes();
 };
 
 

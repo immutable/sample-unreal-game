@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PrimaryGameLayout.h"
+#include "Dialog/DialogTypeDataAsset.h"
 #include "Marketplace/MarketplacePolicy.h"
 
 #include "GameUIPolicy.generated.h"
@@ -25,6 +26,7 @@ public:
 	class UGameUIManagerSubsystem* GetOwningUIManager() const;
 	UPrimaryGameLayout* GetRootLayout() const;
 	UMarketplacePolicy* GetMarketplacePolicy() const;
+	const FDialogType* GetDialogType(FGameplayTag DialogTag) const;
 
 private:
 	void NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer);
@@ -34,14 +36,17 @@ private:
 	friend class UGameUIManagerSubsystem;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Immutable")
+	UPROPERTY(EditAnywhere, Category = "Main")
 	TSoftClassPtr<UPrimaryGameLayout> LayoutClass;
 
-	UPROPERTY(EditAnywhere, Category = "Immutable")
+	UPROPERTY(EditAnywhere, Category = "Main")
 	TSoftClassPtr<UActivatableWidget> LoginScreenWidgetClass;
 	
-	UPROPERTY(EditAnywhere, Category = "Immutable")
+	UPROPERTY(EditAnywhere, Category = "Main")
     TSoftClassPtr<UActivatableWidget> FrontEndWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "Dialog")
+    TSoftObjectPtr<UDialogTypeDataAsset> DialogTypeDataAsset;
 
 	UPROPERTY(EditAnywhere, Category = "Marketplace")
 	TSoftClassPtr<UMarketplacePolicy> MarketplacePolicyClass;

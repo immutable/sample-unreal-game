@@ -4,6 +4,7 @@
 #include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
 #include "OpenAPIStackBundle.h"
+#include "UIGameplayTags.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Engine/DataTable.h"
@@ -63,7 +64,7 @@ FReply UMarketplaceItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& I
 {
 	FReply Reply = Super::NativeOnMouseButtonDoubleClick(InGeometry,InMouseEvent);
 
-	if (auto Widget = Cast<UMarketplaceItemFullWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")), MarketplaceItemFullWidgetClass.LoadSynchronous())))
+	if (auto Widget = Cast<UMarketplaceItemFullWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FUILayers::Menu, MarketplaceItemFullWidgetClass.LoadSynchronous())))
 	{
 		Widget->ProcessModel(*StackBundle);
 	}

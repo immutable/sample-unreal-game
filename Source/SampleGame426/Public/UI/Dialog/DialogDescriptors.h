@@ -37,8 +37,8 @@ public:
 	}
 };
 
-USTRUCT(BlueprintType)
-struct SAMPLEGAME426_API FDialogDescriptor
+UCLASS(BlueprintType, MinimalAPI, Transient)
+class UDialogDescriptor : public UObject
 {
 	GENERATED_BODY()
 
@@ -50,8 +50,8 @@ public:
 	FText Body;
 };
 
-USTRUCT()
-struct SAMPLEGAME426_API FDialogDescriptor_OneAction : public FDialogDescriptor
+UCLASS()
+class UDialogDescriptor_OneAction : public UDialogDescriptor
 {
 	GENERATED_BODY()
 
@@ -63,8 +63,8 @@ public:
 	FDialogAction Action;
 };
 
-USTRUCT()
-struct SAMPLEGAME426_API FDialogDescriptor_TwoActions : public FDialogDescriptor
+UCLASS()
+class UDialogDescriptor_TwoActions : public UDialogDescriptor
 {
 	GENERATED_BODY()
 

@@ -7,14 +7,14 @@
 
 #define LOCTEXT_NAMESPACE "ImmutableUI"
 
-FDialogDescriptor UDialogSubsystem::CreateErrorDescriptor(const FText& Header, const FText& Body)
+UDialogDescriptor_OneAction* UDialogSubsystem::CreateErrorDescriptor(const FText& Header, const FText& Body)
 {
-	FDialogDescriptor_OneAction Descriptor;
+	UDialogDescriptor_OneAction* Descriptor = NewObject<UDialogDescriptor_OneAction>();
 
-	Descriptor.Header = Header;
-	Descriptor.Body = Body;
-	Descriptor.Action.Result = EDialogResult::Confirmed;
-	Descriptor.ActionText = LOCTEXT("Ok", "Ok");
+	Descriptor->Header = Header;
+	Descriptor->Body = Body;
+	Descriptor->Action.Result = EDialogResult::Confirmed;
+	Descriptor->ActionText = LOCTEXT("Ok", "Ok");
 
 	return Descriptor;
 }
@@ -44,7 +44,7 @@ void UDialogSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-void UDialogSubsystem::ShowError(const FDialogDescriptor& DialogDescriptor, FDialogResultDelegate ResultCallback)
+UDialog* UDialogSubsystem::ShowError(const UDialogDescriptor* Descriptor)
 {
 	auto DialogData = GetDialogType(FUIDialogTypes::Error);
 
@@ -52,15 +52,19 @@ void UDialogSubsystem::ShowError(const FDialogDescriptor& DialogDescriptor, FDia
 	{
 		UE_LOG(LogTemp, Error, TEXT("Error dialog data is not assigned"));
 		
-		return;
+		return nullptr;
 	}
 
-	UDialog* Dialog =  Cast<UDialog>(UGameUIManagerSubsystem::PushWidgetToLayer(GetLocalPlayer(), FUILayers::Modal,  DialogData->Dialog.LoadSynchronous()));
+	auto Dialog =  Cast<UDialog>(UGameUIManagerSubsystem::PushWidgetToLayer(GetLocalPlayer(), FUILayers::Modal,  DialogData->Dialog.LoadSynchronous()));
 
 	if (Dialog)
 	{
-		Dialog->SetupDialog(DialogDescriptor, ResultCallback);
+		return nullptr;
 	}
+	
+	Dialog->SetupDialog(Descriptor);
+
+	return Dialog;
 }
 
 #undef LOCTEXT_NAMESPACE

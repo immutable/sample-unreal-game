@@ -22,12 +22,12 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	virtual void ShowError(const FDialogDescriptor& DialogDescriptor, FDialogResultDelegate ResultCallback = FDialogResultDelegate());
-	
-	static FDialogDescriptor CreateErrorDescriptor(const FText& Header, const FText& Body);
+	UFUNCTION(BlueprintCallable)
+	UDialog* ShowError(const UDialogDescriptor* Descriptor);
+
+	static UDialogDescriptor_OneAction* CreateErrorDescriptor(const FText& Header, const FText& Body);
 
 private:
-
 	const FDialogType* GetDialogType(FGameplayTag DialogType) const;
 
 };

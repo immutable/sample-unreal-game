@@ -4,25 +4,22 @@
 #include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
 
-void UCustomGameInstance::SendSystemMessage(FGameplayTag MessageType, FText TitleText, FText BodyText)
-{
-	OnHandleSystemMessage.Broadcast(MessageType, TitleText, BodyText);
-}
-
-void UCustomGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Title, FText Message)
-{
-	UE_LOG(LogSampleGame, Log, TEXT("HandleSystemMessage: Message  %s, %s, %s"), *MessageType.ToString(), *Title.ToString(), *Message.ToString());
-	
-	// ULocalPlayer* FirstPlayer = GetFirstGamePlayer();
-	// // Forward severe ones to the error dialog for the first player
-	// if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
-	// {
-	// 	if (UCommonMessagingSubsystem* Messaging = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
-	// 	{
-	// 		Messaging->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
-	// 	}
-	// }
-}
+// void UCustomGameInstance::SendSystemMessage(FGameplayTag MessageType, FText TitleText, FText BodyText)
+// {
+// 	OnHandleSystemMessage.Broadcast(MessageType, TitleText, BodyText);
+//
+// 	UE_LOG(LogSampleGame, Log, TEXT("HandleSystemMessage: Message  %s, %s, %s"), *MessageType.ToString(), *TitleText.ToString(), *BodyText.ToString());
+// 	
+// 	ULocalPlayer* FirstPlayer = GetFirstGamePlayer();
+// 	// Forward severe ones to the error dialog for the first player
+// 	if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
+// 	{
+// 		if (UCommonMessagingSubsystem* Messaging = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
+// 		{
+// 			Messaging->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
+// 		}
+// 	}
+// }
 
 int32 UCustomGameInstance::AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUserId UserId)
 {

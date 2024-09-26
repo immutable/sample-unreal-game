@@ -7,6 +7,7 @@
 #include "UIGameplayTags.h"
 #include "UI/Marketplace/MarketplacePolicy.h"
 #include "Base/ItemWidget.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 USearchStacksWidget::USearchStacksWidget()
@@ -55,21 +56,23 @@ void USearchStacksWidget::OnWidgetRebuilt()
 
 void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPISearchApi::SearchStacksResponse& Response)
 {
-	if (Response.IsSuccessful())
+	if (!Response.IsSuccessful())
 	{
-		int32 NumberOfColumns = ListPanel->GetNumberOfColumns();
-		int32 NumberOfRows = ListPanel->GetNumberOfRows();
-		int32 NumberOfResults = Response.Content.Result.Num();
+		return;
+	}
 
-		HandlePageData(Response.Content.Page);
-		for (int32 ResultId = 0; ResultId < NumberOfResults; ResultId++)
-		{
-			int32 Row = ResultId / NumberOfColumns;
-			int32 Column = ResultId - Row * NumberOfColumns;
-			auto ItemWidget = ListPanel->GetItem(Column, Row);
+	int32 NumberOfColumns = ListPanel->GetNumberOfColumns();
+	int32 NumberOfRows = ListPanel->GetNumberOfRows();
+	int32 NumberOfResults = Response.Content.Result.Num();
 
-			ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
-		}
+	HandlePageData(Response.Content.Page);
+	for (int32 ResultId = 0; ResultId < NumberOfResults; ResultId++)
+	{
+		int32 Row = ResultId / NumberOfColumns;
+		int32 Column = ResultId - Row * NumberOfColumns;
+		auto ItemWidget = ListPanel->GetItem(Column, Row);
+
+		ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
 	}
 }
 

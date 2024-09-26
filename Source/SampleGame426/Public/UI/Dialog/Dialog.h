@@ -17,6 +17,8 @@ class SAMPLEGAME426_API UDialog : public UActivatableWidget
 	GENERATED_BODY()
 	
 public:
+	UDialog(const FObjectInitializer& Initializer);
+	
 	UFUNCTION(BlueprintImplementableEvent, Category = "Immutable")
 	void SetupDialog(const UDialogDescriptor* Descriptor);
 

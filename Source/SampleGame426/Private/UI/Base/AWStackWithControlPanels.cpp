@@ -66,8 +66,8 @@ void UAWStackWithControlPanels::SynchronizeProperties()
 	if (IsDesignTime())
 	{
 		ControlPanelButtons.Empty();
-		LeftControlPanel.Reset();
-		RightControlPanel.Reset();
+		LeftControlPanel->ClearChildren();
+		RightControlPanel->ClearChildren();
 		for (int32 i = 0; i < 5; ++i)
 		{
 			AddButtonToLeft(FUIControlPanelButtons::Empty);
@@ -121,7 +121,7 @@ void UAWStackWithControlPanels::ReleaseSlateResources(bool bReleaseChildren)
 
 		TopPanelWidget = nullptr;
 	}
-	
+
 	MyVerticalBox.Reset();
 	LeftControlPanel.Reset();
 	RightControlPanel.Reset();

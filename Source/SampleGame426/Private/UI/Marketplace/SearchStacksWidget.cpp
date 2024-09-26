@@ -7,6 +7,7 @@
 #include "UIGameplayTags.h"
 #include "UI/Marketplace/MarketplacePolicy.h"
 #include "Base/ItemWidget.h"
+#include "Dialog/DialogSubsystem.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
@@ -58,6 +59,11 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 {
 	if (!Response.IsSuccessful())
 	{
+		if (UDialogSubsystem* DialogSubsystem = GetOwningLocalPlayer()->GetSubsystem<UDialogSubsystem>())
+		{
+			DialogSubsystem->ShowError(UDialogSubsystem::CreateErrorDescriptor(FText::FromString("Error"), FText::FromString(Response.GetResponseString())));
+		}
+		
 		return;
 	}
 

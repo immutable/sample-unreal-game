@@ -10,7 +10,7 @@
 #include "Engine/DataTable.h"
 #include "Math/BigInt.h"
 #include "NFT/NFT_TableRowBase.h"
-#include "Marketplace/MarketplaceItemFullWidget.h"
+#include "Marketplace/SearchStacksListingWidget.h"
 #include "Marketplace/MarketplaceUtility.h"
 
 
@@ -64,7 +64,7 @@ FReply UMarketplaceItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& I
 {
 	FReply Reply = Super::NativeOnMouseButtonDoubleClick(InGeometry,InMouseEvent);
 
-	if (auto Widget = Cast<UMarketplaceItemFullWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FUILayers::Menu, MarketplaceItemFullWidgetClass.LoadSynchronous())))
+	if (auto Widget = Cast<USearchStacksListingWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FUILayers::Menu, MarketplaceItemFullWidgetClass.LoadSynchronous())))
 	{
 		Widget->ProcessModel(*StackBundle);
 	}

@@ -1,4 +1,4 @@
-﻿#include "Marketplace/MarketplaceItemFullWidget.h"
+﻿#include "Marketplace/SearchStacksListingWidget.h"
 
 #include "OpenAPIListing.h"
 #include "OpenAPIStackBundle.h"
@@ -9,7 +9,7 @@
 #define MP_DESCRIPTION_UPDATED_AT TEXT("Updated at")
 
 
-void UMarketplaceItemFullWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
+void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 {
 	auto StackBundle = static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data);
 

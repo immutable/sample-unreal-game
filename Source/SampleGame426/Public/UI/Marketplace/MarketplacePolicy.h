@@ -6,12 +6,6 @@
 #include "MarketplacePolicy.generated.h"
 
 
-namespace ImmutableQuery
-{
-	struct FMP_SearchStacksRequestTraitData;
-	struct FMP_SearchStacksRequestData;
-}
-
 /*
  * 
  */

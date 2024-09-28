@@ -51,7 +51,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Marketplace", meta=(BindWidget))
 	class UTextBlock* NFTPriceTokenName  = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Marketplace")
-	TSoftClassPtr<class UMarketplaceItemFullWidget> MarketplaceItemFullWidgetClass;
+	TSoftClassPtr<class USearchStacksListingWidget> MarketplaceItemFullWidgetClass;
 	UPROPERTY(EditAnywhere, Category = "Marketplace", meta = (RequiredAssetDataTags = "RowStructure=NFT_TableRowBase"))
 	class UDataTable* NFT_DataSet;
 

@@ -1,15 +1,16 @@
 ﻿#pragma once
 
 #include "Base/ActivatableWidget.h"
+#include "Base/ActivatableWidgetWithControlPanels.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 
-#include "MarketplaceItemFullWidget.generated.h"
+#include "SearchStacksListingWidget.generated.h"
 
 /**
  * 
  */
 UCLASS(Abstract)
-class SAMPLEGAME426_API UMarketplaceItemFullWidget : public UActivatableWidget, public IOpenAPIProcessorInterface
+class SAMPLEGAME426_API USearchStacksListingWidget : public UActivatableWidgetWithControlPanels, public IOpenAPIProcessorInterface
 {
 	GENERATED_BODY()
 

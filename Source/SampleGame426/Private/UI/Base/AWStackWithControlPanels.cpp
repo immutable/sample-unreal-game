@@ -3,6 +3,7 @@
 #include "UIGameplayTags.h"
 #include "Base/ActivatableWidget.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
+#include "Widgets/Images/SImage.h"
 
 
 TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
@@ -17,6 +18,7 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 	}
 	
 	SAssignNew(MyVerticalBox, SVerticalBox)
+
 	+ SVerticalBox::Slot()
 	.HAlign(HAlign_Fill)
 	.VAlign(VAlign_Fill)
@@ -24,23 +26,41 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 	[
 		TopPanelSlate
 	]
+	
 	+ SVerticalBox::Slot()
 	[
 		SNew(SHorizontalBox)
 
 		+ SHorizontalBox::Slot()
+		
 		.FillWidth(LeftPanelHorizontalWidthFill)
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
-		.Padding(24.f)
+		.Padding(PanelsPadding)
 		[
-			SAssignNew(LeftControlPanel, SVerticalBox)
+			SNew(SOverlay)
+
+			+ SOverlay::Slot()
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			[
+				SNew(SImage)
+				.Image(&PanelsBrush)
+			]
+
+			+ SOverlay::Slot()
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			[
+				SAssignNew(LeftControlPanel, SVerticalBox)
+			]
 		]
 		
 		+ SHorizontalBox::Slot()
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
 		.FillWidth(CenterPanelHorizontalWidthFill)
+		.Padding(ActivatableWidgetPadding)
 		[
 			Original
 		]
@@ -49,9 +69,24 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 		.FillWidth(RightPanelHorizontalWidthFill)
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
-		.Padding(24.f)
+		.Padding(PanelsPadding)
 		[
-			SAssignNew(RightControlPanel, SVerticalBox)
+			SNew(SOverlay)
+
+			+ SOverlay::Slot()
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			[
+				SNew(SImage)
+				.Image(&PanelsBrush)
+			]
+
+			+ SOverlay::Slot()
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			[
+				SAssignNew(RightControlPanel, SVerticalBox)
+			]
 		]
 	];
 
@@ -169,6 +204,7 @@ UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag
 	.HAlign(HAlign_Fill)
 	.VAlign(VAlign_Top)
 	.AutoHeight()
+	.Padding(ButtonPadding)
 	[
 		Button->TakeWidget()	
 	];

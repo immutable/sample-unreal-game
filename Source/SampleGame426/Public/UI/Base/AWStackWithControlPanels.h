@@ -50,6 +50,14 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
 	TSubclassOf<UActivatableWidget> TopPanelWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
+	FSlateBrush PanelsBrush;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
+	FMargin ActivatableWidgetPadding;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
+	FMargin PanelsPadding;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
+	FMargin ButtonPadding;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float LeftPanelHorizontalWidthFill = 0.05f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float RightPanelHorizontalWidthFill = 0.05f;

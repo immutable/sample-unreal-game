@@ -17,6 +17,7 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnControlPanelButtonClicked, FGameplayTag, ButtonTag);
 	
 	void SetIcon(const FSlateBrush& InBrush);
+	void SetIconColor(const FLinearColor& InColor);
 	void SetButtonTag(FGameplayTag& InTag);
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "ControlPanel")
 	void Enable();

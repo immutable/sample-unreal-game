@@ -12,6 +12,14 @@ void UControlPanelButton::SetIcon(const FSlateBrush& InBrush)
 	}
 }
 
+void UControlPanelButton::SetIconColor(const FLinearColor& InColor)
+{
+	if (Icon)
+	{
+		Icon->SetColorAndOpacity(InColor);
+	}
+}
+
 void UControlPanelButton::SetButtonTag(FGameplayTag& InTag)
 {
 	ButtonTag = InTag;

@@ -195,6 +195,7 @@ UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag
 	if (Info)
 	{
 		Button->SetIcon(Info->Icon);
+		Button->SetIconColor(Info->ColorAndOpacity);
 		Button->SetButtonTag(ButtonTag);
 	}
 

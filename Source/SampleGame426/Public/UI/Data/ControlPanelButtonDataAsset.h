@@ -14,8 +14,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
     FSlateBrush Icon;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Display Info")
-    FSlateBrush Background;
+	UPROPERTY(EditDefaultsOnly, Category = "Display Info", meta=( sRGB="true") )
+	FLinearColor ColorAndOpacity;
 };
 
 /*

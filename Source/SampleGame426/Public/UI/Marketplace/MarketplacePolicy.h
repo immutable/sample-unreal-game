@@ -2,10 +2,12 @@
 
 #include "OpenAPISearchApi.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
+#include "Online/ImmutableQuery.h"
 
 #include "MarketplacePolicy.generated.h"
 
 
+class UCustomLocalPlayer;
 /*
  * 
  */
@@ -22,6 +24,8 @@ public:
 
 	ImmutableOpenAPI::OpenAPISearchApi* GetOpenAPISearchApi();
 	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> GetSearchStacksRequest();
+
+	ImmutableQuery* GetImmutableQuery();
 
 	void SetPageSize(int32 PageSize);
 	void SetPageCursor(TOptional<FString> PageCursor);
@@ -54,5 +58,6 @@ private:
 	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> SearchStacksRequestData;
 	TUniquePtr<ImmutableOpenAPI::OpenAPISearchApi> SearchAPI;
 	TUniquePtr<ImmutableOpenAPI::HttpRetryManager> HttpRetryManager;
-	
+	TUniquePtr<ImmutableQuery> ImmutableQueryAPI;
+
 };

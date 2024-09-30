@@ -1,7 +1,11 @@
 ﻿#include "UI/Marketplace/MarketplacePolicy.h"
 
+#include "CustomGameInstance.h"
+#include "CustomLocalPlayer.h"
 #include "OpenAPIHelpers.h"
 #include "OpenAPISearchApiOperations.h"
+#include "UIGameplayTags.h"
+#include "Dialog/DialogSubsystem.h"
 
 
 UMarketplacePolicy::UMarketplacePolicy()
@@ -20,6 +24,8 @@ void UMarketplacePolicy::PostInitProperties()
 	SearchAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
 	SearchAPI->SetHttpRetryManager(*HttpRetryManager);
 	SearchStacksRequestData->ChainName = SearchStacksChainName;
+
+	ImmutableQueryAPI = MakeUnique<ImmutableQuery>();
 }
 
 ImmutableOpenAPI::OpenAPISearchApi* UMarketplacePolicy::GetOpenAPISearchApi()
@@ -32,6 +38,11 @@ TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> UMarketplace
 	SearchStacksRequestData->ContractAddress = ContractAddress;
 	
 	return SearchStacksRequestData;
+}
+
+ImmutableQuery* UMarketplacePolicy::GetImmutableQuery()
+{
+	return ImmutableQueryAPI.Get();
 }
 
 void UMarketplacePolicy::SetPageSize(int32 PageSize)

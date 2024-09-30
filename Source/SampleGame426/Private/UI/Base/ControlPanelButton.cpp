@@ -16,7 +16,7 @@ void UControlPanelButton::SetIconColor(const FLinearColor& InColor)
 {
 	if (Icon)
 	{
-		Icon->SetColorAndOpacity(InColor);
+		Icon->SetBrushTintColor(InColor);
 	}
 }
 

@@ -19,9 +19,9 @@ public:
 	// FCustomHandleSystemMessageDelegate OnHandleSystemMessage;
 
 	/** Send a system message via OnHandleSystemMessage */
-	// UFUNCTION(BlueprintCallable, Category = CommonUser)
-	// virtual void SendSystemMessage(FGameplayTag MessageType, FText TitleText, FText BodyText);
-	
+	UFUNCTION(BlueprintCallable, Category = CommonUser)
+	static void SendSystemMessage(const UObject* WorldContextObject, FGameplayTag MessageType, FText TitleText, FText BodyText);
+
 	virtual int32 AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUserId UserId) override;
 	virtual bool RemoveLocalPlayer(ULocalPlayer* ExistingPlayer) override;
 	virtual void ReturnToMainMenu() override;

@@ -1,8 +1,8 @@
 #include "ImmutableQuery.h"
 
 #include "HttpModule.h"
-#include "JsonObjectConverter.h"
 #include "LogSampleGame.h"
+#include "OpenAPIHelpers.h"
 
 
 bool ImmutableHttpRetryManager::Tick(float DeltaTime)
@@ -62,12 +62,21 @@ void GetBalanceResponse::SetHttpResponseCode(EHttpResponseCodes::Type InHttpResp
 
 bool GetBalanceResponse::FromJson(const TSharedPtr<FJsonValue>& JsonValue)
 {
-	GetBalanceResponse Response;
+	const TSharedPtr<FJsonObject>* JsonObject;
+	if (!JsonValue->TryGetObject(JsonObject))
+	{
+		return false;
+	}
 	
-	//FJsonObjectConverter::JsonObjectStringToUStruct<GetBalanceResponse>(ResponseString, &GetBalanceResponse, 0, 0);
-	//return TryGetJsonValue(JsonValue, Content);
+	double QuantityDouble;
 
-	return true;
+	if ((*JsonObject)->TryGetNumberField(TEXT("quantity"), QuantityDouble))
+	{
+		Quantity = static_cast<float>(QuantityDouble);
+		return true;
+	}
+
+	return false;
 }
 
 void GetUnsignedFulfillOrderTransactionsResponse::SetHttpResponseCode(EHttpResponseCodes::Type InHttpResponseCode)
@@ -77,7 +86,24 @@ void GetUnsignedFulfillOrderTransactionsResponse::SetHttpResponseCode(EHttpRespo
 
 bool GetUnsignedFulfillOrderTransactionsResponse::FromJson(const TSharedPtr<FJsonValue>& JsonValue)
 {
-	return true;
+	const TSharedPtr<FJsonObject>* Object;
+	if (!JsonValue->TryGetObject(Object))
+		return false;
+
+	bool ParseSuccess = true;
+	FFulfillOrderResponse FulfillOrderResponse;
+
+	FJsonObjectConverter::JsonObjectToUStruct<FFulfillOrderResponse>(Object->ToSharedRef(), &FulfillOrderResponse, 0, 0);
+
+	//ParseSuccess &= ImmutableOpenAPI::TryGetJsonValue(*Object, TEXT("actions"), Actions);
+	// ParseSuccess &= ImmutableOpenAPI::TryGetJsonValue(*Object, TEXT("order"), Order);
+	//ParseSuccess &= ImmutableOpenAPI::TryGetJsonValue(*Object, TEXT("expiration"), Expiration);
+
+	Actions = FulfillOrderResponse.Actions;
+	Order = FulfillOrderResponse.Order;
+	Expiration = FulfillOrderResponse.Expiration;
+
+	return ParseSuccess;
 }
 
 ImmutableQuery::ImmutableQuery()

@@ -1,7 +1,9 @@
 ﻿#include "CustomLocalPlayer.h"
 
+#include "CustomGameInstance.h"
 #include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
+#include "UIGameplayTags.h"
 #include "Immutable/ImmutableDataTypes.h"
 #include "Immutable/ImmutablePassport.h"
 #include "Immutable/ImmutableSubsystem.h"
@@ -27,12 +29,6 @@ FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerControllerSet(FPlaye
 FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerLoggedIn(FPlayerLoggedInDelegate::FDelegate Delegate)
 {
 	return OnPlayerLoggedIn.Add(Delegate);
-}
-
-FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerPassportIsRunning(
-	FPlayerPassportIsRunningDelegate::FDelegate Delegate)
-{
-	return OnPlayerPassportIsRunning.Add(Delegate);
 }
 
 FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerPassportDataObtained(
@@ -66,6 +62,45 @@ void UCustomLocalPlayer::LoginPassport()
 FString UCustomLocalPlayer::GetPassportWalletAddress()
 {
 	return PassportWalletAddress;
+}
+
+float UCustomLocalPlayer::GetBalance()
+{
+	return PassportWalletBalance;
+}
+
+void UCustomLocalPlayer::UpdateBalance()
+{
+	if (!IsLocalPlayerLoggedIn)
+	{
+		return;
+	}
+
+	UGameUIPolicy* Policy = GetGameUIPolicy();
+
+	if (!Policy->GetMarketplacePolicy())
+	{
+		return;
+	}
+	
+	GetBalanceRequest Request;
+
+	Request.Address = PassportWalletAddress;
+
+	Policy->GetMarketplacePolicy()->GetImmutableQuery()->GetBalance(Request, ImmutableQuery::FGetBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
+}
+
+void UCustomLocalPlayer::OnBalanceUpdateResponse(const GetBalanceResponse& Response)
+{
+	if (!Response.IsSuccessful())
+	{
+		UCustomGameInstance::SendSystemMessage(this, FUIErrors::Undefined, FText::FromString(TEXT("Error")), FText::FromString(Response.GetResponseString()));
+		
+		return;
+	}
+
+	PassportWalletBalance = Response.Quantity;
+	OnBalanceUpdated.Broadcast(PassportWalletBalance);
 }
 
 UPrimaryGameLayout* UCustomLocalPlayer::GetRootUILayout() const
@@ -140,7 +175,9 @@ void UCustomLocalPlayer::OnPassportInitialized(FImmutablePassportResult Result)
 
 void UCustomLocalPlayer::OnPassportLoggedIn(struct FImmutablePassportResult Result)
 {
+	IsLocalPlayerLoggedIn = Result.Success;
 	OnPlayerLoggedIn.Broadcast(Result.Success);
+
 	if (!Result.Success)
 	{
 		//TODO Handle system error	

@@ -2,6 +2,14 @@
 
 #include "GameplayTagContainer.h"
 
+
+struct SAMPLEGAME426_API FUIErrors
+{
+	static FGameplayTag Undefined;
+
+	static void InitUIGameplayTags_Errors();
+};
+
 struct SAMPLEGAME426_API FUILayers
 {
 	static FGameplayTag Menu;

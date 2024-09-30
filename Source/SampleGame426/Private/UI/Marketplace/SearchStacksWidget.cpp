@@ -1,5 +1,6 @@
 ﻿#include "Marketplace/SearchStacksWidget.h"
 
+#include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "IContentBrowserSingleton.h"
@@ -59,10 +60,7 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 {
 	if (!Response.IsSuccessful())
 	{
-		if (UDialogSubsystem* DialogSubsystem = GetOwningLocalPlayer()->GetSubsystem<UDialogSubsystem>())
-		{
-			DialogSubsystem->ShowError(UDialogSubsystem::CreateErrorDescriptor(FText::FromString("Error"), FText::FromString(Response.GetResponseString())));
-		}
+		UCustomGameInstance::SendSystemMessage(this, FUIErrors::Undefined, FText::FromString(TEXT("Error")), FText::FromString(Response.GetResponseString()));
 		
 		return;
 	}

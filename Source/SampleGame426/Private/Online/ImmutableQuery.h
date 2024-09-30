@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "HttpRetrySystem.h"
+#include "ImmutableQueryDataTypes.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 
@@ -81,9 +82,7 @@ public:
 	virtual void SetupHttpRequest(const FHttpRequestRef& HttpRequest) const override final;
 	virtual FString ComputePath() const override final;
 
-	/* The name of chain */
 	FString Address;
-	// OpenAPIBackfillRequest OpenAPIBackfillRequest;
 };
 
 class SAMPLEGAME426_API GetUnsignedFulfillOrderTransactionsRequest : public ImmutableRequest
@@ -114,15 +113,16 @@ public:
 	virtual void SetHttpResponseCode(EHttpResponseCodes::Type InHttpResponseCode) override final;
 	virtual bool FromJson(const TSharedPtr<FJsonValue>& JsonValue) override final;
 
-	// TArray<FAction> Actions;
+	TArray<FAction> Actions;
 
 	FString Expiration;
 
-	// FOrder Order;
+	FOrder Order;
 };
 
 class SAMPLEGAME426_API ImmutableQuery
 {
+public:
 	ImmutableQuery();
 	~ImmutableQuery();
 

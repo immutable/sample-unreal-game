@@ -18,9 +18,13 @@ class USearchStacksListing_ListingsWidget : public UUserWidget
 
 public:
 	void AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing);
+	void Buy();
 
 protected:
 	void OnItemSelection(bool IsSelected, USearchStacksListing_ListingItemWidget* ListingItemWidget);
+	
+private:
+	void OnGetUnsignedFulfillOrderTransaction(const class GetUnsignedFulfillOrderTransactionsResponse& Response);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Marketplace")

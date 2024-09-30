@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Engine/LocalPlayer.h"
+#include "Online/ImmutableQuery.h"
 
 #include "CustomLocalPlayer.generated.h"
 
@@ -19,10 +20,12 @@ public:
 	DECLARE_MULTICAST_DELEGATE(FPlayerPassportIsRunningDelegate);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerLoggedInDelegate, bool IsLoggedIn);
 	DECLARE_MULTICAST_DELEGATE(FPlayerPassportDataObtained);
+	
+	/* Immutalbe related */
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBalanceUpdatedDelegate, float, TokenBalance);
 
 	FDelegateHandle CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate);
 	FDelegateHandle CallAndRegister_OnPlayerLoggedIn(FPlayerLoggedInDelegate::FDelegate Delegate);
-	FDelegateHandle CallAndRegister_OnPlayerPassportIsRunning(FPlayerPassportIsRunningDelegate::FDelegate Delegate);
 	FDelegateHandle CallAndRegister_OnPlayerPassportDataObtained(FPlayerPassportDataObtained::FDelegate Delegate);
 
 	/* ULocalPlayer Interface */
@@ -32,17 +35,22 @@ public:
 	class UPrimaryGameLayout* GetRootUILayout() const;
 	class UGameUIPolicy* GetGameUIPolicy() const;
 
-	UFUNCTION(BlueprintCallable)
+	/* Immutalbe related */
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void LoginPassport();
-
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	FString GetPassportWalletAddress();
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	float GetBalance();
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	void UpdateBalance();
 
 private:
 	void InitializePassport();
 	void OnPassportIsRunning(TWeakObjectPtr<class UImtblJSConnector> JSConnector);
 	void OnPassportInitialized(struct FImmutablePassportResult Result);
 	void OnPassportLoggedIn(struct FImmutablePassportResult Result);
+	void OnBalanceUpdateResponse(const GetBalanceResponse& Response);
 
 	void CollectPassportData();
 	bool CheckAllPassportDataObtained();
@@ -51,6 +59,9 @@ private:
 public:
 	/** Called when the Immutable passport functionality is ready to be used */
 	FPlayerPassportIsRunningDelegate OnPlayerPassportIsRunning;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnBalanceUpdatedDelegate OnBalanceUpdated;
 
 	friend class ACustomPlayerController;
 
@@ -66,6 +77,8 @@ protected:
 private:
 	TWeakObjectPtr<class UImmutablePassport> Passport;
 
+	bool IsLocalPlayerLoggedIn = false;
 	FString PassportWalletAddress;
+	float PassportWalletBalance = 0.0f;
 
 };

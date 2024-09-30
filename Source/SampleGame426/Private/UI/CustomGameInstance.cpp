@@ -3,23 +3,24 @@
 #include "CustomLocalPlayer.h"
 #include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
+#include "Dialog/DialogSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 
-// void UCustomGameInstance::SendSystemMessage(FGameplayTag MessageType, FText TitleText, FText BodyText)
-// {
-// 	OnHandleSystemMessage.Broadcast(MessageType, TitleText, BodyText);
-//
-// 	UE_LOG(LogSampleGame, Log, TEXT("HandleSystemMessage: Message  %s, %s, %s"), *MessageType.ToString(), *TitleText.ToString(), *BodyText.ToString());
-// 	
-// 	ULocalPlayer* FirstPlayer = GetFirstGamePlayer();
-// 	// Forward severe ones to the error dialog for the first player
-// 	if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
-// 	{
-// 		if (UCommonMessagingSubsystem* Messaging = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
-// 		{
-// 			Messaging->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
-// 		}
-// 	}
-// }
+void UCustomGameInstance::SendSystemMessage(const UObject* WorldContextObject, FGameplayTag MessageType, FText TitleText, FText BodyText)
+{
+	auto GameInstance = Cast<UCustomGameInstance>(UGameplayStatics::GetGameInstance(WorldContextObject));
+
+	if (!GameInstance)
+	{
+		UE_LOG(LogSampleGame, Error, TEXT("Failed to SendSystemMessage for %s"), *WorldContextObject->GetName());
+		return;
+	}
+	
+	if (UDialogSubsystem* DialogSubsystem = GameInstance->GetFirstGamePlayer()->GetSubsystem<UDialogSubsystem>())
+	{
+		DialogSubsystem->ShowError(UDialogSubsystem::CreateErrorDescriptor(TitleText, BodyText));
+	}
+}
 
 int32 UCustomGameInstance::AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUserId UserId)
 {

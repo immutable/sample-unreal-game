@@ -1,5 +1,8 @@
 ﻿#include "UIGameplayTags.h"
 
+
+FGameplayTag FUIErrors::Undefined;
+
 FGameplayTag FUILayers::Menu;
 FGameplayTag FUILayers::Modal;
 
@@ -17,6 +20,13 @@ FGameplayTag FUIDialogTypes::Confirmation;
 inline FGameplayTag RequestGameplayTag(const FString& Prefix, const FString& Name)
 {
 	return FGameplayTag::RequestGameplayTag(*(Prefix + Name));
+}
+
+void FUIErrors::InitUIGameplayTags_Errors()
+{
+	FString Prefix = TEXT("UI.Errors.");
+
+	FUIErrors::Undefined = RequestGameplayTag(Prefix, TEXT("Undefined"));
 }
 
 void FUILayers::InitUIGameplayTags_Layers()

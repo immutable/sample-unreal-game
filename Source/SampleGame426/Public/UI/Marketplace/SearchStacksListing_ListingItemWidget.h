@@ -15,9 +15,9 @@ class SAMPLEGAME426_API USearchStacksListing_ListingItemWidget : public UUserWid
 public:
 	DECLARE_DELEGATE_TwoParams(FOnListingItemSelection, bool /* IsSelected */, USearchStacksListing_ListingItemWidget* /* ListingItemWidget */)
 	
-	void RegisterOnSelection(FOnListingItemSelection OnListingItemSelection);
+	void RegisterOnSelection(const FOnListingItemSelection& SelectionDelegate);
 	
-	void SetListingId(const FString& ListingId);
+	void SetListingId(const FString& Id);
     const FString& GetListingId() const;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)

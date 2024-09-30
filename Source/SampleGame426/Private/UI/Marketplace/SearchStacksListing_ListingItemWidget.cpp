@@ -1,14 +1,14 @@
 #include "Marketplace/SearchStacksListing_ListingItemWidget.h"
 
 
-void USearchStacksListing_ListingItemWidget::RegisterOnSelection(FOnListingItemSelection OnListingItemSelection)
+void USearchStacksListing_ListingItemWidget::RegisterOnSelection(const FOnListingItemSelection& SelectionDelegate)
 {
-	this->OnListingItemSelection = OnListingItemSelection; 
+	this->OnListingItemSelection = SelectionDelegate; 
 }
 
-void USearchStacksListing_ListingItemWidget::SetListingId(const FString& ListingId)
+void USearchStacksListing_ListingItemWidget::SetListingId(const FString& Id)
 {
-	this->ListingId = ListingId;
+	this->ListingId = Id;
 }
 
 const FString& USearchStacksListing_ListingItemWidget::GetListingId() const

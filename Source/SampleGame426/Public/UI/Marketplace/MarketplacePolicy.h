@@ -3,6 +3,7 @@
 #include "OpenAPISearchApi.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
 #include "Online/ImmutableQuery.h"
+#include "NFT/NFT_TableRowBase.h"
 
 #include "MarketplacePolicy.generated.h"
 
@@ -22,6 +23,10 @@ public:
 	virtual void PostInitProperties() override;
 	/* UObject Interface */
 
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	class UDataTable* GetNFTDatatable();
+	FNFT_TableRowBase* FindNFTTextureRow(FName RowName);
+
 	ImmutableOpenAPI::OpenAPISearchApi* GetOpenAPISearchApi();
 	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> GetSearchStacksRequest();
 
@@ -35,6 +40,10 @@ public:
 	void SetOnlyIncludeOwnerListings(bool OnlyIncludeOwnerListings);
 	
 protected:
+	// must be global
+	UPROPERTY(EditAnywhere, Category = "Game", meta = (RequiredAssetDataTags = "RowStructure=NFT_TableRowBase"))
+	UDataTable* NFT_Datatable;
+	
 	// Online values:
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	FString URL;

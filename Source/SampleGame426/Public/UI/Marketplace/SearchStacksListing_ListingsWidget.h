@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "SearchStacksListing_ListingItemWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "SearchStacksListing_ListingItemWidget.h"
 
 #include "SearchStacksListing_ListingsWidget.generated.h"
 
@@ -18,14 +18,11 @@ class USearchStacksListing_ListingsWidget : public UUserWidget
 
 public:
 	void AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing);
-	void Buy();
+	USearchStacksListing_ListingItemWidget* GetSelectedItemWidget();
 
 protected:
 	void OnItemSelection(bool IsSelected, USearchStacksListing_ListingItemWidget* ListingItemWidget);
 	
-private:
-	void OnGetUnsignedFulfillOrderTransaction(const class GetUnsignedFulfillOrderTransactionsResponse& Response);
-
 protected:
 	UPROPERTY(EditAnywhere, Category = "Marketplace")
 	TSoftClassPtr<USearchStacksListing_ListingItemWidget> ItemWidgetClass;

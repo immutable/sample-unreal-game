@@ -7,18 +7,17 @@
 #include "UIGameplayTags.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
-#include "Engine/DataTable.h"
 #include "Math/BigInt.h"
-#include "NFT/NFT_TableRowBase.h"
 #include "Marketplace/SearchStacksListingWidget.h"
 #include "Marketplace/MarketplaceUtility.h"
+#include "NFT/NFT_TableRowBase.h"
 
 
 void UMarketplaceItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 {
 	StackBundle = MakeShareable(new ImmutableOpenAPI::OpenAPIStackBundle(static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data)));
-
-	if (!StackBundle.IsValid() || !NFT_DataSet)
+	
+	if (!StackBundle.IsValid())
 	{
 		return;
 	}
@@ -32,17 +31,20 @@ void UMarketplaceItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 		return;
 	}
 
-	FName RowName = FName(*Name->Replace(TEXT(" "),TEXT("_")));
-	auto DatatableRow = FindTextureRow(RowName);
-		
-	if (!DatatableRow)
+	if (UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy())
 	{
-		UE_LOG(LogSampleGame, Error, TEXT("MarketplaceItemWidget - No data row was not found in %s"), *(NFT_DataSet->GetName()));
-		return;
-	}
+		FName RowName = FName(*Name->Replace(TEXT(" "),TEXT("_")));
+		auto DatatableRow = Policy->FindNFTTextureRow(RowName);
+		
+		if (!DatatableRow)
+		{
+			UE_LOG(LogSampleGame, Error, TEXT("MarketplaceItemWidget - No data row %s was not found"), *RowName.ToString());
+			return;
+		}
 
-	SetTextureNFT(DatatableRow->Thumbnail);
-	SetName(DatatableRow->Name);
+		SetTextureNFT(DatatableRow->Thumbnail);
+		SetName(DatatableRow->Name);
+	}
 
 	int32 NumberOfListing = StackBundle->Listings.Num();
 	
@@ -123,16 +125,4 @@ void UMarketplaceItemWidget::SetListingCount(int32 Count)
 	{
 		NFTListingCount->SetVisibility(ESlateVisibility::Hidden);
 	}
-}
-
-FNFT_TableRowBase* UMarketplaceItemWidget::FindTextureRow(FName RowName)
-{
-	if (NFT_DataSet)
-	{
-		FString ContextString;
-
-		return NFT_DataSet->FindRow<FNFT_TableRowBase>(RowName, ContextString, true);
-	}
-	
-	return nullptr;
 }

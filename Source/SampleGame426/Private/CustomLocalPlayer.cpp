@@ -59,6 +59,11 @@ void UCustomLocalPlayer::LoginPassport()
 	OnPlayerLoggedIn.Broadcast(true);
 }
 
+bool UCustomLocalPlayer::IsPassportLoggedIn()
+{
+	return IsLocalPlayerLoggedIn;
+}
+
 FString UCustomLocalPlayer::GetPassportWalletAddress()
 {
 	return PassportWalletAddress;

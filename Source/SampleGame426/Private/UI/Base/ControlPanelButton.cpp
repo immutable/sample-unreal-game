@@ -28,11 +28,13 @@ void UControlPanelButton::SetButtonTag(FGameplayTag& InTag)
 void UControlPanelButton::Enable()
 {
 	ButtonHitbox->SetIsEnabled(true);
+	BP_OnActivationStatusChanged(true);
 }
 
 void UControlPanelButton::Disable()
 {
 	ButtonHitbox->SetIsEnabled(false);
+	BP_OnActivationStatusChanged(false);
 }
 
 void UControlPanelButton::Hide()

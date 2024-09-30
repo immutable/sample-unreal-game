@@ -2,7 +2,6 @@
 
 #include "Base/ItemWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
-#include "NFT/NFT_TableRowBase.h"
 
 #include "MarketplaceItemWidget.generated.h"
 
@@ -36,9 +35,6 @@ protected:
 	void SetPrice(const ImmutableOpenAPI::OpenAPIPriceDetails& PriceDetails);
 	void SetPriceTokenName(const FString& Name);
 
-private:
-	FNFT_TableRowBase* FindTextureRow(FName RowName);
-
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Marketplace", meta=(BindWidget))
 	class UTextBlock* NFTName = nullptr;
@@ -52,8 +48,6 @@ protected:
 	class UTextBlock* NFTPriceTokenName  = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Marketplace")
 	TSoftClassPtr<class USearchStacksListingWidget> MarketplaceItemFullWidgetClass;
-	UPROPERTY(EditAnywhere, Category = "Marketplace", meta = (RequiredAssetDataTags = "RowStructure=NFT_TableRowBase"))
-	class UDataTable* NFT_DataSet;
 
 private:
 	TSharedPtr<ImmutableOpenAPI::OpenAPIStackBundle> StackBundle;

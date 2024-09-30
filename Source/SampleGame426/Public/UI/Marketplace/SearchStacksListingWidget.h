@@ -17,6 +17,9 @@ class SAMPLEGAME426_API USearchStacksListingWidget : public UActivatableWidgetWi
 public:
 	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
 
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	void FulfillOrder();
+
 protected:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
 	void AddDescriptionRecord(const FString& Name, const FString& Value);
@@ -25,10 +28,13 @@ protected:
 	void AddMetadataAttribute(const FString& Name, const FString& Value);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
-	void SetThumbnail(const FString& Name);
+	void SetThumbnail(UTexture2D* Thumbnail);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
 	void SetName(const FString& Name);
+
+private:
+	void OnGetUnsignedFulfillOrderTransaction(const class GetUnsignedFulfillOrderTransactionsResponse& Response);
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))

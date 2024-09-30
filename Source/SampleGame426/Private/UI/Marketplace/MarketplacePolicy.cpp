@@ -1,11 +1,10 @@
 ﻿#include "UI/Marketplace/MarketplacePolicy.h"
 
-#include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "OpenAPIHelpers.h"
 #include "OpenAPISearchApiOperations.h"
-#include "UIGameplayTags.h"
 #include "Dialog/DialogSubsystem.h"
+#include "Engine/DataTable.h"
 
 
 UMarketplacePolicy::UMarketplacePolicy()
@@ -26,6 +25,11 @@ void UMarketplacePolicy::PostInitProperties()
 	SearchStacksRequestData->ChainName = SearchStacksChainName;
 
 	ImmutableQueryAPI = MakeUnique<ImmutableQuery>();
+}
+
+UDataTable* UMarketplacePolicy::GetNFTDatatable()
+{
+	return NFT_Datatable;
 }
 
 ImmutableOpenAPI::OpenAPISearchApi* UMarketplacePolicy::GetOpenAPISearchApi()
@@ -117,4 +121,16 @@ void UMarketplacePolicy::SetTraits(const TArray<FNFTMetadataAttribute_TraitType>
 void UMarketplacePolicy::SetOnlyIncludeOwnerListings(bool OnlyIncludeOwnerListings)
 {
 	SearchStacksRequestData->OnlyIncludeOwnerListings = OnlyIncludeOwnerListings;
+}
+
+FNFT_TableRowBase* UMarketplacePolicy::FindNFTTextureRow(FName RowName)
+{
+	if (NFT_Datatable)
+	{
+		FString ContextString;
+
+		return NFT_Datatable->FindRow<FNFT_TableRowBase>(RowName, ContextString, true);
+	}
+	
+	return nullptr;
 }

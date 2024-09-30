@@ -55,7 +55,8 @@ bool UControlPanelButton::Initialize()
 	{
 		ButtonTag = FGameplayTag::RequestGameplayTag(TEXT("UI.ControlPanel.Button.Empty"));
 		ButtonHitbox->OnClicked.AddUniqueDynamic(this, &UControlPanelButton::HandleButtonClicked);
-		Hide();
+		Show();
+		Disable();
 	}
 	
 	return IsInitialized;

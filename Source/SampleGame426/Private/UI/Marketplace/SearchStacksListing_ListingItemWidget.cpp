@@ -1,9 +1,21 @@
 #include "Marketplace/SearchStacksListing_ListingItemWidget.h"
 
+#include "Components/Button.h"
+
+
+void USearchStacksListing_ListingItemWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	if (SelectButton)
+	{
+		SelectButton->OnClicked.AddUniqueDynamic(this, &USearchStacksListing_ListingItemWidget::OnSelectButtonClicked);
+	}
+}
 
 void USearchStacksListing_ListingItemWidget::RegisterOnSelection(const FOnListingItemSelection& SelectionDelegate)
 {
-	this->OnListingItemSelection = SelectionDelegate; 
+	OnListingItemSelection = SelectionDelegate; 
 }
 
 void USearchStacksListing_ListingItemWidget::SetListingId(const FString& Id)
@@ -16,14 +28,9 @@ const FString& USearchStacksListing_ListingItemWidget::GetListingId() const
 	return ListingId;
 }
 
-void USearchStacksListing_ListingItemWidget::Select()
+void USearchStacksListing_ListingItemWidget::OnSelectButtonClicked()
 {
-	IsSelected = true;
-	OnListingItemSelection.ExecuteIfBound(IsSelected, this);
-}
-
-void USearchStacksListing_ListingItemWidget::Deselect()
-{
-	IsSelected = false;
-	OnListingItemSelection.ExecuteIfBound(IsSelected, this);
+	IsListingItemSelected = !IsListingItemSelected;
+	OnListingItemSelection.ExecuteIfBound(IsListingItemSelected, this);
+	BP_OnSelectButtonClick(IsListingItemSelected);
 }

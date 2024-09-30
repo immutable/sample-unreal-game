@@ -17,13 +17,17 @@ class USearchStacksListing_ListingsWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	DECLARE_DELEGATE_OneParam(FOnSelectionStatusChange, bool /* IsSelected */)
+	
 	void AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing);
 	USearchStacksListing_ListingItemWidget* GetSelectedItemWidget();
+	void RegisterOnSelectionStatusChange(FOnSelectionStatusChange InDelegate);
 
 protected:
 	void OnItemSelection(bool IsSelected, USearchStacksListing_ListingItemWidget* ListingItemWidget);
 	
 protected:
+	FOnSelectionStatusChange OnSelectionStatusChangeDelegate;
 	UPROPERTY(EditAnywhere, Category = "Marketplace")
 	TSoftClassPtr<USearchStacksListing_ListingItemWidget> ItemWidgetClass;
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))

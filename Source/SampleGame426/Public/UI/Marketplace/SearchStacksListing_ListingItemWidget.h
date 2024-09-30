@@ -13,6 +13,8 @@ class SAMPLEGAME426_API USearchStacksListing_ListingItemWidget : public UUserWid
 	GENERATED_BODY()
 
 public:
+	virtual void NativeOnInitialized() override;
+	
 	DECLARE_DELEGATE_TwoParams(FOnListingItemSelection, bool /* IsSelected */, USearchStacksListing_ListingItemWidget* /* ListingItemWidget */)
 	
 	void RegisterOnSelection(const FOnListingItemSelection& SelectionDelegate);
@@ -23,14 +25,20 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
 	void SetData(const FString& TokenID, const FString& Amount, const FString& FeeProtocol, const FString& FeeRoyalty, const FString& Price, const FString& Currency, bool IsToBuy = true);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
-	void Select();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
+	void BP_OnSelectButtonClick(bool IsSelected);
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
-	void Deselect();
+private:
+	UFUNCTION()
+	void OnSelectButtonClicked();
+
+protected:
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	class UButton* SelectButton = nullptr;
+	UPROPERTY(BlueprintReadOnly)
+	bool IsListingItemSelected = false;
 
 private:
 	FString ListingId;
-	bool IsSelected;
 	FOnListingItemSelection OnListingItemSelection;
 };

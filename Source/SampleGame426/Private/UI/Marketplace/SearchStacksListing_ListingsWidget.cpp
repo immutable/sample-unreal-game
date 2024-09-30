@@ -6,6 +6,7 @@
 #include "Components/ScrollBox.h"
 #include "Marketplace/MarketplaceUtility.h"
 
+
 void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing)
 {
 	if (ScrollBoxListings)
@@ -54,8 +55,15 @@ USearchStacksListing_ListingItemWidget* USearchStacksListing_ListingsWidget::Get
 	return SelectedItemWidget;
 }
 
+void USearchStacksListing_ListingsWidget::RegisterOnSelectionStatusChange(FOnSelectionStatusChange InDelegate)
+{
+	OnSelectionStatusChangeDelegate = InDelegate;
+}
+
 void USearchStacksListing_ListingsWidget::OnItemSelection(bool IsSelected, USearchStacksListing_ListingItemWidget* ListingItemWidget)
 {
+	OnSelectionStatusChangeDelegate.ExecuteIfBound(IsSelected);
+	
 	if (SelectedItemWidget == ListingItemWidget && !IsSelected)
 	{
 		SelectedItemWidget = nullptr;
@@ -64,7 +72,6 @@ void USearchStacksListing_ListingsWidget::OnItemSelection(bool IsSelected, USear
 	
 	if (SelectedItemWidget != ListingItemWidget && IsSelected)
 	{
-		SelectedItemWidget->Deselect();
 		SelectedItemWidget = ListingItemWidget;
 	}
 }

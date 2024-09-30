@@ -15,10 +15,9 @@ class SAMPLEGAME426_API USearchStacksListingWidget : public UActivatableWidgetWi
 	GENERATED_BODY()
 
 public:
+	virtual void NativeOnInitialized() override;
+	virtual void SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons) override;
 	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
-
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
-	void FulfillOrder();
 
 protected:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
@@ -34,10 +33,14 @@ protected:
 	void SetName(const FString& Name);
 
 private:
+	void OnSelectionStatusChange(bool IsAnyItemSelected);
 	void OnGetUnsignedFulfillOrderTransaction(const class GetUnsignedFulfillOrderTransactionsResponse& Response);
+	UFUNCTION()
+	void OnBuyButtonClicked(FGameplayTag ButtonTag);
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class USearchStacksListing_ListingsWidget* Listings = nullptr;
-	
+
+	UControlPanelButton* BuyButton = nullptr;
 };

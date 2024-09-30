@@ -15,6 +15,26 @@
 #define MP_DESCRIPTION_UPDATED_AT TEXT("Updated at")
 
 
+void USearchStacksListingWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	
+	if (Listings)
+	{
+		Listings->RegisterOnSelectionStatusChange(USearchStacksListing_ListingsWidget::FOnSelectionStatusChange::CreateUObject(this, &USearchStacksListingWidget::OnSelectionStatusChange));		
+	}
+}
+
+void USearchStacksListingWidget::SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons)
+{
+	Super::SetupControlButtons(Buttons);
+
+	if (Buttons.RemoveAndCopyValue(FUIControlPanelButtons::Buy, BuyButton))
+	{
+		BuyButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksListingWidget::OnBuyButtonClicked);
+	}
+}
+
 void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 {
 	auto StackBundle = static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data);
@@ -65,7 +85,15 @@ void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 	}
 }
 
-void USearchStacksListingWidget::FulfillOrder()
+void USearchStacksListingWidget::OnSelectionStatusChange(bool IsAnyItemSelected)
+{
+	if (BuyButton)
+	{
+		IsAnyItemSelected ? BuyButton->Enable() : BuyButton->Disable();
+	}
+}
+
+void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)
 {
 	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
 	UMarketplacePolicy* Policy = LocalPlayer->GetGameUIPolicy()->GetMarketplacePolicy();

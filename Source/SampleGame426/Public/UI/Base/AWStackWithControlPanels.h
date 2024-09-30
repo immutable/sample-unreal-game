@@ -51,6 +51,8 @@ protected:
 	TSubclassOf<UActivatableWidget> TopPanelWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	FSlateBrush PanelsBrush;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
+	FSlateBrush ActivatableWidgetBackgroundBrush;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
 	FMargin ActivatableWidgetPadding;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")

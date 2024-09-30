@@ -62,7 +62,22 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 		.FillWidth(CenterPanelHorizontalWidthFill)
 		.Padding(ActivatableWidgetPadding)
 		[
-			Original
+			SNew(SOverlay)
+
+			+ SOverlay::Slot()
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			[
+				SNew(SImage)
+				.Image(&ActivatableWidgetBackgroundBrush)
+			]
+
+			+ SOverlay::Slot()
+			.HAlign(HAlign_Fill)
+			.VAlign(VAlign_Fill)
+			[
+				Original
+			]
 		]
 
 		+ SHorizontalBox::Slot()

@@ -2,7 +2,7 @@
 
 #include "OpenAPIListing.h"
 #include "OpenAPIStackBundle.h"
-#include "Marketplace/MarketplaceListingsWidget.h"
+#include "Marketplace/SearchStacksListing_ListingsWidget.h"
 
 #define MP_DESCRIPTION_DESCRIPTION TEXT("Description")
 #define MP_DESCRIPTION_CREATED_AT TEXT("Created at")
@@ -33,7 +33,6 @@ void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 			AddMetadataAttribute(Attribute.TraitType, Attribute.Value);
 		}
 	}
-	
 
 	for (const auto& Listing : StackBundle.Listings)
 	{

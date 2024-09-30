@@ -32,6 +32,6 @@ protected:
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
-	class UMarketplaceListingsWidget* Listings = nullptr;
+	class USearchStacksListing_ListingsWidget* Listings = nullptr;
 	
 };

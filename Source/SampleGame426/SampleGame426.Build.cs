@@ -14,7 +14,8 @@ public class SampleGame426 : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore",
-			"ImmutableOpenAPI",
+			"ImmutableOpenAPI", 
+			"ImmutableTsSdkApi",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 

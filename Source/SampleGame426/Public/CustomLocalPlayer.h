@@ -1,7 +1,7 @@
 ﻿#pragma once
 
+#include "ImmutableTsSdkApi_DefaultApi.h"
 #include "Engine/LocalPlayer.h"
-#include "Online/ImmutableQuery.h"
 #include "Immutable/ImmutableDataTypes.h"
 #include "Immutable/ImmutablePassport.h"
 
@@ -56,7 +56,7 @@ private:
 	void OnPassportInitialized(FImmutablePassportResult Result);
 	void OnPassportLoggedIn(FImmutablePassportResult Result);
 	void OnPassportLoggedOut(FImmutablePassportResult Result);
-	void OnBalanceUpdateResponse(const GetBalanceResponse& Response);
+	void OnBalanceUpdateResponse(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkTokenBalanceGetResponse& Response);
 
 	void CollectPassportData();
 	bool CheckAllPassportDataObtained();

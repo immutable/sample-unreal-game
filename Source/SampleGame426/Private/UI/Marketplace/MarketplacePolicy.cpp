@@ -24,8 +24,8 @@ void UMarketplacePolicy::PostInitProperties()
 	SearchAPI->SetHttpRetryManager(*HttpRetryManager);
 	SearchStacksRequestData->ChainName = SearchStacksChainName;
 
-	ImmutableQueryAPI = MakeUnique<ImmutableQuery>();
-	ImmutableQueryAPI->SetURL(ImmutableLocalAPIURL);
+	TsSdkAPI = MakeUnique<ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi>();
+	TsSdkAPI->SetURL(TsSdkAPIURL);
 }
 
 UDataTable* UMarketplacePolicy::GetNFTDatatable()
@@ -40,14 +40,19 @@ ImmutableOpenAPI::OpenAPISearchApi* UMarketplacePolicy::GetOpenAPISearchApi()
 
 TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> UMarketplacePolicy::GetSearchStacksRequest()
 {
-	SearchStacksRequestData->ContractAddress = ContractAddress;
+	SearchStacksRequestData->ContractAddress = StackContractAddress;
 	
 	return SearchStacksRequestData;
 }
 
-ImmutableQuery* UMarketplacePolicy::GetImmutableQuery()
+ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi* UMarketplacePolicy::GetTsSdkAPI()
 {
-	return ImmutableQueryAPI.Get();
+	return TsSdkAPI.Get();
+}
+
+FString UMarketplacePolicy::GetBalanceContractAddress() const
+{
+	return BalanceContractAddress;
 }
 
 void UMarketplacePolicy::SetPageSize(int32 PageSize)
@@ -83,7 +88,6 @@ void UMarketplacePolicy::SetKeyword(const FString& Keyword)
 	{
 		SearchStacksRequestData->Keyword.Reset();
 	}
-	
 }
 
 void UMarketplacePolicy::SetTraits(const TArray<FNFTMetadataAttribute_TraitType>& Traits)

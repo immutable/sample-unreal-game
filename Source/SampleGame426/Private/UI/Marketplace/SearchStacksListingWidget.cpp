@@ -3,6 +3,8 @@
 #include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
+#include "ImmutableTsSdkApi_DefaultApiOperations.h"
+#include "ImmutableTsSdkApi_V1TsSdkOrderbookFulfillOrderPostRequest.h"
 #include "LogSampleGame.h"
 #include "OpenAPIListing.h"
 #include "OpenAPIStackBundle.h"
@@ -105,16 +107,19 @@ void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)
 	
 	if(Listings->GetSelectedItemWidget())
 	{
-		GetUnsignedFulfillOrderTransactionsRequest Request;
+		ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookFulfillOrderPostRequest RequestData;
+		ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookFulfillOrderPostRequest Request;
 
-		Request.ListingId = Listings->GetSelectedItemWidget()->GetListingId();
-		Request.TakerAddress = LocalPlayer->GetPassportWalletAddress();
+		RequestData.ListingId = Listings->GetSelectedItemWidget()->GetListingId();
+		RequestData.TakerAddress = LocalPlayer->GetPassportWalletAddress();
+		Request.ImmutableTsSdkApiV1TsSdkOrderbookFulfillOrderPostRequest = RequestData;
 		
-		Policy->GetImmutableQuery()->GetUnsignedFulfillOrderTransactions(Request, ImmutableQuery::FGetUnsignedFulfillOrderTransactionsDelegate::CreateUObject(this, &USearchStacksListingWidget::OnGetUnsignedFulfillOrderTransaction));
+		
+		Policy->GetTsSdkAPI()->V1TsSdkOrderbookFulfillOrderPost(Request, ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::FV1TsSdkOrderbookFulfillOrderPostDelegate::CreateUObject(this, &USearchStacksListingWidget::OnOrderbookFulfillOrder));
 	}
 }
 
-void USearchStacksListingWidget::OnGetUnsignedFulfillOrderTransaction(const GetUnsignedFulfillOrderTransactionsResponse& Response)
+void USearchStacksListingWidget::OnOrderbookFulfillOrder(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookFulfillOrderPostResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -123,11 +128,23 @@ void USearchStacksListingWidget::OnGetUnsignedFulfillOrderTransaction(const GetU
 		return;
 	}
 
-	UE_LOG(LogSampleGame, Log, TEXT("GetUnsignedFulfillOrderTransaction Expiration: %s"), *Response.Expiration);
-
-	for (int32 i = 0; i < Response.Actions.Num(); i++)
+	if (Response.Content.Expiration.IsSet())
 	{
-		UE_LOG(LogSampleGame, Log, TEXT("GetUnsignedFulfillOrderTransaction Actions: %s"), *Response.Actions[i].ToString());
+		UE_LOG(LogSampleGame, Log, TEXT("GetUnsignedFulfillOrderTransaction Expiration: %s"), *Response.Content.Expiration.GetValue());	
+	}
+
+	if (Response.Content.Actions.IsSet())
+	{
+		auto Actions = Response.Content.Actions.GetValue();
+		for (int32 i = 0; i < Actions.Num(); i++)
+		{
+			if (Actions[i].Purpose.IsSet())
+			{
+				auto Purpose = Actions[i].Purpose.GetValue();
+				
+				UE_LOG(LogSampleGame, Log, TEXT("GetUnsignedFulfillOrderTransaction Actions: %s"), *Purpose.EnumToString(Purpose.Value));	
+			}
+		}
 	}
 }
 

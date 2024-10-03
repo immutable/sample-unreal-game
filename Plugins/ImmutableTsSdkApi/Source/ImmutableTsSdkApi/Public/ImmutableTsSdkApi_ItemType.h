@@ -29,6 +29,20 @@ public:
 	bool FromJson(const TSharedPtr<FJsonValue>& JsonValue) final;
 	void WriteJson(JsonWriter& Writer) const final;
 
+	enum class Values
+	{
+		_0,
+		_1,
+		_2,
+		_3,
+		_4,
+		_5,
+	};
+
+	static FString EnumToString(const Values& EnumValue);
+	static bool EnumFromString(const FString& EnumAsString, Values& EnumValue);
+
+
 };
 
 }

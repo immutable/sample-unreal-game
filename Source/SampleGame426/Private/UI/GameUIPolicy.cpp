@@ -5,6 +5,7 @@
 #include "LogSampleGame.h"
 #include "UIGameplayTags.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Interfaces/IPassportListnerInterface.h"
 
 
 /* Static */ UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)

@@ -3,9 +3,11 @@
 #include "CustomGameInstance.h"
 #include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
+#include "ImmutableTsSdkApi_DefaultApiOperations.h"
 #include "UIGameplayTags.h"
 #include "Immutable/ImmutableSubsystem.h"
 #include "Settings/SampleGameSettings.h"
+
 
 UCustomLocalPlayer::UCustomLocalPlayer()
 	: Super(FObjectInitializer::Get())
@@ -91,21 +93,22 @@ void UCustomLocalPlayer::UpdateBalance()
 		return;
 	}
 
-	UGameUIPolicy* Policy = GetGameUIPolicy();
+	UMarketplacePolicy* MarketplacePolicy = GetGameUIPolicy()->GetMarketplacePolicy();
 
-	if (!Policy->GetMarketplacePolicy())
+	if (!MarketplacePolicy)
 	{
 		return;
 	}
-	
-	GetBalanceRequest Request;
 
-	Request.Address = PassportWalletAddress;
+	ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkTokenBalanceGetRequest Request;
 
-	Policy->GetMarketplacePolicy()->GetImmutableQuery()->GetBalance(Request, ImmutableQuery::FGetBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
+	Request.WalletAddress = PassportWalletAddress;
+	Request.ContractAddress = MarketplacePolicy->GetBalanceContractAddress();
+
+	MarketplacePolicy->GetTsSdkAPI()->V1TsSdkTokenBalanceGet(Request, ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::FV1TsSdkTokenBalanceGetDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
 }
 
-void UCustomLocalPlayer::OnBalanceUpdateResponse(const GetBalanceResponse& Response)
+void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkTokenBalanceGetResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -114,7 +117,7 @@ void UCustomLocalPlayer::OnBalanceUpdateResponse(const GetBalanceResponse& Respo
 		return;
 	}
 
-	PassportWalletBalance = Response.Quantity;
+	PassportWalletBalance = FCString::Atof(*Response.Content.Quantity);
 	OnBalanceUpdated.Broadcast(PassportWalletBalance);
 }
 

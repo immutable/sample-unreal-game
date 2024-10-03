@@ -1,8 +1,8 @@
 ﻿#pragma once
 
+#include "ImmutableTsSdkApi_DefaultApi.h"
 #include "OpenAPISearchApi.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
-#include "Online/ImmutableQuery.h"
 #include "NFT/NFT_TableRowBase.h"
 
 #include "MarketplacePolicy.generated.h"
@@ -29,8 +29,9 @@ public:
 
 	ImmutableOpenAPI::OpenAPISearchApi* GetOpenAPISearchApi();
 	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> GetSearchStacksRequest();
-
-	ImmutableQuery* GetImmutableQuery();
+	ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi* GetTsSdkAPI();
+	
+	FString GetBalanceContractAddress() const; 
 
 	void SetPageSize(int32 PageSize);
 	void SetPageCursor(TOptional<FString> PageCursor);
@@ -49,7 +50,7 @@ protected:
 	FString MarketplaceAPIURL;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
-	FString ImmutableLocalAPIURL;
+	FString TsSdkAPIURL;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	FString SearchStacksChainName;
@@ -59,9 +60,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	double RetryTimeoutRelativeSeconds = 1.0;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Search NFT stacks")
+	FString BalanceContractAddress;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Search NFT stacks")
-	TArray<FString> ContractAddress;
+	TArray<FString> StackContractAddress;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Search NFT stacks")
 	int32 NumberFractionalDigits = 4;
@@ -70,6 +74,6 @@ private:
 	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> SearchStacksRequestData;
 	TUniquePtr<ImmutableOpenAPI::OpenAPISearchApi> SearchAPI;
 	TUniquePtr<ImmutableOpenAPI::HttpRetryManager> HttpRetryManager;
-	TUniquePtr<ImmutableQuery> ImmutableQueryAPI;
+	TUniquePtr<ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi> TsSdkAPI;
 
 };

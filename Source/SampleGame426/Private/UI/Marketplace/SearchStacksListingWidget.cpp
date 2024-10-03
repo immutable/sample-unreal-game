@@ -114,7 +114,6 @@ void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)
 		RequestData.TakerAddress = LocalPlayer->GetPassportWalletAddress();
 		Request.ImmutableTsSdkApiV1TsSdkOrderbookFulfillOrderPostRequest = RequestData;
 		
-		
 		Policy->GetTsSdkAPI()->V1TsSdkOrderbookFulfillOrderPost(Request, ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::FV1TsSdkOrderbookFulfillOrderPostDelegate::CreateUObject(this, &USearchStacksListingWidget::OnOrderbookFulfillOrder));
 	}
 }

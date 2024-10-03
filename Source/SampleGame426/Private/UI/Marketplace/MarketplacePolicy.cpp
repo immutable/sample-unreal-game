@@ -19,12 +19,13 @@ void UMarketplacePolicy::PostInitProperties()
 	SearchStacksRequestData = MakeShared<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest>();
 	HttpRetryManager = MakeUnique<ImmutableOpenAPI::HttpRetryManager>(RetryLimitCount, RetryTimeoutRelativeSeconds);
 	
-	SearchAPI->SetURL(URL);
+	SearchAPI->SetURL(MarketplaceAPIURL);
 	SearchAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
 	SearchAPI->SetHttpRetryManager(*HttpRetryManager);
 	SearchStacksRequestData->ChainName = SearchStacksChainName;
 
 	ImmutableQueryAPI = MakeUnique<ImmutableQuery>();
+	ImmutableQueryAPI->SetURL(ImmutableLocalAPIURL);
 }
 
 UDataTable* UMarketplacePolicy::GetNFTDatatable()

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "LoginScreenWidget.h"
 #include "PrimaryGameLayout.h"
 #include "Dialog/DialogTypeDataAsset.h"
 #include "Marketplace/MarketplacePolicy.h"
@@ -40,11 +41,8 @@ private:
 	TSoftClassPtr<UPrimaryGameLayout> LayoutClass;
 
 	UPROPERTY(EditAnywhere, Category = "Main")
-	TSoftClassPtr<UActivatableWidget> LoginScreenWidgetClass;
+	TSoftClassPtr<ULoginScreenWidget> LoginScreenWidgetClass;
 	
-	UPROPERTY(EditAnywhere, Category = "Main")
-    TSoftClassPtr<UActivatableWidget> FrontEndWidgetClass;
-
 	UPROPERTY(EditAnywhere, Category = "Dialog")
     TSoftObjectPtr<UDialogTypeDataAsset> DialogTypeDataAsset;
 
@@ -56,4 +54,7 @@ private:
 
 	UPROPERTY(Transient)
 	UMarketplacePolicy* MarketplacePolicy = nullptr;
+
+	UPROPERTY(Transient)
+	ULoginScreenWidget* LoginScreenWidget = nullptr;
 };

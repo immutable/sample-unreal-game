@@ -46,7 +46,10 @@ protected:
 	
 	// Online values:
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
-	FString URL;
+	FString MarketplaceAPIURL;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
+	FString ImmutableLocalAPIURL;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	FString SearchStacksChainName;

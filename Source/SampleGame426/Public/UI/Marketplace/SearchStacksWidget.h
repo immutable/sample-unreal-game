@@ -5,7 +5,7 @@
 #include "Base/ActivatableWidget.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Base/ItemListWidget.h"
-#include "UI/Interfaces/ItemListInterface.h"
+#include "UI/Interfaces/IItemListInterface.h"
 
 #include "SearchStacksWidget.generated.h"
 

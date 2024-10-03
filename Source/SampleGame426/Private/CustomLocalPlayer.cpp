@@ -4,8 +4,6 @@
 #include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
 #include "UIGameplayTags.h"
-#include "Immutable/ImmutableDataTypes.h"
-#include "Immutable/ImmutablePassport.h"
 #include "Immutable/ImmutableSubsystem.h"
 #include "Settings/SampleGameSettings.h"
 
@@ -24,6 +22,16 @@ FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerControllerSet(FPlaye
 	}
 
 	return OnPlayerControllerSet.Add(Delegate);
+}
+
+FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPassportInitialized(FPlayerPassportInitializedDelegates::FDelegate Delegate)
+{
+	if (IsPassportInitialized)
+	{
+		Delegate.Execute();	
+	}
+
+	return OnPlayerPassportInitialized.Add(Delegate);
 }
 
 FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerLoggedIn(FPlayerLoggedInDelegate::FDelegate Delegate)
@@ -51,12 +59,14 @@ void UCustomLocalPlayer::PlayerAdded(class UGameViewportClient* InViewportClient
 
 void UCustomLocalPlayer::LoginPassport()
 {
-	// if (Passport.IsValid())
-	// {
-	// 	Passport->Connect(true, false, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));
-	// }
-
-	OnPlayerLoggedIn.Broadcast(true);
+	 if (Passport.IsValid())
+	 {
+	 	Passport->HasStoredCredentials(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
+	 	{
+	 		Passport->Connect(true, Result.Success, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));
+	 	}));
+	 	
+	 }
 }
 
 bool UCustomLocalPlayer::IsPassportLoggedIn()
@@ -169,23 +179,28 @@ void UCustomLocalPlayer::OnPassportInitialized(FImmutablePassportResult Result)
 	if (Result.Success)
 	{
 		UE_LOG(LogSampleGame, Log, TEXT("Immutable Passport initialized successfully"));
-		OnPlayerPassportIsRunning.Broadcast();
+		IsPassportInitialized = true;
+		if (OnPlayerPassportInitialized.IsBound())
+		{
+			OnPlayerPassportInitialized.Broadcast();	
+		}
 	}
 	else
 	{
 		// TODO Handle system error
+		IsPassportInitialized = false;
 		UE_LOG(LogSampleGame, Log, TEXT("Immutable Passport is not initialized with error: %s"), *Result.Error);
 	}
 }
 
-void UCustomLocalPlayer::OnPassportLoggedIn(struct FImmutablePassportResult Result)
+void UCustomLocalPlayer::OnPassportLoggedIn(FImmutablePassportResult Result)
 {
 	IsLocalPlayerLoggedIn = Result.Success;
 	OnPlayerLoggedIn.Broadcast(Result.Success);
 
 	if (!Result.Success)
 	{
-		//TODO Handle system error	
+		UCustomGameInstance::SendSystemMessage(this, FUIErrors::Undefined, FText::FromString(TEXT("Error")), FText::FromString(Result.Error));
 	}
 	else
 	{
@@ -193,19 +208,37 @@ void UCustomLocalPlayer::OnPassportLoggedIn(struct FImmutablePassportResult Resu
 	}
 }
 
+void UCustomLocalPlayer::OnPassportLoggedOut(FImmutablePassportResult Result)
+{
+	if (Result.Success)
+	{
+	}
+	else
+	{
+	}
+}
+
 void UCustomLocalPlayer::CollectPassportData()
 {
 	if (Passport.IsValid())
 	{
-		Passport->GetAddress(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
+		Passport->ConnectEvm(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
 		{
 			if (Result.Success)
 			{
-				PassportWalletAddress = UImmutablePassport::GetResponseResultAsString(Result.Response);	
-			}
-			else
-			{
+				Passport->ZkEvmRequestAccounts(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
+				{
+					if (Result.Success)
+					{
+						const auto RequestAccountsData = FImmutablePassportZkEvmRequestAccountsData::FromJsonObject(Result.Response.JsonObject);
+
+						PassportWalletAddress = RequestAccountsData->accounts[0];
+					}
+					else
+					{
 				
+					}
+				}));
 			}
 		}));
 	}

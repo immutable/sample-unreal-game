@@ -3,7 +3,7 @@
 
 #include "UObject/Interface.h"
 
-#include "ItemListInterface.generated.h"
+#include "IItemListInterface.generated.h"
 
 /**
  * 

@@ -5,6 +5,7 @@
 
 struct SAMPLEGAME426_API FUILayers
 {
+	static FGameplayTag MenuWithControls;
 	static FGameplayTag Menu;
 	static FGameplayTag Modal;
 

@@ -1,8 +1,10 @@
 ﻿#include "UIGameplayTags.h"
 
 
+FGameplayTag FUILayers::MenuWithControls;
 FGameplayTag FUILayers::Menu;
 FGameplayTag FUILayers::Modal;
+
 
 FGameplayTag FUIControlPanelButtons::Empty;
 FGameplayTag FUIControlPanelButtons::NextPage;
@@ -26,8 +28,9 @@ void FUILayers::InitUIGameplayTags_Layers()
 {
 	FString Prefix = TEXT("UI.Layer.");
 
-	FUILayers::Menu		= RequestGameplayTag(Prefix, TEXT("Menu"));
-	FUILayers::Modal	= RequestGameplayTag(Prefix, TEXT("Modal"));
+	FUILayers::MenuWithControls	= RequestGameplayTag(Prefix, TEXT("MenuWithControls"));
+	FUILayers::Menu				= RequestGameplayTag(Prefix, TEXT("Menu"));
+	FUILayers::Modal			= RequestGameplayTag(Prefix, TEXT("Modal"));
 }
 
 void FUIControlPanelButtons::InitUIGameplayTags_ControlPanelButtons()

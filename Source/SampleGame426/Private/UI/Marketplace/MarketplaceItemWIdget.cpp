@@ -66,7 +66,7 @@ FReply UMarketplaceItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& I
 {
 	FReply Reply = Super::NativeOnMouseButtonDoubleClick(InGeometry,InMouseEvent);
 
-	if (auto Widget = Cast<USearchStacksListingWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FUILayers::Menu, MarketplaceItemFullWidgetClass.LoadSynchronous())))
+	if (auto Widget = Cast<USearchStacksListingWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FUILayers::MenuWithControls, MarketplaceItemFullWidgetClass.LoadSynchronous())))
 	{
 		Widget->ProcessModel(*StackBundle);
 	}

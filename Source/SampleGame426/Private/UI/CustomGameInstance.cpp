@@ -3,10 +3,11 @@
 #include "CustomLocalPlayer.h"
 #include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
-#include "Dialog/DialogSubsystem.h"
+#include "UIGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
 
-void UCustomGameInstance::SendSystemMessage(const UObject* WorldContextObject, FGameplayTag MessageType, FText TitleText, FText BodyText)
+
+void UCustomGameInstance::SendSystemMessage(const UObject* WorldContextObject, FGameplayTag DialogType, const UDialogDescriptor* Descriptor)
 {
 	auto GameInstance = Cast<UCustomGameInstance>(UGameplayStatics::GetGameInstance(WorldContextObject));
 
@@ -18,9 +19,32 @@ void UCustomGameInstance::SendSystemMessage(const UObject* WorldContextObject, F
 	
 	if (UDialogSubsystem* DialogSubsystem = GameInstance->GetFirstGamePlayer()->GetSubsystem<UDialogSubsystem>())
 	{
-		DialogSubsystem->ShowError(UDialogSubsystem::CreateErrorDescriptor(TitleText, BodyText));
+		DialogSubsystem->ShowDialog(DialogType, Descriptor);
 	}
 }
+//
+// void UCustomGameInstance::SendErrorMessage(const UObject* WorldContextObject, FGameplayTag MessageType, const FString& Title, const FString& Body, const FString& Error)
+// {
+// 	auto GameInstance = Cast<UCustomGameInstance>(UGameplayStatics::GetGameInstance(WorldContextObject));
+//
+// 	if (!GameInstance)
+// 	{
+// 		UE_LOG(LogSampleGame, Error, TEXT("Failed to SendSystemMessage for %s"), *WorldContextObject->GetName());
+// 		return;
+// 	}
+// 	
+// 	if (UDialogSubsystem* DialogSubsystem = GameInstance->GetFirstGamePlayer()->GetSubsystem<UDialogSubsystem>())
+// 	{
+// 		if (Error.IsEmpty())
+// 		{
+// 			DialogSubsystem->ShowError(FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(Title, Body, Error));	
+// 		}
+// 		else
+// 		{
+// 			DialogSubsystem->ShowError(FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(Title, Body, Error));
+// 		}
+// 	}
+// }
 
 int32 UCustomGameInstance::AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUserId UserId)
 {

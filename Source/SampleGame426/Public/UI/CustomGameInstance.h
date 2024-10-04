@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameplayTagContainer.h"
+#include "Dialog/DialogSubsystem.h"
 #include "Engine/GameInstance.h"
 
 #include "CustomGameInstance.generated.h"
@@ -20,7 +21,11 @@ public:
 
 	/** Send a system message via OnHandleSystemMessage */
 	UFUNCTION(BlueprintCallable, Category = CommonUser)
-	static void SendSystemMessage(const UObject* WorldContextObject, FGameplayTag MessageType, FText TitleText, FText BodyText);
+	static void SendSystemMessage(const UObject* WorldContextObject, FGameplayTag DialogType, const UDialogDescriptor* Descriptor);
+
+	// UFUNCTION(BlueprintCallable, Category = CommonUser)
+	// static void SendErrorMessage(const UObject* WorldContextObject, FGameplayTag DialogType, UDialogDescriptor* Descriptor);
+
 
 	virtual int32 AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUserId UserId) override;
 	virtual bool RemoveLocalPlayer(ULocalPlayer* ExistingPlayer) override;

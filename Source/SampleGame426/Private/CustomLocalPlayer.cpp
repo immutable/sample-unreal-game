@@ -5,6 +5,7 @@
 #include "LogSampleGame.h"
 #include "ImmutableTsSdkApi_DefaultApiOperations.h"
 #include "UIGameplayTags.h"
+#include "Dialog/DialogSubsystem.h"
 #include "Immutable/ImmutableSubsystem.h"
 #include "Settings/SampleGameSettings.h"
 
@@ -112,7 +113,7 @@ void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableTsSdkApi::Immuta
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendSystemMessage(this, FUIErrors::Undefined, FText::FromString(TEXT("Error")), FText::FromString(Response.GetResponseString()));
+		UCustomGameInstance::SendSystemMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update balance"), Response.GetResponseString()));
 		
 		return;
 	}
@@ -203,7 +204,7 @@ void UCustomLocalPlayer::OnPassportLoggedIn(FImmutablePassportResult Result)
 
 	if (!Result.Success)
 	{
-		UCustomGameInstance::SendSystemMessage(this, FUIErrors::Undefined, FText::FromString(TEXT("Error")), FText::FromString(Result.Error));
+		UCustomGameInstance::SendSystemMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to login into Immutable Passport"), Result.Error));
 	}
 	else
 	{

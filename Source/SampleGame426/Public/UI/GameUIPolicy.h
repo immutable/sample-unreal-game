@@ -28,6 +28,8 @@ public:
 	UPrimaryGameLayout* GetRootLayout() const;
 	UMarketplacePolicy* GetMarketplacePolicy() const;
 	const FDialogType* GetDialogType(FGameplayTag DialogTag) const;
+	void ShowThrobber();
+	void HideThrobber();
 
 private:
 	void NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer);
@@ -42,6 +44,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Main")
 	TSoftClassPtr<ULoginScreenWidget> LoginScreenWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "Main")
+	TSoftClassPtr<UActivatableWidget> ThrobberScreenWidgetClass;
 	
 	UPROPERTY(EditAnywhere, Category = "Dialog")
     TSoftObjectPtr<UDialogTypeDataAsset> DialogTypeDataAsset;
@@ -57,4 +62,7 @@ private:
 
 	UPROPERTY(Transient)
 	ULoginScreenWidget* LoginScreenWidget = nullptr;
+
+	UPROPERTY(Transient)
+	UActivatableWidget* ThrobberScreenWidget = nullptr;
 };

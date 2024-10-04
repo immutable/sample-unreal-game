@@ -23,9 +23,10 @@ public:
 	virtual void Deinitialize() override;
 
 	UFUNCTION(BlueprintCallable)
-	UDialog* ShowError(const UDialogDescriptor* Descriptor);
+	UDialog* ShowDialog(const FGameplayTag& DialogType, const UDialogDescriptor* Descriptor);
 
-	static UDialogDescriptor_OneAction* CreateErrorDescriptor(const FText& Header, const FText& Body);
+	static UDialogDescriptor_OneAction* CreateErrorDescriptor(const FString& Header, const FString& Body);
+	static UErrorDialogDescriptorWithErrorText* CreateErrorDescriptorWithErrorText(const FString& Header, const FString& Body, const FString& Error);
 
 private:
 	const FDialogType* GetDialogType(FGameplayTag DialogType) const;

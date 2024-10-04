@@ -1,8 +1,6 @@
 ﻿#include "UIGameplayTags.h"
 
 
-FGameplayTag FUIErrors::Undefined;
-
 FGameplayTag FUILayers::Menu;
 FGameplayTag FUILayers::Modal;
 
@@ -13,20 +11,15 @@ FGameplayTag FUIControlPanelButtons::Forward;
 FGameplayTag FUIControlPanelButtons::Back;
 FGameplayTag FUIControlPanelButtons::Buy;
 
-FGameplayTag FUIDialogTypes::Error;
+FGameplayTag FUIDialogTypes::None;
+FGameplayTag FUIDialogTypes::ErrorSimple;
+FGameplayTag FUIDialogTypes::ErrorFull;
 FGameplayTag FUIDialogTypes::Confirmation;
 
 
 inline FGameplayTag RequestGameplayTag(const FString& Prefix, const FString& Name)
 {
 	return FGameplayTag::RequestGameplayTag(*(Prefix + Name));
-}
-
-void FUIErrors::InitUIGameplayTags_Errors()
-{
-	FString Prefix = TEXT("UI.Errors.");
-
-	FUIErrors::Undefined = RequestGameplayTag(Prefix, TEXT("Undefined"));
 }
 
 void FUILayers::InitUIGameplayTags_Layers()
@@ -53,6 +46,8 @@ void FUIDialogTypes::InitUIGameplayTags_DialogTypes()
 {
 	FString Prefix = TEXT("UI.Dialog.");
 
-	FUIDialogTypes::Error			= RequestGameplayTag(Prefix, TEXT("Error"));
+	FUIDialogTypes::None		    = RequestGameplayTag(Prefix, TEXT("None"));
+	FUIDialogTypes::ErrorSimple		= RequestGameplayTag(Prefix, TEXT("ErrorSimple"));
+	FUIDialogTypes::ErrorFull		= RequestGameplayTag(Prefix, TEXT("ErrorFull"));
 	FUIDialogTypes::Confirmation	= RequestGameplayTag(Prefix, TEXT("Confirmation"));
 }

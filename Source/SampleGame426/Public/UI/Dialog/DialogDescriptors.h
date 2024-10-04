@@ -81,3 +81,16 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	FDialogAction TwoAction;
 };
+
+
+
+UCLASS()
+class UErrorDialogDescriptorWithErrorText : public UDialogDescriptor_OneAction
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	FText ErrorText;
+	
+};

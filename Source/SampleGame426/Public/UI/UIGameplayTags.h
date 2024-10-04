@@ -3,13 +3,6 @@
 #include "GameplayTagContainer.h"
 
 
-struct SAMPLEGAME426_API FUIErrors
-{
-	static FGameplayTag Undefined;
-
-	static void InitUIGameplayTags_Errors();
-};
-
 struct SAMPLEGAME426_API FUILayers
 {
 	static FGameplayTag Menu;
@@ -32,7 +25,9 @@ struct SAMPLEGAME426_API FUIControlPanelButtons
 
 struct SAMPLEGAME426_API FUIDialogTypes
 {
-	static FGameplayTag Error;
+	static FGameplayTag None;
+	static FGameplayTag ErrorSimple;
+	static FGameplayTag ErrorFull;
 	static FGameplayTag Confirmation;
 
 	static void InitUIGameplayTags_DialogTypes();

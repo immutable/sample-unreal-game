@@ -56,6 +56,19 @@ const FDialogType* UGameUIPolicy::GetDialogType(FGameplayTag DialogTag) const
 	return Data->Dialogs.Find(DialogTag);
 }
 
+void UGameUIPolicy::ShowThrobber()
+{
+	ThrobberScreenWidget = PushWidget(ThrobberScreenWidgetClass, FUILayers::Modal);
+}
+
+void UGameUIPolicy::HideThrobber()
+{
+	if (ThrobberScreenWidget && ThrobberScreenWidget->IsActivated())
+	{
+		ThrobberScreenWidget->DeactivateWidget();
+	}
+}
+
 void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 {
 	LocalPlayer->CallAndRegister_OnPlayerControllerSet(UCustomLocalPlayer::FPlayerControllerSetDelegate::FDelegate::CreateWeakLambda(this, [this](UCustomLocalPlayer* LocalPlayer, APlayerController* PlayerController)
@@ -69,6 +82,7 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 			RootLayout->AddToPlayerScreen(1000);
 
 			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController);
+			PlayerController->SetShowMouseCursor(true);
 			
 			
 			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));

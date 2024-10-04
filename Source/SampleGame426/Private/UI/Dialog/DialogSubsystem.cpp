@@ -7,12 +7,26 @@
 
 #define LOCTEXT_NAMESPACE "ImmutableUI"
 
-UDialogDescriptor_OneAction* UDialogSubsystem::CreateErrorDescriptor(const FText& Header, const FText& Body)
+
+UDialogDescriptor_OneAction* UDialogSubsystem::CreateErrorDescriptor(const FString& Header, const FString& Body)
 {
 	UDialogDescriptor_OneAction* Descriptor = NewObject<UDialogDescriptor_OneAction>();
 
-	Descriptor->Header = Header;
-	Descriptor->Body = Body;
+	Descriptor->Header = FText::FromString(Header);
+	Descriptor->Body = FText::FromString(Body);
+	Descriptor->Action.Result = EDialogResult::Confirmed;
+	Descriptor->ActionText = LOCTEXT("Ok", "Ok");
+
+	return Descriptor;
+}
+
+UErrorDialogDescriptorWithErrorText* UDialogSubsystem::CreateErrorDescriptorWithErrorText(const FString& Header, const FString& Body, const FString& Error)
+{
+	UErrorDialogDescriptorWithErrorText* Descriptor = NewObject<UErrorDialogDescriptorWithErrorText>();
+
+	Descriptor->Header = FText::FromString(Header);
+	Descriptor->Body = FText::FromString(Body);
+	Descriptor->ErrorText = FText::FromString(Error);
 	Descriptor->Action.Result = EDialogResult::Confirmed;
 	Descriptor->ActionText = LOCTEXT("Ok", "Ok");
 
@@ -44,9 +58,9 @@ void UDialogSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-UDialog* UDialogSubsystem::ShowError(const UDialogDescriptor* Descriptor)
+UDialog* UDialogSubsystem::ShowDialog(const FGameplayTag& DialogType, const UDialogDescriptor* Descriptor)
 {
-	auto DialogData = GetDialogType(FUIDialogTypes::Error);
+	auto DialogData = GetDialogType(DialogType);
 
 	if (DialogData == nullptr)
 	{
@@ -66,5 +80,7 @@ UDialog* UDialogSubsystem::ShowError(const UDialogDescriptor* Descriptor)
 
 	return Dialog;
 }
+
+
 
 #undef LOCTEXT_NAMESPACE

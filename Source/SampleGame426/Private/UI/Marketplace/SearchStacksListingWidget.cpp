@@ -122,7 +122,7 @@ void USearchStacksListingWidget::OnOrderbookFulfillOrder(const ImmutableTsSdkApi
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendSystemMessage(this, FUIErrors::Undefined, FText::FromString(TEXT("Error")), FText::FromString(Response.GetResponseString()));
+		UCustomGameInstance::SendSystemMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to fulfill your order"), Response.GetResponseString()));
 
 		return;
 	}

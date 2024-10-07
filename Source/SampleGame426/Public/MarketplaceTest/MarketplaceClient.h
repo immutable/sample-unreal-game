@@ -11,6 +11,8 @@
 
 // delegate that takes an array
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFulfillOrderReturned, const TArray<FAction>&, OrderActions);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPrepareListingReturned, const FPrepareListingResponse, PrepareListingResponse);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCreateListingReturned, const FCreateListingResponse, CreateListingResponse);
 
 /**
  * 
@@ -24,16 +26,30 @@ public:
 	// Get market listings
 	// TODO
 
+	// Get listing by ID
+	// TODO
+
 	// Get Unsigned Fulfill Order Transaction
 	UFUNCTION(BlueprintCallable, Category = "MarketplaceClient")
 	void GetUnsignedFulfillOrderTransactions(const FString& ListingId, const FString& TakerAddress);
 
-	// List a fox skin NFT for sale
-	// TODO
+	// Prepare listing
+	UFUNCTION(BlueprintCallable, Category = "MarketplaceClient")
+	void PrepareListing(const FString& MakerAddress, FBuy Buy, FSell Sell);
+	
+	// Create listing
+	UFUNCTION(BlueprintCallable, Category = "MarketplaceClient")
+	void CreateListing(FOrderComponents OrderComponents, const FString& OrderHash, const FString& OrderSignature);
 
 	// Cancel item for sale
 	// TODO
 
 	UPROPERTY(BlueprintAssignable, Category = "MarketplaceClient")
 	FOnFulfillOrderReturned OnFulfillOrderReturned;
+
+	UPROPERTY(BlueprintAssignable, Category = "MarketplaceClient")
+	FOnPrepareListingReturned OnPrepareListingReturned;
+
+	UPROPERTY(BlueprintAssignable, Category = "MarketplaceClient")
+	FOnCreateListingReturned OnCreateListingReturned;
 };

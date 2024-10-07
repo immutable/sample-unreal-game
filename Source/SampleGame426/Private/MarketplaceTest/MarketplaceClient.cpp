@@ -14,7 +14,7 @@ void UMarketplaceClient::GetUnsignedFulfillOrderTransactions(const FString& List
 
 	UHttpClient* HttpClient = NewObject<UHttpClient>();
 
-	const FString Uri = FString::Printf(TEXT("http://localhost:8080/v1/ts-sdk/orderbook/fulfillOrder"));
+	const FString Uri = FString::Printf(TEXT("https://api.dev.immutable.com/v1/ts-sdk/orderbook/fulfillOrder"));
 	const FString Body = FString::Printf(
 		TEXT("{\"listingId\": \"%s\",\"takerAddress\": \"%s\",\"takerFees\": []}"), *ListingId, *TakerAddress);
 
@@ -23,7 +23,8 @@ void UMarketplaceClient::GetUnsignedFulfillOrderTransactions(const FString& List
 		UE_LOG(LogSampleGame, Display, TEXT("MakeHttpPostRequest Callback"));
 
 		FFulfillOrderResponse FulfillOrderResponse;
-		FJsonObjectConverter::JsonObjectStringToUStruct<FFulfillOrderResponse>(ResponseString, &FulfillOrderResponse, 0, 0);
+		FJsonObjectConverter::JsonObjectStringToUStruct<FFulfillOrderResponse>(ResponseString, &FulfillOrderResponse,
+			0, 0);
 		
 		for (int32 i = 0; i < FulfillOrderResponse.Actions.Num(); i++)
 		{
@@ -32,5 +33,84 @@ void UMarketplaceClient::GetUnsignedFulfillOrderTransactions(const FString& List
 		}
 		
 		OnFulfillOrderReturned.Broadcast(FulfillOrderResponse.Actions);
+	});
+}
+
+void UMarketplaceClient::PrepareListing(const FString& MakerAddress, const FBuy Buy, const FSell Sell)
+{
+	// TODO - Change from Warning to Display
+	UE_LOG(LogSampleGame, Warning, TEXT("PrepareListing for token ID: %s from contract %s for %s amount (wei)"),
+		*Sell.TokenId, *Sell.ContractAddress, *Buy.Amount);
+
+	UHttpClient* HttpClient = NewObject<UHttpClient>();
+
+	const FString Uri = FString::Printf(TEXT("https://api.dev.immutable.com/v1/ts-sdk/orderbook/prepareListing"));
+	FPrepareListingRequest PrepareListingRequest;
+
+	PrepareListingRequest.MakerAddress = *MakerAddress;
+	PrepareListingRequest.Buy = Buy;
+	PrepareListingRequest.Sell = Sell;
+
+	FString RequestBodyString;
+	
+	FJsonObjectConverter::UStructToJsonObjectString<FPrepareListingRequest>(PrepareListingRequest, RequestBodyString);
+
+	// TODO - Change from Warning to Display
+	UE_LOG(LogSampleGame, Warning, TEXT("PrepareListing request body %s"), *RequestBodyString);
+
+	HttpClient->MakeHttpPostRequest(Uri, RequestBodyString, [this](FString ResponseString)
+	{
+		// TODO - Change from Warning to Display
+		UE_LOG(LogSampleGame, Warning, TEXT("Prepare Listing Callback: %s"), *ResponseString);
+
+		FPrepareListingResponse PrepareListingResponse;
+		FJsonObjectConverter::JsonObjectStringToUStruct<FPrepareListingResponse>(ResponseString, &PrepareListingResponse, 0, 0);
+
+		// TODO - Change from Warning to Display
+		UE_LOG(LogSampleGame, Warning, TEXT("Prepare listing order hash: %s"), *PrepareListingResponse.OrderHash);
+		for (int32 i = 0; i < PrepareListingResponse.Actions.Num(); i++)
+		{
+			// TODO - Change from Warning to Display
+			UE_LOG(LogSampleGame, Warning, TEXT("PopulatedTransactions: %s"),
+				   *PrepareListingResponse.Actions[i].ToString());
+		}
+
+		OnPrepareListingReturned.Broadcast(PrepareListingResponse);
+	});
+}
+
+void UMarketplaceClient::CreateListing(FOrderComponents OrderComponents, const FString& OrderHash, const FString& OrderSignature)
+{
+	// TODO - Change from Warning to Display
+	UE_LOG(LogSampleGame, Warning, TEXT("Create listing"));
+	UE_LOG(LogSampleGame, Warning, TEXT("Order hash: %s"), *OrderHash);
+	UE_LOG(LogSampleGame, Warning, TEXT("Order signature: %s"), *OrderSignature);
+
+	UHttpClient* HttpClient = NewObject<UHttpClient>();
+
+	const FString Uri = FString::Printf(TEXT("https://api.dev.immutable.com/v1/ts-sdk/orderbook/createListing"));
+
+	FCreateListingRequest CreateListingRequest;
+
+	CreateListingRequest.MakerFees = {};
+	CreateListingRequest.OrderComponents = OrderComponents;
+	CreateListingRequest.OrderHash = *OrderHash;
+	CreateListingRequest.OrderSignature = *OrderSignature;
+
+	FString RequestBodyString;
+	FJsonObjectConverter::UStructToJsonObjectString<FCreateListingRequest>(CreateListingRequest, RequestBodyString);
+
+	HttpClient->MakeHttpPostRequest(Uri, RequestBodyString, [this](FString ResponseString)
+	{
+		// TODO - Change from Warning to Display
+		UE_LOG(LogSampleGame, Warning, TEXT("Create listing response body %s"), *ResponseString);
+
+		FCreateListingResponse CreateListingResponse;
+		FJsonObjectConverter::JsonObjectStringToUStruct<FCreateListingResponse>(ResponseString, &CreateListingResponse, 0, 0);
+
+		// TODO - Change from Warning to Display
+		UE_LOG(LogSampleGame, Warning, TEXT("Listing ID: %s"), *CreateListingResponse.Result.Id);
+		
+		OnCreateListingReturned.Broadcast(CreateListingResponse);
 	});
 }

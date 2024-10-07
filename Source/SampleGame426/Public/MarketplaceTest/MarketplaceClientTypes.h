@@ -2,7 +2,215 @@
 
 #include "CoreMinimal.h"
 #include "JsonObjectConverter.h"
+#include "Immutable/ImmutableRequests.h"
 #include "MarketplaceClientTypes.generated.h"
+
+USTRUCT(BlueprintType)
+struct FDomain
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString ChainId;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Name;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString VerifyingContract;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Version;
+};
+
+USTRUCT(BlueprintType)
+struct FOfferItem
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	uint8 ItemType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Token;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString IdentifierOrCriteria;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString StartAmount;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString EndAmount;
+};
+
+USTRUCT(BlueprintType)
+struct FConsiderationItem
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	uint8 ItemType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Token;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString IdentifierOrCriteria;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString StartAmount;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString EndAmount;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Recipient;
+};
+
+/**
+ * "message" object from NESTED INSIDE the "SIGNABLE" action.
+ * See FSignableMessage
+ */
+USTRUCT(BlueprintType)
+struct FMessage
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Offerer;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Zone;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FOfferItem> Offer;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FConsiderationItem> Consideration;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	uint8 OrderType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString StartTime;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString EndTime;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString ZoneHash;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Salt;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString ConduitKey;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Counter;
+};
+
+USTRUCT(BlueprintType)
+struct FNameType
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Name;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Type;
+};
+
+USTRUCT(BlueprintType)
+struct FSignableMessageTypes
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FNameType> OrderComponents;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FNameType> OfferItems;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FNameType> ConsiderationItem;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FNameType> EIP712Domain;
+
+	FString ToString() const
+	{
+		FString OutputString;
+		FJsonObjectConverter::UStructToJsonObjectString(*this, OutputString);
+		return OutputString;
+	}
+};
+
+/**
+ * Top level "message" object in the "SIGNABLE" action object
+ * Note, this object is called "message" when returned from the prepare listing API
+ */
+USTRUCT(BlueprintType)
+struct FSignableMessage
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FZkEvmSignTypedDataV4Domain Domain;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FZkEvmSignTypedDataV4SignableMessageTypes Types;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FZkEvmSignTypedDataV4Message Message;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString PrimaryType;
+};
+
+USTRUCT(BlueprintType)
+struct FOrderComponents
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString ConduitKey;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FConsiderationItem> Consideration;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString EndTime;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FOfferItem> Offer;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Offerer;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	uint8 OrderType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Salt;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString StartTime;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString TotalOriginalConsiderationItems;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Zone;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString ZoneHash;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Counter;
+};
 
 USTRUCT(BlueprintType)
 struct FTransaction
@@ -32,35 +240,52 @@ struct FTransaction
     }
 };
 
-
 UENUM(BlueprintType)
 enum class EPurpose : uint8
 {
     APPROVAL UMETA(DisplayName = "Approval"),
-    FULFILL_ORDER UMETA(DisplayName = "Fulfill Order")
+    FULFILL_ORDER UMETA(DisplayName = "Fulfill Order"),
+	CREATE_LISTING UMETA(DisplayName = "Create Listing")
 };
-
 
 USTRUCT(BlueprintType)
 struct FAction
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
-    FString Type;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Type;
 
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
-    FTransaction PopulatedTransactions;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Purpose;
 
-    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
-    EPurpose Purpose;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FTransaction PopulatedTransactions;
 
-    FString ToString() const
-    {
-        FString OutputString;
-        FJsonObjectConverter::UStructToJsonObjectString(*this, OutputString);
-        return OutputString;
-    }
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FSignableMessage Message;
+
+	FString ToString() const
+	{
+		FString OutputString;
+		FJsonObjectConverter::UStructToJsonObjectString(*this, OutputString);
+		return OutputString;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FPrepareListingResponse
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FAction> Actions;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FOrderComponents OrderComponents;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString OrderHash;
 };
 
 USTRUCT(BlueprintType)
@@ -247,4 +472,55 @@ struct FFulfillOrderRequest
 
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
     FFee TakerFees;
+};
+
+USTRUCT(BlueprintType)
+struct FPrepareListingRequest
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+    FString MakerAddress;
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+    FBuy Buy;
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+    FSell Sell;
+};
+
+USTRUCT(BlueprintType)
+struct FCreateListingResult
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString Id;
+};
+
+USTRUCT(BlueprintType)
+struct FCreateListingResponse
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FCreateListingResult Result;
+};
+
+USTRUCT(BlueprintType)
+struct FCreateListingRequest
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FFee> MakerFees;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FOrderComponents OrderComponents;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString OrderHash;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString OrderSignature;
 };

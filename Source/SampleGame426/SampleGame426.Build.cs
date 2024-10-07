@@ -29,7 +29,7 @@ public class SampleGame426 : ModuleRules
 			"Json",
 			"JsonUtilities",
 			"HTTP",
-			"OpenAPI"
+			// "ImmutableTsSdkApi"
 		});
 
 

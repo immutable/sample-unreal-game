@@ -20,6 +20,7 @@ class SAMPLEGAME426_API UCustomButtonBase : public UUserWidget
 public:
 	/* UUserWidget */
 	virtual void NativeConstruct() override;
+	virtual void NativeOnInitialized() override;
 	/* UUserWidget */
 
 	UFUNCTION()
@@ -30,6 +31,12 @@ public:
 	//
 	// UPROPERTY(BlueprintAssignable, Category = "Immutable", meta = (AllowPrivateAccess = true))
 	// FOnCustomButtonClicked OnCustomButtonClicked;
+
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = UCustomButtonBase)
+	virtual void ChangeEnableStatus(bool EnableStatus);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = UCustomButtonBase, meta = (DisplayName = "Change Enable Status"))
+	void BP_ChangeEnableStatus(bool EnableStatus);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))

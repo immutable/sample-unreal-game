@@ -2,9 +2,10 @@
 
 #include "OpenAPIPage.h"
 #include "OpenAPISearchApi.h"
-#include "Base/ActivatableWidgetWithControls.h"
+#include "Base/ActivatableWidget.h"
+#include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Base/ItemListWidget.h"
-#include "UI/Interfaces/ItemListInterface.h"
+#include "UI/Interfaces/IItemListInterface.h"
 
 #include "SearchStacksWidget.generated.h"
 
@@ -13,11 +14,12 @@
  * 
  */
 UCLASS(Abstract)
-class SAMPLEGAME426_API USearchStacksWidget : public UActivatableWidgetWithControls, public IItemListInterface
+class SAMPLEGAME426_API USearchStacksWidget : public UActivatableWidgetWithControlPanels, public IItemListInterface
 {
 	GENERATED_BODY()
 
 public:
+	USearchStacksWidget();
 	virtual void RefreshItemList(TOptional<FString> PageCursor) override;
 
 protected:
@@ -27,10 +29,13 @@ protected:
 	/* UActivatableWidget */
 
 	void OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPISearchApi::SearchStacksResponse& Response);
-	virtual void OnControlButtonClicked_Implementation(FGameplayTag ButtonTag) override;
+	virtual void SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons) override;
 
 private:
 	void HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData);
+
+	UFUNCTION()
+	void OnPageDirectionButtonClicked(FGameplayTag ButtonTag);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))

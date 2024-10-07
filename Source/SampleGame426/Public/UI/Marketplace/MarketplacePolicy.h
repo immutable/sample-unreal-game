@@ -1,17 +1,14 @@
 ﻿#pragma once
 
+#include "ImmutableTsSdkApi_DefaultApi.h"
 #include "OpenAPISearchApi.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
+#include "NFT/NFT_TableRowBase.h"
 
 #include "MarketplacePolicy.generated.h"
 
 
-namespace ImmutableQuery
-{
-	struct FMP_SearchStacksRequestTraitData;
-	struct FMP_SearchStacksRequestData;
-}
-
+class UCustomLocalPlayer;
 /*
  * 
  */
@@ -26,8 +23,15 @@ public:
 	virtual void PostInitProperties() override;
 	/* UObject Interface */
 
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	class UDataTable* GetNFTDatatable();
+	FNFT_TableRowBase* FindNFTTextureRow(FName RowName);
+
 	ImmutableOpenAPI::OpenAPISearchApi* GetOpenAPISearchApi();
 	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> GetSearchStacksRequest();
+	ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi* GetTsSdkAPI();
+	
+	FString GetBalanceContractAddress() const; 
 
 	void SetPageSize(int32 PageSize);
 	void SetPageCursor(TOptional<FString> PageCursor);
@@ -37,24 +41,31 @@ public:
 	void SetOnlyIncludeOwnerListings(bool OnlyIncludeOwnerListings);
 	
 protected:
+	// must be global
+	UPROPERTY(EditAnywhere, Category = "Game", meta = (RequiredAssetDataTags = "RowStructure=NFT_TableRowBase"))
+	UDataTable* NFT_Datatable;
+	
 	// Online values:
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
-	FString URL;
+	FString MarketplaceAPIURL;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Onlie")
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
+	FString TsSdkAPIURL;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	FString SearchStacksChainName;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Onlie")
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	uint32 RetryLimitCount = 0;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Onlie")
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	double RetryTimeoutRelativeSeconds = 1.0;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Search NFT stacks")
-	TArray<FString> ContractAddress;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Search NFT stacks")
-	TSoftObjectPtr<UNFTMetadataAttributeDataAsset> SearchMetaAttributes;
+	FString BalanceContractAddress;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Search NFT stacks")
+	TArray<FString> StackContractAddress;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Search NFT stacks")
 	int32 NumberFractionalDigits = 4;
@@ -63,5 +74,6 @@ private:
 	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> SearchStacksRequestData;
 	TUniquePtr<ImmutableOpenAPI::OpenAPISearchApi> SearchAPI;
 	TUniquePtr<ImmutableOpenAPI::HttpRetryManager> HttpRetryManager;
-	
+	TUniquePtr<ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi> TsSdkAPI;
+
 };

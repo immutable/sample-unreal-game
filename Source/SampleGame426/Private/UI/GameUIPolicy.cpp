@@ -3,6 +3,9 @@
 #include "CustomLocalPlayer.h"
 #include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
+#include "UIGameplayTags.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Interfaces/IPassportListnerInterface.h"
 
 
 /* Static */ UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)
@@ -41,6 +44,31 @@ UMarketplacePolicy* UGameUIPolicy::GetMarketplacePolicy() const
 	return MarketplacePolicy;
 }
 
+const FDialogType* UGameUIPolicy::GetDialogType(FGameplayTag DialogTag) const
+{
+	UDialogTypeDataAsset* Data = DialogTypeDataAsset.LoadSynchronous();
+	
+	if (!Data)
+	{
+		return nullptr;
+	}
+
+	return Data->Dialogs.Find(DialogTag);
+}
+
+void UGameUIPolicy::ShowThrobber()
+{
+	ThrobberScreenWidget = PushWidget(ThrobberScreenWidgetClass, FUILayers::Modal);
+}
+
+void UGameUIPolicy::HideThrobber()
+{
+	if (ThrobberScreenWidget && ThrobberScreenWidget->IsActivated())
+	{
+		ThrobberScreenWidget->DeactivateWidget();
+	}
+}
+
 void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 {
 	LocalPlayer->CallAndRegister_OnPlayerControllerSet(UCustomLocalPlayer::FPlayerControllerSetDelegate::FDelegate::CreateWeakLambda(this, [this](UCustomLocalPlayer* LocalPlayer, APlayerController* PlayerController)
@@ -49,16 +77,18 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 	
 		if (ensure(LayoutWidgetClass && !LayoutWidgetClass->HasAnyClassFlags(CLASS_Abstract)))
 		{
-			PlayerController->SetInputMode(FInputModeUIOnly());
-			
 			RootLayout = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass, TEXT("PrimaryGameLayout"));
 			RootLayout->SetPlayerContext(FLocalPlayerContext(LocalPlayer));
 			RootLayout->AddToPlayerScreen(1000);
+
+			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController);
+			PlayerController->SetShowMouseCursor(true);
+			
 			
 			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
 
 			// add login screen widget as an initial screen
-			PushWidget(LoginScreenWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Modal")));
+			LoginScreenWidget = Cast<ULoginScreenWidget>(PushWidget(LoginScreenWidgetClass, FUILayers::Modal));
 
 	#if WITH_EDITOR
 			if (GIsEditor)
@@ -70,11 +100,22 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 		}
 	}));
 
+	LocalPlayer->CallAndRegister_OnPassportInitialized(UCustomLocalPlayer::FPlayerPassportInitializedDelegates::FDelegate::CreateWeakLambda(this, [this]()
+	{
+		if (LoginScreenWidget && LoginScreenWidget->GetClass()->ImplementsInterface(UPassportListenerInterface::StaticClass()))
+		{
+			IPassportListenerInterface::Execute_OnPassportInitialized(LoginScreenWidget);	
+		}
+	}));
+
 	LocalPlayer->CallAndRegister_OnPlayerLoggedIn(UCustomLocalPlayer::FPlayerLoggedInDelegate::FDelegate::CreateWeakLambda(this, [this](bool IsLoggedIn)
 	{
 		if (IsLoggedIn)
 		{
-			PushWidget(FrontEndWidgetClass, FGameplayTag::RequestGameplayTag(TEXT("UI.Layer.Menu")));
+			if (LoginScreenWidget && LoginScreenWidget->GetClass()->ImplementsInterface(UPassportListenerInterface::StaticClass()))
+			{
+				IPassportListenerInterface::Execute_OnPassportLoggedIn(LoginScreenWidget);	
+			}
 
 			// create marketplace policy
 			MarketplacePolicy = NewObject<UMarketplacePolicy>(this, MarketplacePolicyClass.LoadSynchronous());

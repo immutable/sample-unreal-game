@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Base/ActivatableWidget.h"
+// #include "UI/Interfaces/IPassportListnerInterface.h"
 
 #include "LoginScreenWidget.generated.h"
 
@@ -14,6 +15,6 @@ public:
 	virtual void NativeOnActivated() override;
 
 private:
-	void OnPassportLoggedIn(bool IsLoggedIn);
+	// void OnPassportLoggedIn(bool IsLoggedIn);
 
 };

@@ -3,15 +3,35 @@
 #include "GameplayTagContainer.h"
 
 
+struct SAMPLEGAME426_API FUILayers
+{
+	static FGameplayTag MenuWithControls;
+	static FGameplayTag Menu;
+	static FGameplayTag Modal;
+
+	static void InitUIGameplayTags_Layers();
+};
+
 struct SAMPLEGAME426_API FUIControlPanelButtons
 {
+	static FGameplayTag Empty;
 	static FGameplayTag NextPage;
 	static FGameplayTag PreviousPage;
 	static FGameplayTag Back;
 	static FGameplayTag Forward;
 	static FGameplayTag Buy;
 
-	static void InitUIGameplayTags_IconButtons();
+	static void InitUIGameplayTags_ControlPanelButtons();
+};
+
+struct SAMPLEGAME426_API FUIDialogTypes
+{
+	static FGameplayTag None;
+	static FGameplayTag ErrorSimple;
+	static FGameplayTag ErrorFull;
+	static FGameplayTag Confirmation;
+
+	static void InitUIGameplayTags_DialogTypes();
 };
 
 

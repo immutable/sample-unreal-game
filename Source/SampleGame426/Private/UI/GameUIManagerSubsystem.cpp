@@ -14,7 +14,9 @@ void UGameUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		SwitchToPolicy(NewObject<UGameUIPolicy>(this, PolicyClass));
 	}
 
-	FUIControlPanelButtons::InitUIGameplayTags_IconButtons();
+	FUILayers::InitUIGameplayTags_Layers();
+	FUIControlPanelButtons::InitUIGameplayTags_ControlPanelButtons();
+	FUIDialogTypes::InitUIGameplayTags_DialogTypes();
 }
 
 void UGameUIManagerSubsystem::Deinitialize()

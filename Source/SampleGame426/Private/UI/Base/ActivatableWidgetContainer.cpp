@@ -7,6 +7,7 @@
 #include "Containers/Ticker.h"
 #include "Base/ActivatableWidget.h"
 
+#define LOCTEXT_NAMESPACE "ImmutableUI"
 
 UActivatableWidget* ActivatableWidgetFromSlate(const TSharedPtr<SWidget>& SlateWidget)
 {
@@ -30,6 +31,11 @@ UActivatableWidgetContainer::UActivatableWidgetContainer(const FObjectInitialize
 	, GeneratedWidgetsPool(*this)
 {
 	SetVisibility(ESlateVisibility::Collapsed);
+}
+
+const FText UActivatableWidgetContainer::GetPaletteCategory()
+{
+	return LOCTEXT("SAMPLEGAME426_UI", "Immutable");
 }
 
 void UActivatableWidgetContainer::AddWidgetInstance(UActivatableWidget& ActivatableWidget)
@@ -89,70 +95,19 @@ TSharedRef<SWidget> UActivatableWidgetContainer::RebuildWidget()
 {
 	MyOverlay = SNew(SOverlay)
 		+ SOverlay::Slot()
-		.HAlign(HAlign_Fill)
-		.VAlign(VAlign_Fill)
 		[
-			SAssignNew(MyVerticalBox, SVerticalBox)
-			+ SVerticalBox::Slot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
-			.FillHeight(1.0f)
-			[
-				SAssignNew(MySwitcher, SAnimatedSwitcher)
-					.TransitionCurveType(TransitionCurveType)
-					.TransitionDuration(TransitionDuration)
-					.TransitionType(TransitionType)
-					.OnActiveIndexChanged_UObject(this, &UActivatableWidgetContainer::HandleActiveIndexChanged)
-					.OnIsTransitioningChanged_UObject(this, &UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged)
-			]
-		]
-		+ SOverlay::Slot()
-		.HAlign(HAlign_Fill)
-		.VAlign(VAlign_Fill)
-		[
-			SAssignNew(MyInputGuard, SSpacer)
-			.Visibility(EVisibility::Collapsed)
+			SAssignNew(MySwitcher, SAnimatedSwitcher)
+			.TransitionCurveType(TransitionCurveType)
+			.TransitionDuration(TransitionDuration)
+			.TransitionType(TransitionType)
+			.OnActiveIndexChanged_UObject(this, &UActivatableWidgetContainer::HandleActiveIndexChanged)
+			.OnIsTransitioningChanged_UObject(this, &UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged)
 		];
 
 	// We always want a 0th slot to be able to animate the first real entry in and out
 	MySwitcher->AddSlot() [SNullWidget::NullWidget];
-	
-	if (WidgetList.Num() > 0)
-	{
-		//@todo DanH: We gotta fill up the switcher and activate the right thing. Alternatively we could just flush all the children upon destruction... I think I like that more.
-	}
 
 	return MyOverlay.ToSharedRef();
-}
-
-void UActivatableWidgetContainer::SynchronizeProperties()
-{
-	Super::SynchronizeProperties();
-
-#if WITH_EDITOR
-	if (IsDesignTime() &&  TopPanelContentWidget && (!bWithTopPanelSlot || TopPanelContentWidget->GetClass() != TopPanelContentWidgetClass))
-	{
-		if (TopPanelContentWidget->GetCachedWidget())
-		{
-			MyVerticalBox->RemoveSlot(TopPanelContentWidget->GetCachedWidget().ToSharedRef());
-		}
-
-		TopPanelContentWidget = nullptr;
-	}
-#endif
-
-	if (bWithTopPanelSlot && !TopPanelContentWidget && TopPanelContentWidgetClass)
-	{
-		TopPanelContentWidget = CreateWidget<UActivatableWidget>(this, TopPanelContentWidgetClass);
-		TopPanelContentWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		MyVerticalBox->InsertSlot(0)
-		.HAlign(HAlign_Fill)
-		.VAlign(VAlign_Fill)
-		.AutoHeight()
-		[
-			TopPanelContentWidget->TakeWidget()
-		];
-	}
 }
 
 void UActivatableWidgetContainer::ReleaseSlateResources(bool bReleaseChildren)
@@ -160,7 +115,6 @@ void UActivatableWidgetContainer::ReleaseSlateResources(bool bReleaseChildren)
 	Super::ReleaseSlateResources(bReleaseChildren);
 
 	MyOverlay.Reset();
-	MyInputGuard.Reset();
 	MySwitcher.Reset();
 	ReleasedWidgets.Empty();
 
@@ -228,8 +182,6 @@ void UActivatableWidgetContainer::RegisterInstanceInternal(UActivatableWidget& N
 
 void UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged(bool bIsTransitioning)
 {
-	// While the switcher is transitioning, put up the guard to intercept all input
-	MyInputGuard->SetVisibility(bIsTransitioning ? EVisibility::Visible : EVisibility::Collapsed);
 	OnTransitioningChanged.Broadcast(this, bIsTransitioning);
 }
 
@@ -316,38 +268,6 @@ void UActivatableWidgetContainer::HandleActiveIndexChanged(int32 ActiveWidgetInd
 // UActivatableWidgetStack
 //////////////////////////////////////////////////////////////////////////
 
-UActivatableWidget* UActivatableWidgetStack::GetRootContent() const
-{
-	return RootContentWidget;
-}
-
-void UActivatableWidgetStack::SynchronizeProperties()
-{
-	Super::SynchronizeProperties();
-	
-#if WITH_EDITOR
-	if (IsDesignTime() && RootContentWidget && RootContentWidget->GetClass() != RootContentWidgetClass)
-	{
-		// At design time, account for the possibility of the preview class changing
-		if (RootContentWidget->GetCachedWidget())
-		{
-			MySwitcher->GetChildSlot(0)->DetachWidget();
-		}
-
-		RootContentWidget = nullptr;
-	}
-#endif
-
-	if (!RootContentWidget && RootContentWidgetClass)
-	{
-		// Establish the root content as the blank 0th slot content
-		RootContentWidget = CreateWidget<UActivatableWidget>(this, RootContentWidgetClass);
-		MySwitcher->GetChildSlot(0)->AttachWidget(RootContentWidget->TakeWidget());
-		
-		SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	}
-}
-
 void UActivatableWidgetStack::OnWidgetAddedToList(UActivatableWidget& AddedWidget)
 {
 	if (MySwitcher)
@@ -363,3 +283,4 @@ void UActivatableWidgetStack::OnWidgetAddedToList(UActivatableWidget& AddedWidge
 	}
 }
 
+#undef LOCTEXT_NAMESPACE

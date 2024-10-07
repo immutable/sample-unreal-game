@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameplayTagContainer.h"
+#include "Dialog/DialogSubsystem.h"
 #include "Engine/GameInstance.h"
 
 #include "CustomGameInstance.generated.h"
@@ -13,20 +14,19 @@ class UCustomGameInstance : public UGameInstance
 
 public:
 	/** Delegate when a system error message is sent, the game can choose to display it to the user using the type tag */
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCustomHandleSystemMessageDelegate, FGameplayTag, MessageType, FText, TitleText, FText, BodyText);
+	// DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCustomHandleSystemMessageDelegate, FGameplayTag, MessageType, FText, TitleText, FText, BodyText);
 	
-	UPROPERTY(BlueprintAssignable, Category = CommonUser)
-	FCustomHandleSystemMessageDelegate OnHandleSystemMessage;
-
+	// UPROPERTY(BlueprintAssignable, Category = CommonUser)
+	// FCustomHandleSystemMessageDelegate OnHandleSystemMessage;
 
 	/** Send a system message via OnHandleSystemMessage */
 	UFUNCTION(BlueprintCallable, Category = CommonUser)
-	virtual void SendSystemMessage(FGameplayTag MessageType, FText TitleText, FText BodyText);
-	
-	UFUNCTION()
-	virtual void HandleSystemMessage(FGameplayTag MessageType, FText Title, FText Message);
+	static void SendSystemMessage(const UObject* WorldContextObject, FGameplayTag DialogType, const UDialogDescriptor* Descriptor);
 
-	
+	// UFUNCTION(BlueprintCallable, Category = CommonUser)
+	// static void SendErrorMessage(const UObject* WorldContextObject, FGameplayTag DialogType, UDialogDescriptor* Descriptor);
+
+
 	virtual int32 AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUserId UserId) override;
 	virtual bool RemoveLocalPlayer(ULocalPlayer* ExistingPlayer) override;
 	virtual void ReturnToMainMenu() override;

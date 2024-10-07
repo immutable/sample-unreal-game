@@ -1,6 +1,8 @@
 #pragma once
 
+#include "LoginScreenWidget.h"
 #include "PrimaryGameLayout.h"
+#include "Dialog/DialogTypeDataAsset.h"
 #include "Marketplace/MarketplacePolicy.h"
 
 #include "GameUIPolicy.generated.h"
@@ -25,6 +27,9 @@ public:
 	class UGameUIManagerSubsystem* GetOwningUIManager() const;
 	UPrimaryGameLayout* GetRootLayout() const;
 	UMarketplacePolicy* GetMarketplacePolicy() const;
+	const FDialogType* GetDialogType(FGameplayTag DialogTag) const;
+	void ShowThrobber();
+	void HideThrobber();
 
 private:
 	void NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer);
@@ -34,14 +39,17 @@ private:
 	friend class UGameUIManagerSubsystem;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Immutable")
+	UPROPERTY(EditAnywhere, Category = "Main")
 	TSoftClassPtr<UPrimaryGameLayout> LayoutClass;
 
-	UPROPERTY(EditAnywhere, Category = "Immutable")
-	TSoftClassPtr<UActivatableWidget> LoginScreenWidgetClass;
+	UPROPERTY(EditAnywhere, Category = "Main")
+	TSoftClassPtr<ULoginScreenWidget> LoginScreenWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "Main")
+	TSoftClassPtr<UActivatableWidget> ThrobberScreenWidgetClass;
 	
-	UPROPERTY(EditAnywhere, Category = "Immutable")
-    TSoftClassPtr<UActivatableWidget> FrontEndWidgetClass;
+	UPROPERTY(EditAnywhere, Category = "Dialog")
+    TSoftObjectPtr<UDialogTypeDataAsset> DialogTypeDataAsset;
 
 	UPROPERTY(EditAnywhere, Category = "Marketplace")
 	TSoftClassPtr<UMarketplacePolicy> MarketplacePolicyClass;
@@ -51,4 +59,10 @@ private:
 
 	UPROPERTY(Transient)
 	UMarketplacePolicy* MarketplacePolicy = nullptr;
+
+	UPROPERTY(Transient)
+	ULoginScreenWidget* LoginScreenWidget = nullptr;
+
+	UPROPERTY(Transient)
+	UActivatableWidget* ThrobberScreenWidget = nullptr;
 };

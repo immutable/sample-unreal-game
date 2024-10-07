@@ -1,7 +1,10 @@
 ﻿#include "UI/Marketplace/MarketplacePolicy.h"
 
+#include "CustomLocalPlayer.h"
 #include "OpenAPIHelpers.h"
 #include "OpenAPISearchApiOperations.h"
+#include "Dialog/DialogSubsystem.h"
+#include "Engine/DataTable.h"
 
 
 UMarketplacePolicy::UMarketplacePolicy()
@@ -16,10 +19,18 @@ void UMarketplacePolicy::PostInitProperties()
 	SearchStacksRequestData = MakeShared<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest>();
 	HttpRetryManager = MakeUnique<ImmutableOpenAPI::HttpRetryManager>(RetryLimitCount, RetryTimeoutRelativeSeconds);
 	
-	SearchAPI->SetURL(URL);
+	SearchAPI->SetURL(MarketplaceAPIURL);
 	SearchAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
 	SearchAPI->SetHttpRetryManager(*HttpRetryManager);
 	SearchStacksRequestData->ChainName = SearchStacksChainName;
+
+	TsSdkAPI = MakeUnique<ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi>();
+	TsSdkAPI->SetURL(TsSdkAPIURL);
+}
+
+UDataTable* UMarketplacePolicy::GetNFTDatatable()
+{
+	return NFT_Datatable;
 }
 
 ImmutableOpenAPI::OpenAPISearchApi* UMarketplacePolicy::GetOpenAPISearchApi()
@@ -29,9 +40,19 @@ ImmutableOpenAPI::OpenAPISearchApi* UMarketplacePolicy::GetOpenAPISearchApi()
 
 TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> UMarketplacePolicy::GetSearchStacksRequest()
 {
-	SearchStacksRequestData->ContractAddress = ContractAddress;
+	SearchStacksRequestData->ContractAddress = StackContractAddress;
 	
 	return SearchStacksRequestData;
+}
+
+ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi* UMarketplacePolicy::GetTsSdkAPI()
+{
+	return TsSdkAPI.Get();
+}
+
+FString UMarketplacePolicy::GetBalanceContractAddress() const
+{
+	return BalanceContractAddress;
 }
 
 void UMarketplacePolicy::SetPageSize(int32 PageSize)
@@ -67,7 +88,6 @@ void UMarketplacePolicy::SetKeyword(const FString& Keyword)
 	{
 		SearchStacksRequestData->Keyword.Reset();
 	}
-	
 }
 
 void UMarketplacePolicy::SetTraits(const TArray<FNFTMetadataAttribute_TraitType>& Traits)
@@ -106,4 +126,16 @@ void UMarketplacePolicy::SetTraits(const TArray<FNFTMetadataAttribute_TraitType>
 void UMarketplacePolicy::SetOnlyIncludeOwnerListings(bool OnlyIncludeOwnerListings)
 {
 	SearchStacksRequestData->OnlyIncludeOwnerListings = OnlyIncludeOwnerListings;
+}
+
+FNFT_TableRowBase* UMarketplacePolicy::FindNFTTextureRow(FName RowName)
+{
+	if (NFT_Datatable)
+	{
+		FString ContextString;
+
+		return NFT_Datatable->FindRow<FNFT_TableRowBase>(RowName, ContextString, true);
+	}
+	
+	return nullptr;
 }

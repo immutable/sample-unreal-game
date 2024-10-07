@@ -1,5 +1,6 @@
 ﻿#include "Marketplace/SearchStacksWidget.h"
 
+#include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "IContentBrowserSingleton.h"
@@ -7,7 +8,15 @@
 #include "UIGameplayTags.h"
 #include "UI/Marketplace/MarketplacePolicy.h"
 #include "Base/ItemWidget.h"
+#include "Dialog/DialogSubsystem.h"
+#include "Kismet/KismetSystemLibrary.h"
 
+
+USearchStacksWidget::USearchStacksWidget()
+{
+	ControlPanelButtonsData.Add(FUIControlPanelButtons::NextPage, EAWStackControlPanelSide::Right);
+	ControlPanelButtonsData.Add(FUIControlPanelButtons::PreviousPage, EAWStackControlPanelSide::Left);
+}
 
 void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 {
@@ -45,32 +54,65 @@ void USearchStacksWidget::NativeOnActivated()
 void USearchStacksWidget::OnWidgetRebuilt()
 {
 	Super::OnWidgetRebuilt();
-	
-	PreviousPageButton = AddButtonToLeft(FUIControlPanelButtons::PreviousPage);
-	NextPageButton = AddButtonToRight(FUIControlPanelButtons::NextPage);
 }
 
 void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPISearchApi::SearchStacksResponse& Response)
 {
-	if (Response.IsSuccessful())
+	if (!Response.IsSuccessful())
 	{
-		int32 NumberOfColumns = ListPanel->GetNumberOfColumns();
-		int32 NumberOfRows = ListPanel->GetNumberOfRows();
-		int32 NumberOfResults = Response.Content.Result.Num();
+		UCustomGameInstance::SendSystemMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search stacks result"), Response.GetResponseString()));
+		
+		return;
+	}
 
-		HandlePageData(Response.Content.Page);
-		for (int32 ResultId = 0; ResultId < NumberOfResults; ResultId++)
-		{
-			int32 Row = ResultId / NumberOfColumns;
-			int32 Column = ResultId - Row * NumberOfColumns;
-			auto ItemWidget = ListPanel->GetItem(Column, Row);
+	int32 NumberOfColumns = ListPanel->GetNumberOfColumns();
+	// int32 NumberOfRows = ListPanel->GetNumberOfRows();
+	int32 NumberOfResults = Response.Content.Result.Num();
 
-			ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
-		}
+	HandlePageData(Response.Content.Page);
+	for (int32 ResultId = 0; ResultId < NumberOfResults; ResultId++)
+	{
+		int32 Row = ResultId / NumberOfColumns;
+		int32 Column = ResultId - Row * NumberOfColumns;
+		auto ItemWidget = ListPanel->GetItem(Column, Row);
+
+		ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
 	}
 }
 
-void USearchStacksWidget::OnControlButtonClicked_Implementation(FGameplayTag ButtonTag)
+void USearchStacksWidget::SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons)
+{
+	for (auto Button : Buttons)
+	{
+		if (Button.Key.MatchesTagExact(FUIControlPanelButtons::PreviousPage))
+		{
+			PreviousPageButton = Button.Value;
+		}
+		if (Button.Key.MatchesTagExact(FUIControlPanelButtons::NextPage))
+		{
+			NextPageButton = Button.Value;
+		}
+		Button.Value->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnPageDirectionButtonClicked);
+	}
+	
+	Super::SetupControlButtons(Buttons);
+}
+
+void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData)
+{
+	PageCursors = PageData;
+
+	if (NextPageButton)
+	{
+		PageCursors.NextCursor.IsSet() ? NextPageButton->Show() : NextPageButton->Hide();	
+	}
+	if (PreviousPageButton)
+	{
+		PageCursors.PreviousCursor.IsSet() ? PreviousPageButton->Show() : PreviousPageButton->Hide();
+	}
+}
+
+void USearchStacksWidget::OnPageDirectionButtonClicked(FGameplayTag ButtonTag)
 {
 	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::PreviousPage))
 	{
@@ -80,12 +122,4 @@ void USearchStacksWidget::OnControlButtonClicked_Implementation(FGameplayTag But
 	{
 		RefreshItemList(PageCursors.NextCursor);
 	}
-}
-
-void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData)
-{
-	PageCursors = PageData;
-
-	PageCursors.NextCursor.IsSet() ? NextPageButton->Enable() : NextPageButton->Disable(); 
-	PageCursors.PreviousCursor.IsSet() ? PreviousPageButton->Enable() : PreviousPageButton->Disable(); 
 }

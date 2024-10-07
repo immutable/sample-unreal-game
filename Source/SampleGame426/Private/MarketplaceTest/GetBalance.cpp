@@ -14,7 +14,9 @@ void UGetBalance::GetTokenBalance(const FString& Address)
 
 	UHttpClient* HttpClient = NewObject<UHttpClient>();
 
-	const FString Uri = FString::Printf(TEXT("http://localhost:6060/balance?address=%s"), *Address);
+	const FString ContractAddress = "0x328766302e7617d0de5901f8da139dca49f3ec75";
+
+	const FString Uri = FString::Printf(TEXT("https://api.dev.immutable.com/v1/ts-sdk/token/balance?wallet_address=%s&contract_address=%s"), *Address, *ContractAddress);
 
 	// Make HTTP request
 	HttpClient->MakeHttpRequest(Uri, [this](FString ResponseString)

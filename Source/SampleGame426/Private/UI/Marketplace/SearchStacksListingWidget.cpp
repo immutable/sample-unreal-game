@@ -3,14 +3,14 @@
 #include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
-#include "ImmutableTsSdkApi_DefaultApiOperations.h"
-#include "ImmutableTsSdkApi_V1TsSdkOrderbookFulfillOrderPostRequest.h"
 #include "LogSampleGame.h"
 #include "OpenAPIListing.h"
 #include "OpenAPIStackBundle.h"
 #include "UIGameplayTags.h"
 #include "Marketplace/MarketplacePolicy.h"
 #include "Marketplace/SearchStacksListing_ListingsWidget.h"
+#include "ImmutableTsSdkApi_DefaultApiOperations.h"
+#include "ImmutableTsSdkApi_V1TsSdkOrderbookFulfillOrderPostRequest.h"
 
 #define MP_DESCRIPTION_DESCRIPTION TEXT("Description")
 #define MP_DESCRIPTION_CREATED_AT TEXT("Created at")
@@ -122,27 +122,48 @@ void USearchStacksListingWidget::OnOrderbookFulfillOrder(const ImmutableTsSdkApi
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendSystemMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to fulfill your order"), Response.GetResponseString()));
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to fulfill your order"), Response.GetResponseString()));
 
 		return;
 	}
 
-	if (Response.Content.Expiration.IsSet())
-	{
-		UE_LOG(LogSampleGame, Log, TEXT("GetUnsignedFulfillOrderTransaction Expiration: %s"), *Response.Content.Expiration.GetValue());	
-	}
+	// if (Response.Content.Expiration.IsSet())
+	// {
+	// 	UE_LOG(LogSampleGame, Log, TEXT("GetUnsignedFulfillOrderTransaction Expiration: %s"), *Response.Content.Expiration.GetValue());	
+	// }
 
 	if (Response.Content.Actions.IsSet())
 	{
 		auto Actions = Response.Content.Actions.GetValue();
-		for (int32 i = 0; i < Actions.Num(); i++)
+		for (auto Action : Actions)
 		{
-			if (Actions[i].Purpose.IsSet())
+			if (Action.Type == ImmutableTsSdkApi::ImmutableTsSdkApi_TransactionAction::TypeEnum::Transaction)
 			{
-				auto Purpose = Actions[i].Purpose.GetValue();
+				if (Action.Purpose.GetValue().Value == ImmutableTsSdkApi::ImmutableTsSdkApi_TransactionPurpose::Values::Approval)
+				{
+					GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), TEXT("Approval for purchase is processed!"));
+				}
+
+				if (Action.Purpose.GetValue().Value == ImmutableTsSdkApi::ImmutableTsSdkApi_TransactionPurpose::Values::FulfillOrder)
+				{
+					if (Action.PopulatedTransactions->To.IsSet() && Action.PopulatedTransactions->Data.IsSet())
+					{
+						GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), TEXT("Transaction complete successfully! Enjoy your new purchase!"));
+						GetOwningCustomLocalPLayer()->UpdateBalance();
+					}
+					else
+					{
+						UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorSimple, UDialogSubsystem::CreateErrorSimpleDescriptor(TEXT("Error"), TEXT("Failed to sign and submit transaction due to empty data")));
+					}
+				}
 				
-				UE_LOG(LogSampleGame, Log, TEXT("GetUnsignedFulfillOrderTransaction Actions: %s"), *Purpose.EnumToString(Purpose.Value));	
 			}
+			// if (Action.Purpose.IsSet())
+			// {
+			// 	auto Purpose = Action.Purpose.GetValue();
+			// 	
+			// 	UE_LOG(LogSampleGame, Log, TEXT("GetUnsignedFulfillOrderTransaction Actions: %s"), *Purpose.EnumToString(Purpose.Value));	
+			// }
 		}
 	}
 }

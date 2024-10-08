@@ -8,7 +8,7 @@
 #define LOCTEXT_NAMESPACE "ImmutableUI"
 
 
-UDialogDescriptor_OneAction* UDialogSubsystem::CreateErrorDescriptor(const FString& Header, const FString& Body)
+UDialogDescriptor_OneAction* UDialogSubsystem::CreateErrorSimpleDescriptor(const FString& Header, const FString& Body)
 {
 	UDialogDescriptor_OneAction* Descriptor = NewObject<UDialogDescriptor_OneAction>();
 
@@ -27,6 +27,18 @@ UErrorDialogDescriptorWithErrorText* UDialogSubsystem::CreateErrorDescriptorWith
 	Descriptor->Header = FText::FromString(Header);
 	Descriptor->Body = FText::FromString(Body);
 	Descriptor->ErrorText = FText::FromString(Error);
+	Descriptor->Action.Result = EDialogResult::Confirmed;
+	Descriptor->ActionText = LOCTEXT("Ok", "Ok");
+
+	return Descriptor;
+}
+
+UDialogDescriptor_OneAction* UDialogSubsystem::CreateMessageDescriptor(const FString& Header, const FString& Body)
+{
+	UDialogDescriptor_OneAction* Descriptor = NewObject<UDialogDescriptor_OneAction>();
+
+	Descriptor->Header = FText::FromString(Header);
+	Descriptor->Body = FText::FromString(Body);
 	Descriptor->Action.Result = EDialogResult::Confirmed;
 	Descriptor->ActionText = LOCTEXT("Ok", "Ok");
 

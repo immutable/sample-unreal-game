@@ -109,11 +109,31 @@ void UCustomLocalPlayer::UpdateBalance()
 	MarketplacePolicy->GetTsSdkAPI()->V1TsSdkTokenBalanceGet(Request, ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::FV1TsSdkTokenBalanceGetDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
 }
 
+void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Data, const FString& DisplayMessage)
+{
+	FImtblTransactionRequest Request;
+
+	Request.to = To;
+	Request.data = Data;
+	Request.value = "0";
+	
+	Passport->ZkEvmSendTransactionWithConfirmation(Request, UImmutablePassport::FImtblPassportResponseDelegate::CreateWeakLambda(this, [this, DisplayMessage](FImmutablePassportResult Result)
+	{
+		if (!Result.Success)
+		{
+			UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to sign and submit transaction"), Result.Error));
+			return;
+		}
+		
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Message, UDialogSubsystem::CreateMessageDescriptor(TEXT("Message"), *DisplayMessage));
+	}));
+}
+
 void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkTokenBalanceGetResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendSystemMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update balance"), Response.GetResponseString()));
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update balance"), Response.GetResponseString()));
 		
 		return;
 	}
@@ -204,7 +224,7 @@ void UCustomLocalPlayer::OnPassportLoggedIn(FImmutablePassportResult Result)
 
 	if (!Result.Success)
 	{
-		UCustomGameInstance::SendSystemMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to login into Immutable Passport"), Result.Error));
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to login into Immutable Passport"), Result.Error));
 	}
 	else
 	{

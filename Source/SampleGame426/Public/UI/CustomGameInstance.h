@@ -20,8 +20,12 @@ public:
 	// FCustomHandleSystemMessageDelegate OnHandleSystemMessage;
 
 	/** Send a system message via OnHandleSystemMessage */
-	UFUNCTION(BlueprintCallable, Category = CommonUser)
-	static void SendSystemMessage(const UObject* WorldContextObject, FGameplayTag DialogType, const UDialogDescriptor* Descriptor);
+	UFUNCTION(BlueprintCallable, Category = "Immutable")
+	static void SendDialogMessage(const UObject* WorldContextObject, FGameplayTag DialogType, const UDialogDescriptor* Descriptor);
+
+	UFUNCTION(BlueprintCallable, Category = "Immutable")
+	static void SendRunningLineMessage(const UObject* WorldContextObject, const FString& Message);
+
 
 	// UFUNCTION(BlueprintCallable, Category = CommonUser)
 	// static void SendErrorMessage(const UObject* WorldContextObject, FGameplayTag DialogType, UDialogDescriptor* Descriptor);

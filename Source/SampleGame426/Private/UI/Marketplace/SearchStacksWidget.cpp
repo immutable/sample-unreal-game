@@ -60,7 +60,7 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendSystemMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search stacks result"), Response.GetResponseString()));
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search stacks result"), Response.GetResponseString()));
 		
 		return;
 	}

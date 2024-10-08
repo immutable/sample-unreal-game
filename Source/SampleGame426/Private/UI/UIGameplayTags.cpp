@@ -17,6 +17,7 @@ FGameplayTag FUIDialogTypes::None;
 FGameplayTag FUIDialogTypes::ErrorSimple;
 FGameplayTag FUIDialogTypes::ErrorFull;
 FGameplayTag FUIDialogTypes::Confirmation;
+FGameplayTag FUIDialogTypes::Message;
 
 
 inline FGameplayTag RequestGameplayTag(const FString& Prefix, const FString& Name)
@@ -53,4 +54,5 @@ void FUIDialogTypes::InitUIGameplayTags_DialogTypes()
 	FUIDialogTypes::ErrorSimple		= RequestGameplayTag(Prefix, TEXT("ErrorSimple"));
 	FUIDialogTypes::ErrorFull		= RequestGameplayTag(Prefix, TEXT("ErrorFull"));
 	FUIDialogTypes::Confirmation	= RequestGameplayTag(Prefix, TEXT("Confirmation"));
+	FUIDialogTypes::Message			= RequestGameplayTag(Prefix, TEXT("Message"));
 }

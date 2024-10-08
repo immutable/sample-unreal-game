@@ -25,8 +25,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UDialog* ShowDialog(const FGameplayTag& DialogType, const UDialogDescriptor* Descriptor);
 
-	static UDialogDescriptor_OneAction* CreateErrorDescriptor(const FString& Header, const FString& Body);
+	static UDialogDescriptor_OneAction* CreateErrorSimpleDescriptor(const FString& Header, const FString& Body);
 	static UErrorDialogDescriptorWithErrorText* CreateErrorDescriptorWithErrorText(const FString& Header, const FString& Body, const FString& Error);
+	static UDialogDescriptor_OneAction* CreateMessageDescriptor(const FString& Header, const FString& Body);
 
 private:
 	const FDialogType* GetDialogType(FGameplayTag DialogType) const;

@@ -50,6 +50,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void UpdateBalance();
 
+	void SignSubmitApproval(const FString& To, const FString& Data, const FString& DisplayMessage);
+
 private:
 	void InitializePassport();
 	void OnPassportIsRunning(TWeakObjectPtr<class UImtblJSConnector> JSConnector);

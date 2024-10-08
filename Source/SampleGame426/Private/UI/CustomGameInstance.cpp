@@ -7,7 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 
 
-void UCustomGameInstance::SendSystemMessage(const UObject* WorldContextObject, FGameplayTag DialogType, const UDialogDescriptor* Descriptor)
+void UCustomGameInstance::SendDialogMessage(const UObject* WorldContextObject, FGameplayTag DialogType, const UDialogDescriptor* Descriptor)
 {
 	auto GameInstance = Cast<UCustomGameInstance>(UGameplayStatics::GetGameInstance(WorldContextObject));
 
@@ -22,6 +22,12 @@ void UCustomGameInstance::SendSystemMessage(const UObject* WorldContextObject, F
 		DialogSubsystem->ShowDialog(DialogType, Descriptor);
 	}
 }
+
+void UCustomGameInstance::SendRunningLineMessage(const UObject* WorldContextObject, const FString& Message)
+{
+	UE_LOG(LogSampleGame, Log, TEXT("%s"), *Message);
+}
+
 //
 // void UCustomGameInstance::SendErrorMessage(const UObject* WorldContextObject, FGameplayTag MessageType, const FString& Title, const FString& Body, const FString& Error)
 // {

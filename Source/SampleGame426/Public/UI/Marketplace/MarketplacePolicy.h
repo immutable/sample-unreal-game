@@ -1,7 +1,8 @@
 ﻿#pragma once
 
 #include "ImmutableTsSdkApi_DefaultApi.h"
-#include "OpenAPISearchApi.h"
+#include "ImmutableOpenAPI/Public/OpenAPISearchApi.h"
+#include "ImmutableIndexerSearchAPI/Public/OpenAPIStacksApi.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
 #include "NFT/NFT_TableRowBase.h"
 
@@ -18,17 +19,23 @@ class UMarketplacePolicy : public UObject
 	GENERATED_BODY()
 
 public:
-	UMarketplacePolicy();
+	enum
+	{
+		
+	};
+	
 	/* UObject Interface */
 	virtual void PostInitProperties() override;
 	/* UObject Interface */
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
-	class UDataTable* GetNFTDatatable();
+	UDataTable* GetNFTDatatable();
 	FNFT_TableRowBase* FindNFTTextureRow(FName RowName);
 
-	ImmutableOpenAPI::OpenAPISearchApi* GetOpenAPISearchApi();
-	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> GetSearchStacksRequest();
+	ImmutableOpenAPI::OpenAPISearchApi* GetSearchAPI();
+	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> GetSearchAPI_SearchStacksRequest();
+	ImmutableIndexerSearchAPI::OpenAPIStacksApi* GetIndexerStacksAPI();
+	TSharedPtr<ImmutableIndexerSearchAPI::OpenAPIStacksApi::SearchNFTsRequest> GetIndexerStacksAPI_SearchNfTsRequest();
 	ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi* GetTsSdkAPI();
 	
 	FString GetBalanceContractAddress() const; 
@@ -53,7 +60,10 @@ protected:
 	FString TsSdkAPIURL;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
-	FString SearchStacksChainName;
+	FString SearchAPIChainName;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
+	FString IndexerStacksAPIChainName;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	uint32 RetryLimitCount = 0;
@@ -71,9 +81,14 @@ protected:
 	int32 NumberFractionalDigits = 4;
 
 private:
-	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> SearchStacksRequestData;
+	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> SearchAPI_SearchStacksRequest;
 	TUniquePtr<ImmutableOpenAPI::OpenAPISearchApi> SearchAPI;
-	TUniquePtr<ImmutableOpenAPI::HttpRetryManager> HttpRetryManager;
+	TUniquePtr<ImmutableOpenAPI::HttpRetryManager> SearchAPI_HttpRetryManager;
+
+	TSharedPtr<ImmutableIndexerSearchAPI::OpenAPIStacksApi::SearchNFTsRequest> IndexerStacksAPI_SearchNfTsRequest;
+	TUniquePtr<ImmutableIndexerSearchAPI::OpenAPIStacksApi> IndexerStacksAPI;
+	TUniquePtr<ImmutableIndexerSearchAPI::HttpRetryManager> IndexerStacksAPI_HttpRetryManager;
+
 	TUniquePtr<ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi> TsSdkAPI;
 
 };

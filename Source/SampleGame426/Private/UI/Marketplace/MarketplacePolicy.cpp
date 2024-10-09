@@ -3,26 +3,32 @@
 #include "CustomLocalPlayer.h"
 #include "OpenAPIHelpers.h"
 #include "OpenAPISearchApiOperations.h"
+#include "OpenAPIStacksApiOperations.h"
 #include "Dialog/DialogSubsystem.h"
 #include "Engine/DataTable.h"
 
-
-UMarketplacePolicy::UMarketplacePolicy()
-{
-}
 
 void UMarketplacePolicy::PostInitProperties()
 {
 	UObject::PostInitProperties();
 
 	SearchAPI = MakeUnique<ImmutableOpenAPI::OpenAPISearchApi>();
-	SearchStacksRequestData = MakeShared<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest>();
-	HttpRetryManager = MakeUnique<ImmutableOpenAPI::HttpRetryManager>(RetryLimitCount, RetryTimeoutRelativeSeconds);
+	SearchAPI_SearchStacksRequest = MakeShared<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest>();
+	SearchAPI_HttpRetryManager = MakeUnique<ImmutableOpenAPI::HttpRetryManager>(RetryLimitCount, RetryTimeoutRelativeSeconds);
 	
 	SearchAPI->SetURL(MarketplaceAPIURL);
 	SearchAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
-	SearchAPI->SetHttpRetryManager(*HttpRetryManager);
-	SearchStacksRequestData->ChainName = SearchStacksChainName;
+	SearchAPI->SetHttpRetryManager(*SearchAPI_HttpRetryManager);
+	SearchAPI_SearchStacksRequest->ChainName = SearchAPIChainName;
+
+	IndexerStacksAPI = MakeUnique<ImmutableIndexerSearchAPI::OpenAPIStacksApi>();
+	IndexerStacksAPI_SearchNfTsRequest = MakeShared<ImmutableIndexerSearchAPI::OpenAPIStacksApi::SearchNFTsRequest>();
+	IndexerStacksAPI_HttpRetryManager = MakeUnique<ImmutableIndexerSearchAPI::HttpRetryManager>(RetryLimitCount, RetryTimeoutRelativeSeconds);
+
+	IndexerStacksAPI->SetURL(MarketplaceAPIURL);
+	IndexerStacksAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
+	IndexerStacksAPI->SetHttpRetryManager(*IndexerStacksAPI_HttpRetryManager);
+	IndexerStacksAPI_SearchNfTsRequest->ChainName = IndexerStacksAPIChainName;
 
 	TsSdkAPI = MakeUnique<ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi>();
 	TsSdkAPI->SetURL(TsSdkAPIURL);
@@ -33,16 +39,27 @@ UDataTable* UMarketplacePolicy::GetNFTDatatable()
 	return NFT_Datatable;
 }
 
-ImmutableOpenAPI::OpenAPISearchApi* UMarketplacePolicy::GetOpenAPISearchApi()
+ImmutableOpenAPI::OpenAPISearchApi* UMarketplacePolicy::GetSearchAPI()
 {
 	return SearchAPI.Get();
 }
 
-TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> UMarketplacePolicy::GetSearchStacksRequest()
+TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> UMarketplacePolicy::GetSearchAPI_SearchStacksRequest()
 {
-	SearchStacksRequestData->ContractAddress = StackContractAddress;
+	SearchAPI_SearchStacksRequest->ContractAddress = StackContractAddress;
 	
-	return SearchStacksRequestData;
+	return SearchAPI_SearchStacksRequest;
+}
+
+ImmutableIndexerSearchAPI::OpenAPIStacksApi* UMarketplacePolicy::GetIndexerStacksAPI()
+{
+	return IndexerStacksAPI.Get();
+}
+
+TSharedPtr<ImmutableIndexerSearchAPI::OpenAPIStacksApi::SearchNFTsRequest> UMarketplacePolicy::GetIndexerStacksAPI_SearchNfTsRequest()
+{
+	IndexerStacksAPI_SearchNfTsRequest->OnlyIncludeOwnerListings = true;
+	return IndexerStacksAPI_SearchNfTsRequest;
 }
 
 ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi* UMarketplacePolicy::GetTsSdkAPI()
@@ -57,36 +74,38 @@ FString UMarketplacePolicy::GetBalanceContractAddress() const
 
 void UMarketplacePolicy::SetPageSize(int32 PageSize)
 {
-	SearchStacksRequestData->PageSize = PageSize;
+	SearchAPI_SearchStacksRequest->PageSize = PageSize;
+	IndexerStacksAPI_SearchNfTsRequest->PageSize = PageSize;
 }
 
 void UMarketplacePolicy::SetPageCursor(TOptional<FString> PageCursor)
 {
-	SearchStacksRequestData->PageCursor = PageCursor;
+	SearchAPI_SearchStacksRequest->PageCursor = PageCursor;
 }
 
 void UMarketplacePolicy::SetAccount(const FString& Account)
 {
 	if (Account.IsEmpty())
 	{
-		SearchStacksRequestData->AccountAddress = Account;	
+		//SearchAPI_SearchStacksRequest->AccountAddress.Reset();
+        IndexerStacksAPI_SearchNfTsRequest->AccountAddress.Reset();
 	}
 	else
 	{
-		SearchStacksRequestData->AccountAddress.Reset();
+		//SearchAPI_SearchStacksRequest->AccountAddress = Account;
+		IndexerStacksAPI_SearchNfTsRequest->AccountAddress = Account;
 	}
-	
 }
 
 void UMarketplacePolicy::SetKeyword(const FString& Keyword)
 {
 	if (!Keyword.TrimStartAndEnd().IsEmpty())
 	{
-		SearchStacksRequestData->Keyword = Keyword;	
+		SearchAPI_SearchStacksRequest->Keyword = Keyword;	
 	}
 	else
 	{
-		SearchStacksRequestData->Keyword.Reset();
+		SearchAPI_SearchStacksRequest->Keyword.Reset();
 	}
 }
 
@@ -115,17 +134,17 @@ void UMarketplacePolicy::SetTraits(const TArray<FNFTMetadataAttribute_TraitType>
 			TraitsJson += "\"" + Trait.Name + "\": {\"values\": [" + ValuesJson + "], \"condition\": \"eq\"}";
 		}
 
-		SearchStacksRequestData->Trait = ImmutableOpenAPI::ToUrlString("{" + TraitsJson + "}");
+		SearchAPI_SearchStacksRequest->Trait = ImmutableOpenAPI::ToUrlString("{" + TraitsJson + "}");
 	}
 	else
 	{
-		SearchStacksRequestData->Trait.Reset();
+		SearchAPI_SearchStacksRequest->Trait.Reset();
 	}
 }
 
 void UMarketplacePolicy::SetOnlyIncludeOwnerListings(bool OnlyIncludeOwnerListings)
 {
-	SearchStacksRequestData->OnlyIncludeOwnerListings = OnlyIncludeOwnerListings;
+	SearchAPI_SearchStacksRequest->OnlyIncludeOwnerListings = OnlyIncludeOwnerListings;
 }
 
 FNFT_TableRowBase* UMarketplacePolicy::FindNFTTextureRow(FName RowName)

@@ -42,8 +42,7 @@ FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerLoggedIn(FPlayerLogg
 	return OnPlayerLoggedIn.Add(Delegate);
 }
 
-FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerPassportDataObtained(
-	FPlayerPassportDataObtained::FDelegate Delegate)
+FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerPassportDataObtained(FPlayerPassportDataObtained::FDelegate Delegate)
 {
 	if (CheckAllPassportDataObtained())
 	{
@@ -257,10 +256,11 @@ void UCustomLocalPlayer::CollectPassportData()
 						const auto RequestAccountsData = FImmutablePassportZkEvmRequestAccountsData::FromJsonObject(Result.Response.JsonObject);
 
 						PassportWalletAddress = RequestAccountsData->accounts[0];
+						NotifyIfAllPassportDataObtained();
 					}
 					else
 					{
-				
+						UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to obtain Immutable Passport data"), Result.Error));
 					}
 				}));
 			}
@@ -282,6 +282,8 @@ void UCustomLocalPlayer::NotifyIfAllPassportDataObtained()
 {
 	if (!CheckAllPassportDataObtained())
 	{
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorSimple, UDialogSubsystem::CreateErrorSimpleDescriptor(TEXT("Error"), TEXT("Some Immutable Passport data is missing")));
+		
 		return;
 	}
 

@@ -16,7 +16,7 @@ namespace ImmutableOpenAPI
  * 
  */
 UCLASS(Abstract, BlueprintType)
-class SAMPLEGAME426_API UMarketplaceItemWidget : public UItemWidget, public IOpenAPIProcessorInterface
+class SAMPLEGAME426_API UMarketplaceItemWidget : public UItemWidget, public IMarketplaceOpenAPIProcessorInterface
 {
 	GENERATED_BODY()
 

@@ -16,6 +16,8 @@ public class SampleGame426 : ModuleRules
 			"InputCore",
 			"ImmutableOpenAPI", 
 			"ImmutableTsSdkApi",
+			"ImmutableIndexerSearchAPI"
+			
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 

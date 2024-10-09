@@ -85,6 +85,8 @@ void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 	{
 		Listings->AddItem(Listing);
 	}
+
+	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
 void USearchStacksListingWidget::OnSelectionStatusChange(bool IsAnyItemSelected)

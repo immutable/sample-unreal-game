@@ -15,7 +15,6 @@ class SAMPLEGAME426_API UItemWidget : public UCustomUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) {};
 	virtual void SetOriginalState();
 
 protected:

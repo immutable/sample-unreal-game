@@ -10,13 +10,8 @@
 #include "Base/ItemWidget.h"
 #include "Dialog/DialogSubsystem.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 
-
-USearchStacksWidget::USearchStacksWidget()
-{
-	ControlPanelButtonsData.Add(FUIControlPanelButtons::NextPage, EAWStackControlPanelSide::Right);
-	ControlPanelButtonsData.Add(FUIControlPanelButtons::PreviousPage, EAWStackControlPanelSide::Left);
-}
 
 void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 {
@@ -41,7 +36,7 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 
 	Policy->SetPageSize(ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows());
 	Policy->SetPageCursor(PageCursor);
-	Policy->GetOpenAPISearchApi()->SearchStacks(*Policy->GetSearchStacksRequest(), ImmutableOpenAPI::OpenAPISearchApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
+	Policy->GetSearchAPI()->SearchStacks(*Policy->GetSearchAPI_SearchStacksRequest(), ImmutableOpenAPI::OpenAPISearchApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
 }
 
 void USearchStacksWidget::NativeOnActivated()
@@ -74,9 +69,11 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 	{
 		int32 Row = ResultId / NumberOfColumns;
 		int32 Column = ResultId - Row * NumberOfColumns;
-		auto ItemWidget = ListPanel->GetItem(Column, Row);
-
-		ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
+		
+		if (auto ItemWidget = Cast<IMarketplaceOpenAPIProcessorInterface>(ListPanel->GetItem(Column, Row)))
+		{
+			ItemWidget->ProcessModel(Response.Content.Result[ResultId]);	
+		}
 	}
 }
 

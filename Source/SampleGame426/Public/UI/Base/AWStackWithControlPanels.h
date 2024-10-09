@@ -48,7 +48,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
 	TSoftObjectPtr<UControlPanelButtonDataAsset> ControlPanelButtonDefaults;
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
-	TSubclassOf<UActivatableWidget> TopPanelWidgetClass;
+	TSubclassOf<UCustomUserWidget> TopPanelWidgetClass;
+	UPROPERTY(EditAnywhere, Category = "Window Settings")
+	TSubclassOf<UCustomUserWidget> BottomPanelWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	FSlateBrush PanelsBrush;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
@@ -60,6 +62,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
 	FMargin ButtonPadding;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
+	float TopPanelVerticalHeightFill = 0.05f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
+	float CenterPanelVerticalHeightFill = 0.9f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
+	float BottomPanelVerticalHeightFill = 0.05f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float LeftPanelHorizontalWidthFill = 0.05f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float RightPanelHorizontalWidthFill = 0.05f;
@@ -68,7 +76,9 @@ protected:
 
 private:
 	UPROPERTY(Transient)
-	UActivatableWidget* TopPanelWidget = nullptr;
+	UCustomUserWidget* TopPanelWidget = nullptr;
+	UPROPERTY(Transient)
+	UCustomUserWidget* BottomPanelWidget = nullptr;
 
 	UPROPERTY(Transient)
 	TMap<FGameplayTag, UControlPanelButton*> ControlPanelButtons;

@@ -10,11 +10,18 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 {
 	TSharedRef<SWidget> Original = Super::RebuildWidget();
 	TSharedRef<SWidget> TopPanelSlate = SNullWidget::NullWidget;
+	TSharedRef<SWidget> BottomPanelSlate = SNullWidget::NullWidget;
 
 	if (!TopPanelWidget && TopPanelWidgetClass)
 	{
-		TopPanelWidget = CreateWidget<UActivatableWidget>(this, TopPanelWidgetClass);
+		TopPanelWidget = CreateWidget<UCustomUserWidget>(this, TopPanelWidgetClass);
 		TopPanelSlate = TopPanelWidget->TakeWidget();
+	}
+
+	if (!BottomPanelWidget && BottomPanelWidgetClass)
+	{
+		BottomPanelWidget = CreateWidget<UCustomUserWidget>(this, BottomPanelWidgetClass);
+		BottomPanelSlate = BottomPanelWidget->TakeWidget();
 	}
 	
 	SAssignNew(MyVerticalBox, SVerticalBox)
@@ -22,12 +29,15 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 	+ SVerticalBox::Slot()
 	.HAlign(HAlign_Fill)
 	.VAlign(VAlign_Fill)
-	.AutoHeight()
+	.FillHeight(TopPanelVerticalHeightFill)
 	[
 		TopPanelSlate
 	]
 	
 	+ SVerticalBox::Slot()
+	.HAlign(HAlign_Fill)
+	.VAlign(VAlign_Fill)
+	.FillHeight(CenterPanelVerticalHeightFill)
 	[
 		SNew(SHorizontalBox)
 
@@ -103,6 +113,14 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 				SAssignNew(RightControlPanel, SVerticalBox)
 			]
 		]
+	]
+
+	+ SVerticalBox::Slot()
+	.HAlign(HAlign_Fill)
+	.VAlign(VAlign_Fill)
+	.FillHeight(BottomPanelVerticalHeightFill)
+	[
+		BottomPanelSlate
 	];
 
 	return MyVerticalBox.ToSharedRef();
@@ -170,6 +188,16 @@ void UAWStackWithControlPanels::ReleaseSlateResources(bool bReleaseChildren)
 		}
 
 		TopPanelWidget = nullptr;
+	}
+
+	if (BottomPanelWidget)
+	{
+		if (BottomPanelWidget->GetCachedWidget())
+		{
+			MyVerticalBox->RemoveSlot(BottomPanelWidget->GetCachedWidget().ToSharedRef());
+		}
+
+		BottomPanelWidget = nullptr;
 	}
 
 	MyVerticalBox.Reset();

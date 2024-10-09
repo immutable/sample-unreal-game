@@ -23,8 +23,11 @@ public:
 	void OnPassportInitialized();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = Immutable)
-	void OnPassportLoggedIn();
+	void OnPassportLoggedIn(bool LoginStatus);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = Immutable)
 	void OnPassportLoggedOut();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = Immutable)
+	void OnPassportDataObtained();
 };

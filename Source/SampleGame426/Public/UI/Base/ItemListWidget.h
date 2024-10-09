@@ -32,14 +32,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Immutable")
 	TSoftClassPtr<class UItemWidget> ItemClass;
 
-	UPROPERTY(EditAnywhere, Category = "Immutable")
+	UPROPERTY(EditDefaultsOnly, Category = "Immutable")
 	int32 NumberOfRows = 4;
 	
-	UPROPERTY(EditAnywhere, Category = "Immutable")
+	UPROPERTY(EditDefaultsOnly, Category = "Immutable")
 	int32 NumberOfColumns = 5;
 
+	UPROPERTY(EditAnywhere, Category = "Immutable")
+	FMargin ItemPadding;
+
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
-	class UUniformGridPanel* ListPanel = nullptr;
+	class UGridPanel* ListPanel = nullptr;
 
 private:
 	TArray<UItemWidget*> CachedItems;

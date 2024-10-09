@@ -88,7 +88,7 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
 
 			// add login screen widget as an initial screen
-			LoginScreenWidget = Cast<ULoginScreenWidget>(PushWidget(LoginScreenWidgetClass, FUILayers::Modal));
+			LoginScreenWidget = Cast<ULoginScreenWidget>(PushWidget(LoginScreenWidgetClass, FUILayers::Menu));
 
 	#if WITH_EDITOR
 			if (GIsEditor)
@@ -110,17 +110,23 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 
 	LocalPlayer->CallAndRegister_OnPlayerLoggedIn(UCustomLocalPlayer::FPlayerLoggedInDelegate::FDelegate::CreateWeakLambda(this, [this](bool IsLoggedIn)
 	{
-		if (IsLoggedIn)
+		if (LoginScreenWidget && LoginScreenWidget->GetClass()->ImplementsInterface(UPassportListenerInterface::StaticClass()))
 		{
-			if (LoginScreenWidget && LoginScreenWidget->GetClass()->ImplementsInterface(UPassportListenerInterface::StaticClass()))
-			{
-				IPassportListenerInterface::Execute_OnPassportLoggedIn(LoginScreenWidget);	
-			}
-
-			// create marketplace policy
-			MarketplacePolicy = NewObject<UMarketplacePolicy>(this, MarketplacePolicyClass.LoadSynchronous());
+			IPassportListenerInterface::Execute_OnPassportLoggedIn(LoginScreenWidget, IsLoggedIn);	
 		}
 	}));
+
+	LocalPlayer->CallAndRegister_OnPlayerPassportDataObtained(UCustomLocalPlayer::FPlayerPassportDataObtained::FDelegate::CreateWeakLambda(this, [this]()
+	{
+		if (LoginScreenWidget && LoginScreenWidget->GetClass()->ImplementsInterface(UPassportListenerInterface::StaticClass()))
+		{
+			IPassportListenerInterface::Execute_OnPassportDataObtained(LoginScreenWidget);	
+		}
+
+		// create marketplace policy
+		MarketplacePolicy = NewObject<UMarketplacePolicy>(this, MarketplacePolicyClass.LoadSynchronous());
+	}));
+	
 }
 
 void UGameUIPolicy::NotifyPlayerDestroyed(UCustomLocalPlayer* LocalPlayer)

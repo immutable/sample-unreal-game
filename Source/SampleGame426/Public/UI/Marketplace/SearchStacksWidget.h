@@ -2,7 +2,6 @@
 
 #include "OpenAPIPage.h"
 #include "OpenAPISearchApi.h"
-#include "Base/ActivatableWidget.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Base/ItemListWidget.h"
 #include "UI/Interfaces/IItemListInterface.h"
@@ -19,7 +18,6 @@ class SAMPLEGAME426_API USearchStacksWidget : public UActivatableWidgetWithContr
 	GENERATED_BODY()
 
 public:
-	USearchStacksWidget();
 	virtual void RefreshItemList(TOptional<FString> PageCursor) override;
 
 protected:
@@ -39,7 +37,7 @@ private:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
-	class UItemListWidget* ListPanel = nullptr;
+	UItemListWidget* ListPanel = nullptr;
 	UPROPERTY(Transient)
 	UControlPanelButton* PreviousPageButton = nullptr;
 	UPROPERTY(Transient)

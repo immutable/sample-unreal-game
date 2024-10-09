@@ -1,7 +1,10 @@
 #include "Base/ItemListWidget.h"
 
 #include "Base/ItemWidget.h"
+#include "Components/GridPanel.h"
+#include "Components/GridSlot.h"
 #include "Components/UniformGridPanel.h"
+#include "Components/UniformGridSlot.h"
 
 
 void UItemListWidget::ResetPanelItems()
@@ -55,7 +58,13 @@ TSharedRef<SWidget> UItemListWidget::RebuildWidget()
 				UItemWidget* NewItemWidgetObject = CreateWidget<UItemWidget>(this, ItemWidgetClass, ItemWidgetName);
 
 				CachedItems.Add(NewItemWidgetObject);
-				ListPanel->AddChildToUniformGrid(NewItemWidgetObject, Row, Column);
+
+				//auto UniformGridSlot = ListPanel->AddChildToUniformGrid(NewItemWidgetObject, Row, Column);
+				auto GridSlot = ListPanel->AddChildToGrid(NewItemWidgetObject, Row, Column);
+
+				GridSlot->SetPadding(ItemPadding);
+				GridSlot->SetHorizontalAlignment(HAlign_Fill);
+				GridSlot->SetVerticalAlignment(VAlign_Fill);
 			}
 		}
 	}

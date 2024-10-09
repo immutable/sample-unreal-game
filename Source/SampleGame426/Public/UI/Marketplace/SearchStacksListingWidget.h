@@ -10,7 +10,7 @@
  * 
  */
 UCLASS(Abstract)
-class SAMPLEGAME426_API USearchStacksListingWidget : public UActivatableWidgetWithControlPanels, public IOpenAPIProcessorInterface
+class SAMPLEGAME426_API USearchStacksListingWidget : public UActivatableWidgetWithControlPanels, public IMarketplaceOpenAPIProcessorInterface
 {
 	GENERATED_BODY()
 

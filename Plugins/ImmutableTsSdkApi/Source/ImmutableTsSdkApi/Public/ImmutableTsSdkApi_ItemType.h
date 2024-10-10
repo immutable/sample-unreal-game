@@ -42,6 +42,7 @@ public:
 	static FString EnumToString(const Values& EnumValue);
 	static bool EnumFromString(const FString& EnumAsString, Values& EnumValue);
 
+	uint8 Value;
 
 };
 

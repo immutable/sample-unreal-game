@@ -9,7 +9,7 @@
 #include "Components/TextBlock.h"
 #include "Math/BigInt.h"
 #include "Marketplace/SearchStacksListingWidget.h"
-#include "Marketplace/MarketplaceUtility.h"
+#include "UI/Utility/MathUtility.h"
 #include "NFT/NFT_TableRowBase.h"
 
 
@@ -99,7 +99,7 @@ void UMarketplaceItemWidget::SetPrice(const ImmutableOpenAPI::OpenAPIPriceDetail
 {
 	if (NFTLowestPrice && PriceDetails.Token.Decimals.IsSet())
 	{
-		FString Price = FMarketplaceUtility::ConvertMarketplaceTokenValue(PriceDetails.Token.Decimals.GetValue(), PriceDetails.Amount.Value);  
+		FString Price = FMathUtility::ConvertWeiStringToFloatValueString(PriceDetails.Token.Decimals.GetValue(), PriceDetails.Amount.Value);  
 
 		NFTLowestPrice->SetText(FText::FromString(Price));
 

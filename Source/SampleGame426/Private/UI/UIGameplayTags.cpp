@@ -5,19 +5,20 @@ FGameplayTag FUILayers::MenuWithControls;
 FGameplayTag FUILayers::Menu;
 FGameplayTag FUILayers::Modal;
 
-
 FGameplayTag FUIControlPanelButtons::Empty;
 FGameplayTag FUIControlPanelButtons::NextPage;
 FGameplayTag FUIControlPanelButtons::PreviousPage;
 FGameplayTag FUIControlPanelButtons::Forward;
 FGameplayTag FUIControlPanelButtons::Back;
 FGameplayTag FUIControlPanelButtons::Buy;
+FGameplayTag FUIControlPanelButtons::Sell;
 
 FGameplayTag FUIDialogTypes::None;
 FGameplayTag FUIDialogTypes::ErrorSimple;
 FGameplayTag FUIDialogTypes::ErrorFull;
 FGameplayTag FUIDialogTypes::Confirmation;
 FGameplayTag FUIDialogTypes::Message;
+FGameplayTag FUIDialogTypes::Sell;
 
 
 inline FGameplayTag RequestGameplayTag(const FString& Prefix, const FString& Name)
@@ -44,6 +45,7 @@ void FUIControlPanelButtons::InitUIGameplayTags_ControlPanelButtons()
 	FUIControlPanelButtons::Forward			= RequestGameplayTag(Prefix, TEXT("Forward"));
 	FUIControlPanelButtons::Back			= RequestGameplayTag(Prefix, TEXT("Back"));
 	FUIControlPanelButtons::Buy				= RequestGameplayTag(Prefix, TEXT("Buy"));
+	FUIControlPanelButtons::Sell			= RequestGameplayTag(Prefix, TEXT("Sell"));
 }
 
 void FUIDialogTypes::InitUIGameplayTags_DialogTypes()
@@ -55,4 +57,5 @@ void FUIDialogTypes::InitUIGameplayTags_DialogTypes()
 	FUIDialogTypes::ErrorFull		= RequestGameplayTag(Prefix, TEXT("ErrorFull"));
 	FUIDialogTypes::Confirmation	= RequestGameplayTag(Prefix, TEXT("Confirmation"));
 	FUIDialogTypes::Message			= RequestGameplayTag(Prefix, TEXT("Message"));
+	FUIDialogTypes::Sell			= RequestGameplayTag(Prefix, TEXT("Sell"));
 }

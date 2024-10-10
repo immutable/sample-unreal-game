@@ -21,7 +21,7 @@ public:
 
 	/** Send a system message via OnHandleSystemMessage */
 	UFUNCTION(BlueprintCallable, Category = "Immutable")
-	static void SendDialogMessage(const UObject* WorldContextObject, FGameplayTag DialogType, const UDialogDescriptor* Descriptor);
+	static UDialog* SendDialogMessage(const UObject* WorldContextObject, FGameplayTag DialogType, UDialogDescriptor* Descriptor);
 
 	UFUNCTION(BlueprintCallable, Category = "Immutable")
 	static void SendRunningLineMessage(const UObject* WorldContextObject, const FString& Message);

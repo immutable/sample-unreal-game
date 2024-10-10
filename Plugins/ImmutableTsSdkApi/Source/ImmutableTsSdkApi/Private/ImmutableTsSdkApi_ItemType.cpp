@@ -87,20 +87,12 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, ImmutableTs
 
 void ImmutableTsSdkApi_ItemType::WriteJson(JsonWriter& Writer) const
 {
-	Writer->WriteObjectStart();
-	Writer->WriteObjectEnd();
+	Writer->WriteValue(Value);
 }
 
 bool ImmutableTsSdkApi_ItemType::FromJson(const TSharedPtr<FJsonValue>& JsonValue)
 {
-	const TSharedPtr<FJsonObject>* Object;
-	if (!JsonValue->TryGetObject(Object))
-		return false;
-
-	bool ParseSuccess = true;
-
-
-	return ParseSuccess;
+	return JsonValue->TryGetNumber(Value);
 }
 
 }

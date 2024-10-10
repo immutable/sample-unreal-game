@@ -31,14 +31,16 @@ public:
 
 	enum class Values
 	{
-		_0,
-		_1,
-		_2,
-		_3,
+		_0 = 0,
+		_1 = 1,
+		_2 = 2,
+		_3 = 3,
 	};
 
 	static FString EnumToString(const Values& EnumValue);
 	static bool EnumFromString(const FString& EnumAsString, Values& EnumValue);
+
+	uint8 Value;
 };
 
 }

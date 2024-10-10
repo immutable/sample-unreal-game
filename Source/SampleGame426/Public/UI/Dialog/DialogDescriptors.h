@@ -7,10 +7,8 @@ UENUM(BlueprintType)
 enum class EDialogResult : uint8
 {
 	Confirmed,
-	Declined,
 	Cancelled,
-	Killed,
-	Retried,
+	Closed,
 	Unknown UMETA(Hidden)
 };
 
@@ -22,16 +20,16 @@ struct FDialogAction
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EDialogResult Result = EDialogResult::Unknown;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText ActionText;
 	
 	FString GetActionName() const
 	{
 		switch (Result)
 		{
 		case EDialogResult::Confirmed: return TEXT("Confirmed");
-		case EDialogResult::Declined: return TEXT("Declined");
 		case EDialogResult::Cancelled: return TEXT("Cancelled");
-		case EDialogResult::Killed: return TEXT("Killed");
-		case EDialogResult::Retried: return TEXT("Retried");
 		default: return TEXT("Unknown");
 		}
 	}
@@ -57,9 +55,6 @@ class UDialogDescriptor_OneAction : public UDialogDescriptor
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	FText ActionText;
-	
-	UPROPERTY(BlueprintReadWrite)
 	FDialogAction Action;
 };
 
@@ -70,18 +65,11 @@ class UDialogDescriptor_TwoActions : public UDialogDescriptor
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	FText ActionOneText;
-
-	UPROPERTY(BlueprintReadWrite)
-	FText ActionTwoText;
-
-	UPROPERTY(BlueprintReadWrite)
 	FDialogAction OneAction;
 
 	UPROPERTY(BlueprintReadWrite)
 	FDialogAction TwoAction;
 };
-
 
 
 UCLASS()
@@ -92,5 +80,16 @@ class UErrorDialogDescriptorWithErrorText : public UDialogDescriptor_OneAction
 public:
 	UPROPERTY(BlueprintReadWrite)
 	FText ErrorText;
+	
+};
+
+UCLASS()
+class USellDialogDescriptor : public UDialogDescriptor_TwoActions
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	FText Price;
 	
 };

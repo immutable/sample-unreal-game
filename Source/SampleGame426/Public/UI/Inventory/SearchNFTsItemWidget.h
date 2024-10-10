@@ -20,7 +20,18 @@ class SAMPLEGAME426_API USearchNFTsItemWidget : public UItemWidget, public IInve
 	GENERATED_BODY()
 
 public:
+	virtual void NativeOnInitialized() override;
 	virtual void ProcessModel(const ImmutableIndexerSearchAPI::Model& Data) override;
+
+	DECLARE_DELEGATE_TwoParams(FOnSearchNFTsItemWidgetSelection, bool /* IsSelected */, USearchNFTsItemWidget* /* SearchNFTsItemWidget */)
+	
+	void RegisterOnSelection(const FOnSearchNFTsItemWidgetSelection& SelectionDelegate);
+
+	FString GetTokenId() const;
+	FString GetContractAddress() const;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
+	void BP_OnSelectButtonClick(bool IsSelected);
 
 protected:
 	void SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture);
@@ -28,14 +39,23 @@ protected:
 	void SetBalance(int32 Balance);
 
 private:
-	TSharedPtr<ImmutableIndexerSearchAPI::OpenAPINFTBundle> NFTBundle;
+	UFUNCTION()
+	void OnSelectButtonClicked();
 
 protected:
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	class UButton* SelectButton = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory", meta=(BindWidget))
 	class UTextBlock* NFTName = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory", meta=(BindWidget))
 	class UImage* NFTThumbnail  = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory", meta=(BindWidget))
 	class UTextBlock* NFTBalance  = nullptr;
+	UPROPERTY(BlueprintReadOnly)
+	bool IsItemSelected = false;
+	
+private:
+	TSharedPtr<ImmutableIndexerSearchAPI::OpenAPINFTBundle> NFTBundle;
+	FOnSearchNFTsItemWidgetSelection OnSearchNFTsItemWidgetSelectionDelegate;
 	
 };

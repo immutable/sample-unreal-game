@@ -51,6 +51,7 @@ public:
 	void UpdateBalance();
 
 	void SignSubmitApproval(const FString& To, const FString& Data, const FString& DisplayMessage);
+	void CreateListing(const FString& SingableMessageJson, TFunction<void(const FString& Signature)> Callback);
 
 private:
 	void InitializePassport();

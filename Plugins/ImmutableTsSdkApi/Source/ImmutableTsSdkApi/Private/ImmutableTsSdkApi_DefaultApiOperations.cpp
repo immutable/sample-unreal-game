@@ -103,7 +103,7 @@ void ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookCancelOrdersOnChainPostReques
 	{
 		// Body parameters
 		FString JsonBody;
-		JsonWriter Writer = TJsonWriterFactory<>::Create(&JsonBody);
+		JsonWriter Writer = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonBody);
 
 		if (ImmutableTsSdkApiV1TsSdkOrderbookCancelOrdersOnChainPostRequest.IsSet())
 		{
@@ -162,7 +162,7 @@ void ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookCancelOrdersPostRequest::Setu
 	{
 		// Body parameters
 		FString JsonBody;
-		JsonWriter Writer = TJsonWriterFactory<>::Create(&JsonBody);
+		JsonWriter Writer = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonBody);
 
 		if (ImmutableTsSdkApiV1TsSdkOrderbookCancelOrdersPostRequest.IsSet())
 		{
@@ -221,7 +221,7 @@ void ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookCreateListingPostRequest::Set
 	{
 		// Body parameters
 		FString JsonBody;
-		JsonWriter Writer = TJsonWriterFactory<>::Create(&JsonBody);
+		JsonWriter Writer = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonBody);
 
 		if (ImmutableTsSdkApiV1TsSdkOrderbookCreateListingPostRequest.IsSet())
 		{
@@ -280,7 +280,7 @@ void ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookFulfillOrderPostRequest::Setu
 	{
 		// Body parameters
 		FString JsonBody;
-		JsonWriter Writer = TJsonWriterFactory<>::Create(&JsonBody);
+		JsonWriter Writer = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonBody);
 
 		if (ImmutableTsSdkApiV1TsSdkOrderbookFulfillOrderPostRequest.IsSet())
 		{
@@ -339,7 +339,7 @@ void ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookPrepareListingPostRequest::Se
 	{
 		// Body parameters
 		FString JsonBody;
-		JsonWriter Writer = TJsonWriterFactory<>::Create(&JsonBody);
+		JsonWriter Writer = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonBody);
 
 		if (ImmutableTsSdkApiV1TsSdkOrderbookPrepareListingPostRequest.IsSet())
 		{
@@ -398,7 +398,7 @@ void ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookPrepareOrderCancellationsPost
 	{
 		// Body parameters
 		FString JsonBody;
-		JsonWriter Writer = TJsonWriterFactory<>::Create(&JsonBody);
+		JsonWriter Writer = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonBody);
 
 		if (ImmutableTsSdkApiV1TsSdkOrderbookPrepareOrderCancellationsPostRequest.IsSet())
 		{

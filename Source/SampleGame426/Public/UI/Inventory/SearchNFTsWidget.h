@@ -2,7 +2,9 @@
 
 #include "UI/Interfaces/IItemListInterface.h"
 #include "Base/ItemListWidget.h"
+#include "Inventory/SearchNFTsItemWidget.h"
 #include "OpenAPIStacksApi.h"
+#include "ImmutableTsSdkApi_DefaultApi.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "ImmutableIndexerSearchAPI/Public/OpenAPIPage.h"
 
@@ -25,10 +27,16 @@ protected:
 	virtual void SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons) override;
 
 	void OnSearchNFTsResponse(const ImmutableIndexerSearchAPI::OpenAPIStacksApi::SearchNFTsResponse& Response);
-	//virtual void ProcessModel(const ImmutableIndexerSearchAPI::Model& Data) override;
+	void OnItemSelection(bool IsSelected, USearchNFTsItemWidget* ItemWidget);
 	
 private:
 	void HandlePageData(const ImmutableIndexerSearchAPI::OpenAPIPage& PageData);
+	UFUNCTION()
+	void OnSellButtonClicked(FGameplayTag ButtonTag);
+	UFUNCTION()
+	void OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult Result);
+	void OnOrderbookPrepareListingPost(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookPrepareListingPostResponse& Response);
+	void OnOrderbookCreateListingPost(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookCreateListingPostResponse& Response);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
@@ -38,6 +46,10 @@ protected:
 	UPROPERTY(Transient)
 	UControlPanelButton* NextPageButton = nullptr;
 
+private:
+	USearchNFTsItemWidget* SelectedItemWidget = nullptr;
 	ImmutableIndexerSearchAPI::OpenAPIPage PageCursors;
+	UControlPanelButton* SellButton = nullptr;
+
 
 };

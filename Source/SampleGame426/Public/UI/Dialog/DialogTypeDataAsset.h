@@ -15,7 +15,7 @@ struct SAMPLEGAME426_API FDialogType
 	TSoftClassPtr<UDialog> Dialog;
 
 	UPROPERTY(EditAnywhere)
-	FString DefaultHeader;
+	FText DefaultHeader;
 };
 
 

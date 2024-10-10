@@ -14,8 +14,8 @@ UDialogDescriptor_OneAction* UDialogSubsystem::CreateErrorSimpleDescriptor(const
 
 	Descriptor->Header = FText::FromString(Header);
 	Descriptor->Body = FText::FromString(Body);
-	Descriptor->Action.Result = EDialogResult::Confirmed;
-	Descriptor->ActionText = LOCTEXT("Ok", "Ok");
+	Descriptor->Action.Result = EDialogResult::Closed;
+	Descriptor->Action.ActionText = LOCTEXT("Ok", "Ok");
 
 	return Descriptor;
 }
@@ -27,8 +27,8 @@ UErrorDialogDescriptorWithErrorText* UDialogSubsystem::CreateErrorDescriptorWith
 	Descriptor->Header = FText::FromString(Header);
 	Descriptor->Body = FText::FromString(Body);
 	Descriptor->ErrorText = FText::FromString(Error);
-	Descriptor->Action.Result = EDialogResult::Confirmed;
-	Descriptor->ActionText = LOCTEXT("Ok", "Ok");
+	Descriptor->Action.Result = EDialogResult::Closed;
+	Descriptor->Action.ActionText = LOCTEXT("Ok", "Ok");
 
 	return Descriptor;
 }
@@ -39,8 +39,22 @@ UDialogDescriptor_OneAction* UDialogSubsystem::CreateMessageDescriptor(const FSt
 
 	Descriptor->Header = FText::FromString(Header);
 	Descriptor->Body = FText::FromString(Body);
-	Descriptor->Action.Result = EDialogResult::Confirmed;
-	Descriptor->ActionText = LOCTEXT("Ok", "Ok");
+	Descriptor->Action.Result = EDialogResult::Closed;
+	Descriptor->Action.ActionText = LOCTEXT("Ok", "Ok");
+
+	return Descriptor;
+}
+
+UDialogDescriptor_TwoActions* UDialogSubsystem::CreateSellDescriptor(const FString& Header, const FString& Body)
+{
+	UDialogDescriptor_TwoActions* Descriptor = NewObject<UDialogDescriptor_TwoActions>();
+
+	Descriptor->Header = FText::FromString(Header);
+	Descriptor->Body = FText::FromString(Body);
+	Descriptor->OneAction.Result = EDialogResult::Confirmed;
+	Descriptor->OneAction.ActionText = LOCTEXT("List", "List");
+	Descriptor->TwoAction.Result = EDialogResult::Cancelled;
+	Descriptor->TwoAction.ActionText = LOCTEXT("Cancel", "Cancel");
 
 	return Descriptor;
 }
@@ -70,7 +84,7 @@ void UDialogSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-UDialog* UDialogSubsystem::ShowDialog(const FGameplayTag& DialogType, const UDialogDescriptor* Descriptor)
+UDialog* UDialogSubsystem::ShowDialog(const FGameplayTag& DialogType, UDialogDescriptor* Descriptor)
 {
 	auto DialogData = GetDialogType(DialogType);
 
@@ -87,12 +101,15 @@ UDialog* UDialogSubsystem::ShowDialog(const FGameplayTag& DialogType, const UDia
 	{
 		return nullptr;
 	}
+
+	if (Descriptor->Header.IsEmpty())
+	{
+		Descriptor->Header = DialogData->DefaultHeader;
+	}
 	
 	Dialog->SetupDialog(Descriptor);
 
 	return Dialog;
 }
-
-
 
 #undef LOCTEXT_NAMESPACE

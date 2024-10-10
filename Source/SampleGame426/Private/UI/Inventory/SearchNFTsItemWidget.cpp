@@ -4,10 +4,21 @@
 #include "GameUIPolicy.h"
 #include "LogSampleGame.h"
 #include "OpenAPINFTBundle.h"
+#include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Marketplace/MarketplacePolicy.h"
 
+
+void USearchNFTsItemWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	if (SelectButton)
+	{
+		SelectButton->OnClicked.AddUniqueDynamic(this, &USearchNFTsItemWidget::OnSelectButtonClicked);
+	}
+}
 
 void USearchNFTsItemWidget::ProcessModel(const ImmutableIndexerSearchAPI::Model& Data)
 {
@@ -54,6 +65,31 @@ void USearchNFTsItemWidget::ProcessModel(const ImmutableIndexerSearchAPI::Model&
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);	
 }
 
+void USearchNFTsItemWidget::RegisterOnSelection(const FOnSearchNFTsItemWidgetSelection& SelectionDelegate)
+{
+	OnSearchNFTsItemWidgetSelectionDelegate = SelectionDelegate;
+}
+
+FString USearchNFTsItemWidget::GetTokenId() const
+{
+	if (NFTBundle.IsValid())
+	{
+		return NFTBundle->NftWithStack.TokenId;	
+	}
+
+	return TEXT("");
+}
+
+FString USearchNFTsItemWidget::GetContractAddress() const
+{
+	if (NFTBundle.IsValid())
+	{
+		return NFTBundle->NftWithStack.ContractAddress;	
+	}
+
+	return TEXT("");
+}
+
 void USearchNFTsItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 {
 	if (NFTThumbnail)
@@ -81,4 +117,11 @@ void USearchNFTsItemWidget::SetBalance(int32 Balance)
 	{
 		NFTBalance->SetText(FText::AsNumber(Balance));
 	}
+}
+
+void USearchNFTsItemWidget::OnSelectButtonClicked()
+{
+	IsItemSelected = !IsItemSelected;
+	OnSearchNFTsItemWidgetSelectionDelegate.ExecuteIfBound(IsItemSelected, this);
+	BP_OnSelectButtonClick(IsItemSelected);
 }

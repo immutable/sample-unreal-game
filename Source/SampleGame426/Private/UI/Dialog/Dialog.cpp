@@ -1,6 +1,8 @@
 #include "Dialog/Dialog.h"
 
 #include "LogSampleGame.h"
+#include "Components/Button.h"
+#include "Components/EditableTextBox.h"
 
 
 UDialog::UDialog(const FObjectInitializer& Initializer)
@@ -9,13 +11,43 @@ UDialog::UDialog(const FObjectInitializer& Initializer)
 	bSetVisibilityOnDeactivated = true;
 }
 
-void UDialog::OnDialogAction(const FDialogAction& ExecutedAction)
+void UDialog::ExecuteDialogAction(const UDialogButton* Button)
 {
-	UE_LOG(LogSampleGame, Log, TEXT("Dialog action was executed %s"), *ExecutedAction.GetActionName());
-	DialogResultDelegate.Broadcast(ExecutedAction.Result);
+	check(Button && Button->GetButtonAction().Result != EDialogResult::Unknown);
+
+	const FDialogAction& Action = Button->GetButtonAction();
+	
+	UE_LOG(LogSampleGame, Log, TEXT("Dialog action was executed %s"), *Action.GetActionName());
+	DialogResultDelegate.Broadcast(this, Action.Result);
+
+	if (Action.Result == EDialogResult::Cancelled || Action.Result == EDialogResult::Closed)
+	{
+		KillDialog();
+	}
 }
 
 void UDialog::KillDialog()
 {
 	NativeDestruct();
+}
+
+void USellDialog::ExecuteDialogAction(const UDialogButton* Button)
+{
+	check(Button && Button->GetButtonAction().Result != EDialogResult::Unknown);
+
+	const FDialogAction& Action = Button->GetButtonAction();
+	FText PriceText = PriceEditableTextBox->GetText();
+
+	if (Action.Result == EDialogResult::Confirmed && !PriceText.IsNumeric())
+	{
+		return;
+	}
+
+	Super::ExecuteDialogAction(Button);
+}
+
+FString USellDialog::GetPrice() const
+{
+	// return FCString::Atof(*PriceEditableTextBox->GetText().ToString());
+	return  PriceEditableTextBox->GetText().ToString();
 }

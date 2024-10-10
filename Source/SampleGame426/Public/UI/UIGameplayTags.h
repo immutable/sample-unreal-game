@@ -20,6 +20,8 @@ struct SAMPLEGAME426_API FUIControlPanelButtons
 	static FGameplayTag Back;
 	static FGameplayTag Forward;
 	static FGameplayTag Buy;
+	static FGameplayTag Sell;
+	
 
 	static void InitUIGameplayTags_ControlPanelButtons();
 };
@@ -31,6 +33,7 @@ struct SAMPLEGAME426_API FUIDialogTypes
 	static FGameplayTag ErrorFull;
 	static FGameplayTag Confirmation;
 	static FGameplayTag Message;
+	static FGameplayTag Sell;
 
 	static void InitUIGameplayTags_DialogTypes();
 };

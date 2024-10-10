@@ -18,12 +18,13 @@
 #include "Dom/JsonObject.h"
 #include "HttpRetrySystem.h"
 #include "Containers/Ticker.h"
+#include "Policies/CondensedJsonPrintPolicy.h"
 #include "Runtime/Launch/Resources/Version.h"
 
 namespace ImmutableTsSdkApi
 {
 
-typedef TSharedRef<TJsonWriter<>> JsonWriter;
+typedef TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter;
 using namespace FHttpRetrySystem;
 
 struct IMMUTABLETSSDKAPI_API HttpRetryManager

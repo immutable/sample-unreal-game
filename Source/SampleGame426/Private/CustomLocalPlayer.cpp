@@ -128,6 +128,33 @@ void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Da
 	}));
 }
 
+void UCustomLocalPlayer::CreateListing(const FString& SingableMessageJson, TFunction<void(const FString& Signature)> Callback)
+{
+	if (SingableMessageJson.IsEmpty())
+	{
+		UCustomGameInstance::SendRunningLineMessage(this, TEXT("CreateListing: Input json string is empty!"));
+		return;
+	}
+	
+	// FZkEvmSignTypedDataV4Request Request;
+	//
+	// if (!FJsonObjectConverter::JsonObjectStringToUStruct(SingableMessageJson, &Request, 0, 0))
+	// {
+	// 	UCustomGameInstance::SendRunningLineMessage(this, TEXT("CreateListing: Failed to convert json string to sign type data structure!"));
+	// 	return;
+	// }
+	
+	Passport->ZkEvmSignTypedDataV4(SingableMessageJson, UImmutablePassport::FImtblPassportResponseDelegate::CreateWeakLambda(this, [this, Callback](FImmutablePassportResult Result)
+	{
+		if (!Result.Success)
+		{
+			UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to sign type data"), Result.Error));
+			return;
+		}
+		Callback(UImmutablePassport::GetResponseResultAsString(Result.Response));
+	}));
+}
+
 void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkTokenBalanceGetResponse& Response)
 {
 	if (!Response.IsSuccessful())

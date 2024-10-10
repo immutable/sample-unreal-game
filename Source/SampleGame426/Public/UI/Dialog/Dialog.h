@@ -1,12 +1,14 @@
 #pragma once
 
+#include "DialogButton.h"
 #include "Base/ActivatableWidget.h"
 #include "DialogDescriptors.h"
 
 #include "Dialog.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDialogResultDelegate, EDialogResult, Result);
+class UButton;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDialogResultDelegate, UDialog*, DialogPtr, EDialogResult, Result);
 
 /*
  * 
@@ -23,13 +25,32 @@ public:
 	void SetupDialog(const UDialogDescriptor* Descriptor);
 
 	UFUNCTION(BlueprintCallable, Category = "Immutable")
-	void OnDialogAction(const FDialogAction& ExecutedAction);
+	virtual void ExecuteDialogAction(const UDialogButton* Button);
 
 	UFUNCTION(BlueprintCallable, Category = "Immutable")
-	void KillDialog();
+	virtual void KillDialog();
 
 public:
 	UPROPERTY(BlueprintAssignable)
 	FDialogResultDelegate DialogResultDelegate;
 	
+};
+
+/*
+ * 
+ */
+UCLASS(Abstract)
+class SAMPLEGAME426_API USellDialog : public UDialog
+{
+	GENERATED_BODY()
+	
+public:
+	virtual void ExecuteDialogAction(const UDialogButton* Button) override;
+	
+	FString GetPrice() const;
+
+protected:
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	class UEditableTextBox* PriceEditableTextBox;
+
 };

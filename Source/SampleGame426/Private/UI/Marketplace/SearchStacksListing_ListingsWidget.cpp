@@ -4,7 +4,7 @@
 #include "IContentBrowserSingleton.h"
 #include "OpenAPIListing.h"
 #include "Components/ScrollBox.h"
-#include "Marketplace/MarketplaceUtility.h"
+#include "UI/Utility/MathUtility.h"
 
 
 void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing)
@@ -20,7 +20,7 @@ void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAP
 			
 			if (Decimals.IsSet())
 			{
-				FString Price = FMarketplaceUtility::ConvertMarketplaceTokenValue(Decimals.GetValue(), Listing.PriceDetails.Amount.Value);
+				FString Price = FMathUtility::ConvertWeiStringToFloatValueString(Decimals.GetValue(), Listing.PriceDetails.Amount.Value);
 				FString FeeProtocol, FeeRoyalty;
 
 				for (const auto& Fee : Listing.PriceDetails.Fees)
@@ -28,10 +28,10 @@ void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAP
 					switch(Fee.Type)
 					{
 					case ImmutableOpenAPI::OpenAPIFee::TypeEnum::Protocol:
-						FeeProtocol = FMarketplaceUtility::ConvertMarketplaceTokenValue(Decimals.GetValue(), Fee.Amount);	
+						FeeProtocol = FMathUtility::ConvertWeiStringToFloatValueString(Decimals.GetValue(), Fee.Amount);	
 					break;
 					case ImmutableOpenAPI::OpenAPIFee::TypeEnum::Royalty:
-						FeeRoyalty = FMarketplaceUtility::ConvertMarketplaceTokenValue(Decimals.GetValue(), Fee.Amount);
+						FeeRoyalty = FMathUtility::ConvertWeiStringToFloatValueString(Decimals.GetValue(), Fee.Amount);
 					break;
 					default:;
 					}

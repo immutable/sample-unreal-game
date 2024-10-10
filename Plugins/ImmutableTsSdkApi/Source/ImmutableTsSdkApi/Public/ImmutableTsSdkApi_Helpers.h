@@ -24,7 +24,7 @@ class IHttpRequest;
 namespace ImmutableTsSdkApi
 {
 
-typedef TSharedRef<TJsonWriter<>> JsonWriter;
+// typedef TSharedRef<TJsonWriter<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>>> JsonWriter;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -120,7 +120,7 @@ inline auto ToString(const T& EnumModelValue)
 inline FString ToString(const Model& Value)
 {
 	FString String;
-	JsonWriter Writer = TJsonWriterFactory<>::Create(&String);
+	JsonWriter Writer = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&String);
 	Value.WriteJson(Writer);
 	Writer->Close();
 	return String;

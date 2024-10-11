@@ -162,7 +162,7 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 	ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookPrepareListingPostRequestBuy BuyData;
 	ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookPrepareListingPostRequestSell SellData;
 
-	BuyData.Amount = TEXT("2000000000000");//FMathUtility::ConvertFloatValueStringToWeiString(18, Dialog->GetPrice());
+	BuyData.Amount = FMathUtility::ConvertFloatValueStringToWeiString(18, Dialog->GetPrice());
 	BuyData.ContractAddress = Policy->GetBalanceContractAddress();
 	BuyData.Type = ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookPrepareListingPostRequestBuy::TypeEnum::ERC20;
 
@@ -239,7 +239,7 @@ void USearchNfTsWidget::OnOrderbookCreateListingPost(const ImmutableTsSdkApi::Im
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to create listing"), Response.GetResponseString()));
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to create listing"), Response.GetHttpResponse()->GetContentAsString()));
 		
 		return;
 	}

@@ -31,7 +31,7 @@ FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPassportInitialized(FPlaye
 {
 	if (IsPassportInitialized)
 	{
-		Delegate.Execute();	
+		Delegate.Execute(IsPassportInitialized);	
 	}
 
 	return OnPlayerPassportInitialized.Add(Delegate);
@@ -226,20 +226,14 @@ void UCustomLocalPlayer::OnPassportIsRunning(TWeakObjectPtr<class UImtblJSConnec
 
 void UCustomLocalPlayer::OnPassportInitialized(FImmutablePassportResult Result)
 {
-	if (Result.Success)
+	IsPassportInitialized = Result.Success;
+	if (OnPlayerPassportInitialized.IsBound())
 	{
-		UE_LOG(LogSampleGame, Log, TEXT("Immutable Passport initialized successfully"));
-		IsPassportInitialized = true;
-		if (OnPlayerPassportInitialized.IsBound())
-		{
-			OnPlayerPassportInitialized.Broadcast();	
-		}
+		OnPlayerPassportInitialized.Broadcast(IsPassportInitialized);	
 	}
-	else
+	if (!IsPassportInitialized)
 	{
-		// TODO Handle system error
-		IsPassportInitialized = false;
-		UE_LOG(LogSampleGame, Log, TEXT("Immutable Passport is not initialized with error: %s"), *Result.Error);
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Immutable Passport is not initialized with error"), Result.Error));
 	}
 }
 

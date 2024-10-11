@@ -19,7 +19,7 @@ public:
 	UCustomLocalPlayer();
 	
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerControllerSetDelegate, UCustomLocalPlayer* LocalPlayer, APlayerController* PlayerController);
-	DECLARE_MULTICAST_DELEGATE(FPlayerPassportInitializedDelegates);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerPassportInitializedDelegates, bool IsInitialized);
 	DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerLoggedInDelegate, bool IsLoggedIn);
 	DECLARE_MULTICAST_DELEGATE(FPlayerPassportDataObtained);
 	

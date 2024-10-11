@@ -22,12 +22,7 @@ FString FMathUtility::ConvertWeiStringToFloatValueString(int32 Decimals, const F
 	
 	BigValue /= BigDecimals;
 	
-	std::stringstream ss;
-
-	ss << BigValue;
-	//return FString::SanitizeFloat(, GetDefault<USampleGameSettings>()->NumberFractionalDigits);
-
-	return FString(ss.str().c_str());
+	return FString(BigValue.ToString().c_str());
 }
 
 FString FMathUtility::ConvertFloatValueStringToWeiString(int32 Decimals, const FString& Value)
@@ -38,10 +33,7 @@ FString FMathUtility::ConvertFloatValueStringToWeiString(int32 Decimals, const F
 	for (int32 i = 0; i < Decimals; ++i, BigDecimals *= 10);
 
 	BigValue *= BigDecimals;
+	BigValue.SetPrecision(0);
 
-	std::stringstream ss;
-	
-	ss << BigValue;
-
-	return FString(ss.str().c_str());
+	return FString(BigValue.ToString().c_str());
 }

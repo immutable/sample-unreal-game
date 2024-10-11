@@ -20,65 +20,6 @@
 namespace ImmutableTsSdkApi
 {
 
-inline FString ToString(const ImmutableTsSdkApi_OrderType::Values& Value)
-{
-	switch (Value)
-	{
-	case ImmutableTsSdkApi_OrderType::Values::_0:
-		return TEXT("0");
-	case ImmutableTsSdkApi_OrderType::Values::_1:
-		return TEXT("1");
-	case ImmutableTsSdkApi_OrderType::Values::_2:
-		return TEXT("2");
-	case ImmutableTsSdkApi_OrderType::Values::_3:
-		return TEXT("3");
-	}
-
-	UE_LOG(LogImmutableTsSdkApi, Error, TEXT("Invalid ImmutableTsSdkApi_OrderType::Values Value (%d)"), (int)Value);
-	return TEXT("");
-}
-
-FString ImmutableTsSdkApi_OrderType::EnumToString(const ImmutableTsSdkApi_OrderType::Values& EnumValue)
-{
-	return ToString(EnumValue);
-}
-
-inline bool FromString(const FString& EnumAsString, ImmutableTsSdkApi_OrderType::Values& Value)
-{
-	static TMap<FString, ImmutableTsSdkApi_OrderType::Values> StringToEnum = { 
-		{ TEXT("0"), ImmutableTsSdkApi_OrderType::Values::_0 },
-		{ TEXT("1"), ImmutableTsSdkApi_OrderType::Values::_1 },
-		{ TEXT("2"), ImmutableTsSdkApi_OrderType::Values::_2 },
-		{ TEXT("3"), ImmutableTsSdkApi_OrderType::Values::_3 }, };
-
-	const auto Found = StringToEnum.Find(EnumAsString);
-	if(Found)
-		Value = *Found;
-
-	return Found != nullptr;
-}
-
-bool ImmutableTsSdkApi_OrderType::EnumFromString(const FString& EnumAsString, ImmutableTsSdkApi_OrderType::Values& EnumValue)
-{
-	return FromString(EnumAsString, EnumValue);
-}
-
-inline void WriteJsonValue(JsonWriter& Writer, const ImmutableTsSdkApi_OrderType::Values& Value)
-{
-	WriteJsonValue(Writer, ToString(Value));
-}
-
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, ImmutableTsSdkApi_OrderType::Values& Value)
-{
-	FString TmpValue;
-	if (JsonValue->TryGetString(TmpValue))
-	{
-		if(FromString(TmpValue, Value))
-			return true;
-	}
-	return false;
-}
-
 void ImmutableTsSdkApi_OrderType::WriteJson(JsonWriter& Writer) const
 {
 	Writer->WriteValue(Value);

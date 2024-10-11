@@ -14,7 +14,4 @@ class SAMPLEGAME426_API ULoginScreenWidget : public UActivatableWidget
 public:
 	virtual void NativeOnActivated() override;
 
-private:
-	// void OnPassportLoggedIn(bool IsLoggedIn);
-
 };

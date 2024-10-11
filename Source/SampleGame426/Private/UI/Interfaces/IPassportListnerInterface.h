@@ -20,7 +20,7 @@ class SAMPLEGAME426_API IPassportListenerInterface
 public:
 	/**  */
 	UFUNCTION(BlueprintImplementableEvent, Category = Immutable)
-	void OnPassportInitialized();
+	void OnPassportInitialized(bool PassportStatus);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = Immutable)
 	void OnPassportLoggedIn(bool LoginStatus);

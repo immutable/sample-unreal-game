@@ -1,91 +1,212 @@
 #pragma once
+
 #include <iostream>
-#include <vector>
+#include <deque>
+#include <cmath>
+#include <sstream>
 
 class BigFloat
 {
 private:
-	std::vector<int> digits;
-	bool negativ;
-	bool is_float;
-	int float_point;
-	int float_endpoint;
-	int precision;
+    char sign;
+    std::deque<char> number;
+    int decimals;
+
+    //Error Checking
+    bool error;
+    std::string error_code;
+
+    //Transformations int<-->char single digit
+    inline static int CharToInt(const char& val)
+    {
+        return (val - '0');
+    };
+    inline static char IntToChar(const int& val)
+    {
+        return (val + '0');
+    };
+
+    //Comparator without sign, utilized by Comparators and Operations
+    static int CompareNum(const BigFloat& left, const BigFloat& right);
+
+    //Operations without sign and decimals, utilized by Operations
+    static BigFloat Sum(const BigFloat& left, const BigFloat& right);
+    static BigFloat Subtract(const BigFloat& left, const BigFloat& right);
+    static BigFloat Multiply(const BigFloat& left, const BigFloat& right);
+    static BigFloat Pow(const BigFloat& left, const BigFloat& right);
 
 public:
-	//This is the default constructor, which initializes a new BigFloat object to 0.
-	BigFloat();
+    //Constructors
+    BigFloat()
+    {
+        sign = '\0';
+        decimals = 0;
+        error = 1;
+        error_code = "Unset";
+    };
+    BigFloat(const char* strNum)
+    {
+        *this = strNum;
+    };
+    BigFloat(std::string strNum)
+    {
+        *this = strNum;
+    };
+    BigFloat(int Num)
+    {
+        *this = Num;
+    };
+    BigFloat(double Num)
+    {
+        *this = Num;
+    };
 
-	//This constructor initializes a new BigFloat object from a long long integer.
-	BigFloat(long long);
+    //Assignment operators
+    BigFloat& operator=(const char* strNum);
+    BigFloat& operator=(std::string strNum);
+    BigFloat& operator=(int Num);
+    BigFloat& operator=(double Num);
 
-	//This constructor initializes a new BigFloat object from a string.
-	BigFloat(const std::string&);
+    //Operations
+    friend BigFloat operator+(const BigFloat& left_, const BigFloat& right_);
+    friend BigFloat operator+(const BigFloat& left, const int& int_right);
+    friend BigFloat operator+(const BigFloat& left, const double& double_right);
 
-	//This is the copy constructor, which initializes a new BigFloat object from an existing BigFloat object.
-	BigFloat(const BigFloat&);
+    BigFloat& operator+=(const BigFloat& right_);
+    BigFloat& operator+=(const int& int_right);
+    BigFloat& operator+=(const double& double_right);
 
-	//This is a friend function that returns true if the given BigFloat object is equal to 0.
-	friend bool E0(const BigFloat&);
-	friend BigFloat Balance_Point(std::vector<int>&, std::vector<int>&, const BigFloat&, const BigFloat&);
+    friend BigFloat operator-(const BigFloat& left_, const BigFloat& right_);
+    friend BigFloat operator-(const BigFloat& left, const int& int_right);
+    friend BigFloat operator-(const BigFloat& left, const double& double_right);
 
-	//This is the assignment operator, which assigns one BigFloat object to another.
-	BigFloat& operator = (const BigFloat&);
+    BigFloat& operator-=(const BigFloat& right_);
+    BigFloat& operator-=(const int& int_right);
+    BigFloat& operator-=(const double& double_right);
 
-	//This is the input stream operator, which reads a BigFloat object from an input stream.
-	friend std::istream& operator >> (std::istream&, BigFloat&);
+    friend BigFloat operator*(const BigFloat& left, const BigFloat& right);
+    friend BigFloat operator*(const BigFloat& left, const int& int_right);
+    friend BigFloat operator*(const BigFloat& left, const double& double_right);
 
-	//This is the output stream operator, which writes a BigFloat object to an output stream.
-	friend std::ostream& operator << (std::ostream&, const BigFloat&);
+    BigFloat& operator*=(const BigFloat& right);
+    BigFloat& operator*=(const int& int_right);
+    BigFloat& operator*=(const double& double_right);
 
-	//This is the addition operator, which adds two BigFloat objects together.
-	friend BigFloat operator + (const BigFloat&, const BigFloat&);
+    friend BigFloat operator/(const BigFloat& left, const BigFloat& right);
+    friend BigFloat operator/(const BigFloat& left, const int& int_right);
+    friend BigFloat operator/(const BigFloat& left, const double& double_right);
+    
+    BigFloat& operator/=(const BigFloat& right);
+    BigFloat& operator/=(const int& int_right);
+    BigFloat& operator/=(const double& double_right);
 
-	//This is the compound assignment operator for addition, which adds a BigFloat object to another BigFloat object and stores the result in the first object.
-	friend BigFloat operator += (BigFloat&, const BigFloat&);
+    static BigFloat PrecDiv(const BigFloat& left, const BigFloat& right, int div_precision);
+    static BigFloat PrecDiv(const BigFloat& left, const int& int_right, int div_precision);
+    static BigFloat PrecDiv(const BigFloat& left, const double& double_right, int div_precision);
 
-	//This is the subtraction operator, which subtracts one BigFloat object from another.
-	friend BigFloat operator - (const BigFloat&, const BigFloat&);
+    friend BigFloat operator%(const BigFloat& left, const BigFloat& right);
+    friend BigFloat operator%(const BigFloat& left, const int& int_right);
 
-	//This is the compound assignment operator for subtraction, which subtracts a BigFloat object from another BigFloat object and stores the result in the first object.
-	friend BigFloat operator -= (BigFloat&, const BigFloat&);
+    BigFloat& operator%=(const BigFloat& right);
+    BigFloat& operator%=(const int& int_right);
 
-	//This is the multiplication operator, which multiplies two BigFloat objects together.
-	friend BigFloat operator * (const BigFloat&, const BigFloat&);
+    static BigFloat Power(const BigFloat& left, const BigFloat& right, int div_precision = 0);
+    static BigFloat Power(const BigFloat& left, const int& int_right, int div_precision = 0);
+    static BigFloat Power(const BigFloat& left, const double& double_right, int div_precision = 0);
 
-	// This is the compound assignment operator for multiplication, which multiplies a BigFloat object by another BigFloat object and stores the result in the first object.
-	friend BigFloat operator *= (BigFloat&, const BigFloat&);
+    BigFloat operator++(int)
+    {
+        BigFloat temp = *this;
+        *this = *this + 1;
+        return temp;
+    };
+    BigFloat& operator++()
+    {
+        *this = *this + 1;
+        return *this;
+    };
+    BigFloat operator--(int)
+    {
+        BigFloat temp = *this;
+        *this = *this - 1;
+        return temp;
+    };
+    BigFloat& operator--()
+    {
+        *this = *this - 1;
+        return *this;
+    };
 
-	//This is the division operator, which divides one BigFloat object by another.
-	friend BigFloat operator / (const BigFloat&, const BigFloat&);
+    //Comparators
+    bool operator== (const BigFloat& right) const;
+    bool operator== (const int& int_right) const;
+    bool operator== (const double& double_right) const;
 
-	// This is the compound assignment operator for division, which divides a BigFloat object by another BigFloat object and stores the result in the first object.
-	friend BigFloat operator /= (BigFloat&, const BigFloat&);
+    bool operator!= (const BigFloat& right) const;
+    bool operator!= (const int& int_right) const;
+    bool operator!= (const double& double_right) const;
 
-	//This is the modulus operator, which returns the remainder
-	friend BigFloat operator % (const BigFloat&, const BigFloat&);
+    bool operator> (const BigFloat& right) const;
+    bool operator> (const int& int_right) const;
+    bool operator> (const double& double_right) const;
 
-	// This is the compound modulus operator for division, which divides a BigFloat object by another BigFloat object and stores the remainder in the first object.
-	friend BigFloat operator %= (BigFloat&, const BigFloat&);
+    bool operator>= (const BigFloat& right) const;
+    bool operator>= (const int& int_right) const;
+    bool operator>= (const double& double_right) const;
 
-	//function overloads the prefix ++ operator for the BigFloat class, and returns a reference to the modified object. 
-	BigFloat& operator ++ ();
+    bool operator< (const BigFloat& right) const;
+    bool operator< (const int& int_right) const;
+    bool operator< (const double& double_right) const;
 
-	//function overloads the postfix ++ operator for the BigFloat class, and returns a copy of the object before it was incremented. 
-	BigFloat operator ++ (int fictiv);
+    bool operator<= (const BigFloat& right) const;
+    bool operator<= (const int& int_right) const;
+    bool operator<= (const double& double_right) const;
 
-	//functions work similarly, but for the decrement operator --.
-	BigFloat& operator -- ();
-	BigFloat operator -- (int fictiv);
+    //Stream Operators
+    friend std::ostream& operator<<(std::ostream& out, const BigFloat& right);
+    friend std::istream& operator>>(std::istream& in, BigFloat& right);
 
-	friend bool operator == (const BigFloat&, const BigFloat&);
-	friend bool operator != (const BigFloat&, const BigFloat&);
-	friend bool operator < (const BigFloat&, const BigFloat&);
-	friend bool operator <= (const BigFloat&, const BigFloat&);
-	friend bool operator > (const BigFloat&, const BigFloat&);
-	friend bool operator >= (const BigFloat&, const BigFloat&);
+    //Conversion Operators
+    operator double() const;
+    operator float() const;
+    operator std::string() const;
 
-	int operator [] (const int) const;
-	friend void set_precision(BigFloat&, BigFloat&,const int&);
+    //Transformation Methods
+    double ToDouble() const;
+    float ToFloat() const;
+    std::string ToString() const;
+    void SetPrecision(int prec); //Approximate number or Increase number decimals
+
+
+    void LeadTrim(); //Remove number leading zeros, utilized by Operations without sign
+    void TrailTrim(); //Remove number non significant trailing zeros
+
+    //Error Checking
+    inline bool HasError() const
+    {
+        return error;
+    };
+    inline std::string GetError() const
+    {
+        if(error)
+            return error_code;
+        else
+            return "No Error";
+    };
+
+    //Miscellaneous Methods
+    inline int Decimals() const
+    {
+        return decimals;
+    };
+    inline int Ints() const
+    {
+        return number.size() - decimals;
+    };
+    inline int MemorySize() const
+    {
+        return sizeof(*this) + number.size() * sizeof(char);
+    };
+    std::string Exp() const;
+
 };
-

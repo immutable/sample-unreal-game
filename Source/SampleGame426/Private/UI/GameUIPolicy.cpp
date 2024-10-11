@@ -100,11 +100,11 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 		}
 	}));
 
-	LocalPlayer->CallAndRegister_OnPassportInitialized(UCustomLocalPlayer::FPlayerPassportInitializedDelegates::FDelegate::CreateWeakLambda(this, [this]()
+	LocalPlayer->CallAndRegister_OnPassportInitialized(UCustomLocalPlayer::FPlayerPassportInitializedDelegates::FDelegate::CreateWeakLambda(this, [this](bool IsInitialized)
 	{
 		if (LoginScreenWidget && LoginScreenWidget->GetClass()->ImplementsInterface(UPassportListenerInterface::StaticClass()))
 		{
-			IPassportListenerInterface::Execute_OnPassportInitialized(LoginScreenWidget);	
+			IPassportListenerInterface::Execute_OnPassportInitialized(LoginScreenWidget, IsInitialized);	
 		}
 	}));
 

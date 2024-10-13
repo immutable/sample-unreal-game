@@ -16,7 +16,7 @@ class SAMPLEGAME426_API USearchStacksListingWidget : public UActivatableWidgetWi
 
 public:
 	virtual void NativeOnInitialized() override;
-	virtual void SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons) override;
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel) override;
 	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
 
 protected:

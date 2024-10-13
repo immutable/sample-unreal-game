@@ -1,11 +1,11 @@
 ﻿#pragma once
 
+#include "Base/ActivatableWidgetWithControlPanels.h"
 #include "UI/Interfaces/IItemListInterface.h"
 #include "Base/ItemListWidget.h"
 #include "Inventory/SearchNFTsItemWidget.h"
 #include "OpenAPIStacksApi.h"
 #include "ImmutableTsSdkApi_DefaultApi.h"
-#include "Base/ActivatableWidgetWithControlPanels.h"
 #include "ImmutableIndexerSearchAPI/Public/OpenAPIPage.h"
 
 #include "SearchNFTsWidget.generated.h"
@@ -24,7 +24,7 @@ protected:
 	virtual void NativeOnActivated() override;
 	/* UActivatableWidget */
 	
-	virtual void SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons) override;
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel) override;
 
 	void OnSearchNFTsResponse(const ImmutableIndexerSearchAPI::OpenAPIStacksApi::SearchNFTsResponse& Response);
 	void OnItemSelection(bool IsSelected, USearchNFTsItemWidget* ItemWidget);
@@ -50,6 +50,5 @@ private:
 	USearchNFTsItemWidget* SelectedItemWidget = nullptr;
 	ImmutableIndexerSearchAPI::OpenAPIPage PageCursors;
 	UControlPanelButton* SellButton = nullptr;
-
 
 };

@@ -143,36 +143,15 @@ void UAWStackWithControlPanels::SynchronizeProperties()
 		}
 	}
 #endif
-
-	if (!IsDesignTime())
-	{
-		AddButtonToLeft(FUIControlPanelButtons::Back);
-		AddButtonToRight(FUIControlPanelButtons::Forward);
-	}
 }
 
 void UAWStackWithControlPanels::OnWidgetAddedToList(UActivatableWidget& AddedWidget)
 {
 	Super::OnWidgetAddedToList(AddedWidget);
 
-	UActivatableWidgetWithControlPanels* Widget = Cast<UActivatableWidgetWithControlPanels>(&AddedWidget);
-
-	if (Widget)
+	if (UActivatableWidgetWithControlPanels* Widget = Cast<UActivatableWidgetWithControlPanels>(&AddedWidget))
 	{
-		const TMap<FGameplayTag, EAWStackControlPanelSide>& ButtonsData = Widget->GetControlButtonsData();
-		TMap<FGameplayTag, UControlPanelButton*> Buttons;
-
-		if (Widget->IsSwitchBetweenWindowsHandler())
-		{
-			Buttons.Add(FUIControlPanelButtons::Back, GetButton(FUIControlPanelButtons::Back));
-			Buttons.Add(FUIControlPanelButtons::Forward, GetButton(FUIControlPanelButtons::Forward));
-		}
-		for(auto ButtonData : ButtonsData)
-		{
-			Buttons.Add(ButtonData.Key, AddButton(ButtonData.Key, ButtonData.Value));
-		}
-
-		Widget->SetupControlButtons(Buttons);
+		Widget->SetupControlButtons(this);
 	}
 }
 
@@ -208,6 +187,13 @@ void UAWStackWithControlPanels::ReleaseSlateResources(bool bReleaseChildren)
 
 UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side)
 {
+	UControlPanelButton* Button = GetButton(ButtonTag);
+	
+	if (Button)
+	{
+		return Button;
+	}
+
 	UControlPanelButtonDataAsset* Data = ControlPanelButtonDefaults.LoadSynchronous();
 	
 	if (!Data)
@@ -220,13 +206,6 @@ UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag
 	if (!ButtonClass)
 	{
 		return nullptr;
-	}
-
-	UControlPanelButton* Button = GetButton(ButtonTag);
-	
-	if (Button)
-	{
-		return Button;
 	}
 
 	Button = GeneratedWidgetsPool.GetOrCreateInstance<UControlPanelButton>(ButtonClass);

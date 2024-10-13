@@ -77,22 +77,21 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 	}
 }
 
-void USearchStacksWidget::SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons)
+void USearchStacksWidget::SetupControlButtons(UAWStackWithControlPanels* HostPanel)
 {
-	for (auto Button : Buttons)
+	Super::SetupControlButtons(HostPanel);
+
+	PreviousPageButton = HostPanel->GetButton(FUIControlPanelButtons::PreviousPage);
+	NextPageButton = HostPanel->GetButton(FUIControlPanelButtons::NextPage);
+
+	if (PreviousPageButton)
 	{
-		if (Button.Key.MatchesTagExact(FUIControlPanelButtons::PreviousPage))
-		{
-			PreviousPageButton = Button.Value;
-		}
-		if (Button.Key.MatchesTagExact(FUIControlPanelButtons::NextPage))
-		{
-			NextPageButton = Button.Value;
-		}
-		Button.Value->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnPageDirectionButtonClicked);
+		PreviousPageButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnPageDirectionButtonClicked);
 	}
-	
-	Super::SetupControlButtons(Buttons);
+	if (NextPageButton)
+	{
+		NextPageButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnPageDirectionButtonClicked);	
+	}
 }
 
 void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData)

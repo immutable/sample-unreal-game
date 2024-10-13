@@ -48,11 +48,13 @@ void USearchNfTsWidget::NativeOnActivated()
 	RefreshItemList(TOptional<FString>());
 }
 
-void USearchNfTsWidget::SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons)
+void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostPanel)
 {
-	Super::SetupControlButtons(Buttons);
+	Super::SetupControlButtons(HostPanel);
 
-	if (Buttons.RemoveAndCopyValue(FUIControlPanelButtons::Sell, SellButton))
+	SellButton = HostPanel->GetButton(FUIControlPanelButtons::Sell);
+
+	if (SellButton)
 	{
 		SellButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchNfTsWidget::OnSellButtonClicked);
 	}
@@ -62,7 +64,7 @@ void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableIndexerSearchAPI::Op
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search NFTs result"), Response.GetResponseString()));
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search NFTs result"), Response.GetHttpResponse()->GetContentAsString()));
 		
 		return;
 	}

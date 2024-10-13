@@ -11,23 +11,24 @@ const TMap<FGameplayTag, EAWStackControlPanelSide>& UActivatableWidgetWithContro
 	return ControlPanelButtonsData; 
 }
 
-void UActivatableWidgetWithControlPanels::SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons)
+void UActivatableWidgetWithControlPanels::SetupControlButtons(UAWStackWithControlPanels* HostPanel)
 {
 	if (SwitchBetweenWindowsHandler)
 	{
-		UControlPanelButton *Button = nullptr;
-		
-		if (Buttons.RemoveAndCopyValue(FUIControlPanelButtons::Forward, Button))
+		PreviousWidgetButton = HostPanel->AddButtonToLeft(FUIControlPanelButtons::Back);
+		NextWidgetButton = HostPanel->AddButtonToLeft(FUIControlPanelButtons::Forward);
+	}
+	for(auto ButtonData : ControlPanelButtonsData)
+	{
+		UControlPanelButton* NewButton = ButtonData.Value == EAWStackControlPanelSide::Left ? HostPanel->AddButtonToLeft(ButtonData.Key) : NewButton = HostPanel->AddButtonToRight(ButtonData.Key);
+
+		if (NewButton)
 		{
-			Button->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnForwardButtonClicked);
-		}
-		if (Buttons.RemoveAndCopyValue(FUIControlPanelButtons::Back, Button))
-		{
-			Button->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnBackButtonClicked);
+			ControlPanelButtons.Add(ButtonData.Key, NewButton);
 		}
 	}
 
-	BP_SetupControlButtons(Buttons);
+	BP_SetupControlButtons(ControlPanelButtons);
 }
 
 TSharedRef<SWidget> UActivatableWidgetWithControlPanels::RebuildWidget()
@@ -43,6 +44,13 @@ void UActivatableWidgetWithControlPanels::SynchronizeProperties()
 void UActivatableWidgetWithControlPanels::OnWidgetRebuilt()
 {
 	Super::OnWidgetRebuilt();
+}
+
+void UActivatableWidgetWithControlPanels::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+
+	
 }
 
 void UActivatableWidgetWithControlPanels::OnBackButtonClicked(FGameplayTag ButtonTag)

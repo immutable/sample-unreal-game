@@ -27,7 +27,7 @@ protected:
 	/* UActivatableWidget */
 
 	void OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPISearchApi::SearchStacksResponse& Response);
-	virtual void SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons) override;
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel) override;
 
 private:
 	void HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData);

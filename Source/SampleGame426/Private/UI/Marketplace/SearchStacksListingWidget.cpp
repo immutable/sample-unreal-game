@@ -27,11 +27,13 @@ void USearchStacksListingWidget::NativeOnInitialized()
 	}
 }
 
-void USearchStacksListingWidget::SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons)
+void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPanels* HostPanel)
 {
-	Super::SetupControlButtons(Buttons);
+	Super::SetupControlButtons(HostPanel);
 
-	if (Buttons.RemoveAndCopyValue(FUIControlPanelButtons::Buy, BuyButton))
+	BuyButton = HostPanel->GetButton(FUIControlPanelButtons::Buy);
+
+	if (BuyButton)
 	{
 		BuyButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksListingWidget::OnBuyButtonClicked);
 	}

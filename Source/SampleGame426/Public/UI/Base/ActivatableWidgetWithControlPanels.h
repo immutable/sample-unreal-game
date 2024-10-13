@@ -15,7 +15,7 @@ class UActivatableWidgetWithControlPanels : public UActivatableWidget
 public:
 	const TMap<FGameplayTag, EAWStackControlPanelSide>& GetControlButtonsData() const;
 
-	virtual void SetupControlButtons(TMap<FGameplayTag, UControlPanelButton*>& Buttons);
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel);
 	UFUNCTION(BlueprintImplementableEvent, Category = "Immutable")
 	void BP_SetupControlButtons(const TMap<FGameplayTag, UControlPanelButton*>& Buttons);
 
@@ -27,6 +27,8 @@ protected:
 	virtual void SynchronizeProperties() override;
 	virtual void OnWidgetRebuilt() override;
 	/* UUserWidget interface */
+
+	virtual void NativeOnDeactivated() override;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = Immutable, meta = (DisplayName = "On Back Button Clicked"))
 	void BP_OnBackButtonClicked();
@@ -42,6 +44,13 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
 	TMap<FGameplayTag, EAWStackControlPanelSide> ControlPanelButtonsData;
+	UPROPERTY()
+	TMap<FGameplayTag, UControlPanelButton*> ControlPanelButtons;
+	UPROPERTY(Transient)
+	UControlPanelButton* PreviousWidgetButton = nullptr;
+	UPROPERTY(Transient)
+	UControlPanelButton* NextWidgetButton = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	bool SwitchBetweenWindowsHandler = true;
+	
 };

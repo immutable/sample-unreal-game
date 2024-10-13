@@ -24,9 +24,10 @@ class UAWStackWithControlPanels : public UActivatableWidgetStack
 public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	UControlPanelButton* AddButtonToLeft(FGameplayTag ButtonTag);
-
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	UControlPanelButton* AddButtonToRight(FGameplayTag ButtonTag);
+	UControlPanelButton* AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side);
+	UControlPanelButton* GetButton(FGameplayTag ButtonTag);
 
 	/* UWidget interface */
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
@@ -39,10 +40,6 @@ protected:
 	/* UWidget interface */
 
 	virtual void OnWidgetAddedToList(UActivatableWidget& AddedWidget) override;
-
-private:
-	UControlPanelButton* AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side);
-	UControlPanelButton* GetButton(FGameplayTag ButtonTag);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Window Settings")

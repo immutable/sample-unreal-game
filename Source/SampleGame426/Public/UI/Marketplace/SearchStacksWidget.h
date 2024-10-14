@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "OpenAPIPage.h"
-#include "OpenAPISearchApi.h"
+#include "OpenAPIStacksApi.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Base/ItemListWidget.h"
 #include "UI/Interfaces/IItemListInterface.h"
@@ -26,7 +26,7 @@ protected:
 	virtual void OnWidgetRebuilt() override;
 	/* UActivatableWidget */
 
-	void OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPISearchApi::SearchStacksResponse& Response);
+	void OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksResponse& Response);
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel) override;
 
 private:

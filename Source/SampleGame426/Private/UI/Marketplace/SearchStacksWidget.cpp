@@ -3,8 +3,7 @@
 #include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
-#include "IContentBrowserSingleton.h"
-#include "OpenAPISearchApiOperations.h"
+#include "OpenAPIStacksApiOperations.h"
 #include "UIGameplayTags.h"
 #include "UI/Marketplace/MarketplacePolicy.h"
 #include "Base/ItemWidget.h"
@@ -36,7 +35,7 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 
 	Policy->SetPageSize(ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows());
 	Policy->SetPageCursor(PageCursor);
-	Policy->GetSearchAPI()->SearchStacks(*Policy->GetSearchAPI_SearchStacksRequest(), ImmutableOpenAPI::OpenAPISearchApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
+	Policy->GetImmutableOpenAPI()->SearchStacks(*Policy->GetImmutableOpenAPI_SearchStacksRequest(), ImmutableOpenAPI::OpenAPIStacksApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
 }
 
 void USearchStacksWidget::NativeOnActivated()
@@ -51,7 +50,7 @@ void USearchStacksWidget::OnWidgetRebuilt()
 	Super::OnWidgetRebuilt();
 }
 
-void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPISearchApi::SearchStacksResponse& Response)
+void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{

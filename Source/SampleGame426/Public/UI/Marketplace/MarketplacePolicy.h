@@ -1,8 +1,7 @@
 ﻿#pragma once
 
+#include "OpenAPIStacksApi.h"
 #include "ImmutableTsSdkApi_DefaultApi.h"
-#include "ImmutableOpenAPI/Public/OpenAPISearchApi.h"
-#include "ImmutableIndexerSearchAPI/Public/OpenAPIStacksApi.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
 #include "NFT/NFT_TableRowBase.h"
 
@@ -32,10 +31,10 @@ public:
 	UDataTable* GetNFTDatatable();
 	FNFT_TableRowBase* FindNFTTextureRow(FName RowName);
 
-	ImmutableOpenAPI::OpenAPISearchApi* GetSearchAPI();
-	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> GetSearchAPI_SearchStacksRequest();
-	ImmutableIndexerSearchAPI::OpenAPIStacksApi* GetIndexerStacksAPI();
-	TSharedPtr<ImmutableIndexerSearchAPI::OpenAPIStacksApi::SearchNFTsRequest> GetIndexerStacksAPI_SearchNfTsRequest();
+	ImmutableOpenAPI::OpenAPIStacksApi* GetImmutableOpenAPI();
+	TSharedPtr<ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest> GetImmutableOpenAPI_SearchStacksRequest();
+	TSharedPtr<ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsRequest> GetImmutableOpenAPI_SearchNfTsRequest();
+	
 	ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi* GetTsSdkAPI();
 	
 	FString GetBalanceContractAddress() const; 
@@ -81,14 +80,11 @@ protected:
 	int32 NumberFractionalDigits = 4;
 
 private:
-	TSharedPtr<ImmutableOpenAPI::OpenAPISearchApi::SearchStacksRequest> SearchAPI_SearchStacksRequest;
-	TUniquePtr<ImmutableOpenAPI::OpenAPISearchApi> SearchAPI;
-	TUniquePtr<ImmutableOpenAPI::HttpRetryManager> SearchAPI_HttpRetryManager;
-
-	TSharedPtr<ImmutableIndexerSearchAPI::OpenAPIStacksApi::SearchNFTsRequest> IndexerStacksAPI_SearchNfTsRequest;
-	TUniquePtr<ImmutableIndexerSearchAPI::OpenAPIStacksApi> IndexerStacksAPI;
-	TUniquePtr<ImmutableIndexerSearchAPI::HttpRetryManager> IndexerStacksAPI_HttpRetryManager;
+	TUniquePtr<ImmutableOpenAPI::OpenAPIStacksApi> ImmutableOpenAPI;
+	TUniquePtr<ImmutableOpenAPI::HttpRetryManager> ImmutableOpenAPI_HttpRetryManager;
 
 	TUniquePtr<ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi> TsSdkAPI;
 
+	TSharedPtr<ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest> ImmutableOpenAPI_SearchStacksRequest;
+	TSharedPtr<ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsRequest> ImmutableOpenAPI_SearchNFTsRequest;
 };

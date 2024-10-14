@@ -20,9 +20,9 @@ void USearchNFTsItemWidget::NativeOnInitialized()
 	}
 }
 
-void USearchNFTsItemWidget::ProcessModel(const ImmutableIndexerSearchAPI::Model& Data)
+void USearchNFTsItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 {
-	NFTBundle = MakeShareable(new ImmutableIndexerSearchAPI::OpenAPINFTBundle(static_cast<const ImmutableIndexerSearchAPI::OpenAPINFTBundle&>(Data)));
+	NFTBundle = MakeShareable(new ImmutableOpenAPI::OpenAPINFTBundle(static_cast<const ImmutableOpenAPI::OpenAPINFTBundle&>(Data)));
 	
 	if (!NFTBundle.IsValid())
 	{

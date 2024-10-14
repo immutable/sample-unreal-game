@@ -95,7 +95,7 @@ void UMarketplaceItemWidget::SetName(const FString& Name)
 	}
 }
 
-void UMarketplaceItemWidget::SetPrice(const ImmutableOpenAPI::OpenAPIPriceDetails& PriceDetails)
+void UMarketplaceItemWidget::SetPrice(const ImmutableOpenAPI::OpenAPIMarketPriceDetails& PriceDetails)
 {
 	if (NFTLowestPrice && PriceDetails.Token.Decimals.IsSet())
 	{

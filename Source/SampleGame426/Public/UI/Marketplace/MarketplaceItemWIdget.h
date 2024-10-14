@@ -1,16 +1,11 @@
 ﻿#pragma once
 
+#include "OpenAPIStackBundle.h"
 #include "Base/ItemWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 
 #include "MarketplaceItemWidget.generated.h"
 
-
-namespace ImmutableOpenAPI
-{
-	class OpenAPIStackBundle;
-	class OpenAPIPriceDetails;
-}
 
 /**
  * 
@@ -32,7 +27,7 @@ protected:
 	void SetListingCount(int32 Count);
 	void SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture);
 	void SetName(const FString& Name);
-	void SetPrice(const ImmutableOpenAPI::OpenAPIPriceDetails& PriceDetails);
+	void SetPrice(const ImmutableOpenAPI::OpenAPIMarketPriceDetails& PriceDetails);
 	void SetPriceTokenName(const FString& Name);
 
 protected:

@@ -6,7 +6,7 @@
 #include "SearchNFTsItemWidget.generated.h"
 
 
-namespace ImmutableIndexerSearchAPI
+namespace ImmutableOpenAPI
 {
 	class OpenAPINFTBundle;
 }
@@ -21,7 +21,7 @@ class SAMPLEGAME426_API USearchNFTsItemWidget : public UItemWidget, public IInve
 
 public:
 	virtual void NativeOnInitialized() override;
-	virtual void ProcessModel(const ImmutableIndexerSearchAPI::Model& Data) override;
+	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
 
 	DECLARE_DELEGATE_TwoParams(FOnSearchNFTsItemWidgetSelection, bool /* IsSelected */, USearchNFTsItemWidget* /* SearchNFTsItemWidget */)
 	
@@ -55,7 +55,7 @@ protected:
 	bool IsItemSelected = false;
 	
 private:
-	TSharedPtr<ImmutableIndexerSearchAPI::OpenAPINFTBundle> NFTBundle;
+	TSharedPtr<ImmutableOpenAPI::OpenAPINFTBundle> NFTBundle;
 	FOnSearchNFTsItemWidgetSelection OnSearchNFTsItemWidgetSelectionDelegate;
 	
 };

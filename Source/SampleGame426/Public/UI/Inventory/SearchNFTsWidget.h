@@ -6,7 +6,7 @@
 #include "Inventory/SearchNFTsItemWidget.h"
 #include "OpenAPIStacksApi.h"
 #include "ImmutableTsSdkApi_DefaultApi.h"
-#include "ImmutableIndexerSearchAPI/Public/OpenAPIPage.h"
+#include "OpenAPIPage.h"
 
 #include "SearchNFTsWidget.generated.h"
 
@@ -26,11 +26,11 @@ protected:
 	
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel) override;
 
-	void OnSearchNFTsResponse(const ImmutableIndexerSearchAPI::OpenAPIStacksApi::SearchNFTsResponse& Response);
+	void OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsResponse& Response);
 	void OnItemSelection(bool IsSelected, USearchNFTsItemWidget* ItemWidget);
 	
 private:
-	void HandlePageData(const ImmutableIndexerSearchAPI::OpenAPIPage& PageData);
+	void HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData);
 	UFUNCTION()
 	void OnSellButtonClicked(FGameplayTag ButtonTag);
 	UFUNCTION()
@@ -48,7 +48,7 @@ protected:
 
 private:
 	USearchNFTsItemWidget* SelectedItemWidget = nullptr;
-	ImmutableIndexerSearchAPI::OpenAPIPage PageCursors;
+	ImmutableOpenAPI::OpenAPIPage PageCursors;
 	UControlPanelButton* SellButton = nullptr;
 
 };

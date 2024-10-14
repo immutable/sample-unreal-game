@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "ImmutableOpenAPI/Public/OpenAPIBaseModel.h"
-#include "ImmutableIndexerSearchAPI/Public/OpenAPIBaseModel.h"
 #include "UObject/Interface.h"
 
 #include "IOpenAPIProcessorInterface.generated.h"
@@ -39,5 +38,5 @@ class SAMPLEGAME426_API IInventoryOpenAPIProcessorInterface
 
 public:
 	/**  */
-	virtual void ProcessModel(const ImmutableIndexerSearchAPI::Model& Data) = 0;
+	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) = 0;
 };

@@ -5,9 +5,9 @@
 #include "GameUIPolicy.h"
 #include "ImmutableTsSdkApi_DefaultApiOperations.h"
 #include "ImmutableTsSdkApi_V1TsSdkOrderbookPrepareListingPostRequest.h"
+#include "OpenAPIStacksApiOperations.h"
 #include "UIGameplayTags.h"
 #include "Base/ItemWidget.h"
-#include "ImmutableIndexerSearchAPI/Public/OpenAPIStacksApiOperations.h"
 #include "Marketplace/MarketplacePolicy.h"
 #include "Marketplace/SearchStacksListingWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
@@ -38,7 +38,7 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 	Policy->SetPageSize(ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows());
 	Policy->SetPageCursor(PageCursor);
 	Policy->SetAccount(GetOwningCustomLocalPLayer()->GetPassportWalletAddress());
-	Policy->GetIndexerStacksAPI()->SearchNFTs(*Policy->GetIndexerStacksAPI_SearchNfTsRequest(), ImmutableIndexerSearchAPI::OpenAPIStacksApi::FSearchNFTsDelegate::CreateUObject(this, &USearchNfTsWidget::OnSearchNFTsResponse));
+	Policy->GetImmutableOpenAPI()->SearchNFTs(*Policy->GetImmutableOpenAPI_SearchNfTsRequest(), ImmutableOpenAPI::OpenAPIStacksApi::FSearchNFTsDelegate::CreateUObject(this, &USearchNfTsWidget::OnSearchNFTsResponse));
 }
 
 void USearchNfTsWidget::NativeOnActivated()
@@ -60,7 +60,7 @@ void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostPanel
 	}
 }
 
-void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableIndexerSearchAPI::OpenAPIStacksApi::SearchNFTsResponse& Response)
+void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -116,7 +116,7 @@ void USearchNfTsWidget::OnItemSelection(bool IsSelected, USearchNFTsItemWidget* 
 	}
 }
 
-void USearchNfTsWidget::HandlePageData(const ImmutableIndexerSearchAPI::OpenAPIPage& PageData)
+void USearchNfTsWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData)
 {
 	PageCursors = PageData;
 

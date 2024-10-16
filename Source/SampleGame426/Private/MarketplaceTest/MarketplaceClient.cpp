@@ -14,7 +14,7 @@ void UMarketplaceClient::GetUnsignedFulfillOrderTransactions(const FString& List
 
 	UHttpClient* HttpClient = NewObject<UHttpClient>();
 
-	const FString Uri = FString::Printf(TEXT("https://api.dev.immutable.com/v1/ts-sdk/orderbook/fulfillOrder"));
+	const FString Uri = FString::Printf(TEXT("https://api.sandbox.immutable.com/v1/ts-sdk/orderbook/fulfillOrder"));
 	const FString Body = FString::Printf(
 		TEXT("{\"listingId\": \"%s\",\"takerAddress\": \"%s\",\"takerFees\": []}"), *ListingId, *TakerAddress);
 
@@ -44,7 +44,7 @@ void UMarketplaceClient::PrepareListing(const FString& MakerAddress, const FBuy 
 
 	UHttpClient* HttpClient = NewObject<UHttpClient>();
 
-	const FString Uri = FString::Printf(TEXT("https://api.dev.immutable.com/v1/ts-sdk/orderbook/prepareListing"));
+	const FString Uri = FString::Printf(TEXT("https://api.sandbox.immutable.com/v1/ts-sdk/orderbook/prepareListing"));
 	FPrepareListingRequest PrepareListingRequest;
 
 	PrepareListingRequest.MakerAddress = *MakerAddress;
@@ -88,7 +88,7 @@ void UMarketplaceClient::CreateListing(FOrderComponents OrderComponents, const F
 
 	UHttpClient* HttpClient = NewObject<UHttpClient>();
 
-	const FString Uri = FString::Printf(TEXT("https://api.dev.immutable.com/v1/ts-sdk/orderbook/createListing"));
+	const FString Uri = FString::Printf(TEXT("https://api.sandbox.immutable.com/v1/ts-sdk/orderbook/createListing"));
 
 	FCreateListingRequest CreateListingRequest;
 
@@ -112,5 +112,40 @@ void UMarketplaceClient::CreateListing(FOrderComponents OrderComponents, const F
 		UE_LOG(LogSampleGame, Warning, TEXT("Listing ID: %s"), *CreateListingResponse.Result.Id);
 		
 		OnCreateListingReturned.Broadcast(CreateListingResponse);
+	});
+}
+
+void UMarketplaceClient::CancelListing(const FString& ListingId, const FString& AccountAddress)
+{
+	// TODO - Change from Warning to Display
+	UE_LOG(LogSampleGame, Warning, TEXT("Cancel listing"));
+	UE_LOG(LogSampleGame, Warning, TEXT("Cancel listing ID: %s"), *ListingId);
+	UE_LOG(LogSampleGame, Warning, TEXT("Cancel listing account address: %s"), *AccountAddress);
+
+	UHttpClient* HttpClient = NewObject<UHttpClient>();
+
+	const FString Uri = FString::Printf(TEXT("https://api.sandbox.immutable.com/v1/ts-sdk/orderbook/cancelOrdersOnChain"));
+	
+	FCancelListingRequest CancelListingRequest;
+
+	CancelListingRequest.OrderIds.Add(ListingId);
+	CancelListingRequest.AccountAddress = *AccountAddress;
+	
+	FString RequestBodyString;
+	FJsonObjectConverter::UStructToJsonObjectString<FCancelListingRequest>(CancelListingRequest, RequestBodyString);
+
+	HttpClient->MakeHttpPostRequest(Uri, RequestBodyString, [this](FString ResponseString)
+	{
+		// TODO - Change from Warning to Display
+		UE_LOG(LogSampleGame, Warning, TEXT("Cancel listing response body %s"), *ResponseString);
+
+		FCancelListingResponse CancelListingResponse;
+		FJsonObjectConverter::JsonObjectStringToUStruct<FCancelListingResponse>(ResponseString, &CancelListingResponse, 0, 0);
+		
+		// TODO - Change from Warning to Display
+		UE_LOG(LogSampleGame, Warning, TEXT("Cancel listing transaction to: %s"), *CancelListingResponse.CancellationAction.PopulatedTransactions.To);
+		UE_LOG(LogSampleGame, Warning, TEXT("Cancel listing transaction data: %s"), *CancelListingResponse.CancellationAction.PopulatedTransactions.Data);
+				
+		OnCancelListingReturned.Broadcast(CancelListingResponse);
 	});
 }

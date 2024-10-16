@@ -524,3 +524,24 @@ struct FCreateListingRequest
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
 	FString OrderSignature;
 };
+
+USTRUCT(BlueprintType)
+struct FCancelListingRequest
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	TArray<FString> OrderIds;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FString AccountAddress;
+};
+
+USTRUCT(BlueprintType)
+struct FCancelListingResponse
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "MarketplaceClientTypes")
+	FAction CancellationAction;
+};

@@ -13,6 +13,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFulfillOrderReturned, const TArray<FAction>&, OrderActions);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPrepareListingReturned, const FPrepareListingResponse, PrepareListingResponse);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCreateListingReturned, const FCreateListingResponse, CreateListingResponse);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCancelListingReturned, const FCancelListingResponse, CancelListingResponse);
 
 /**
  * 
@@ -42,7 +43,8 @@ public:
 	void CreateListing(FOrderComponents OrderComponents, const FString& OrderHash, const FString& OrderSignature);
 
 	// Cancel item for sale
-	// TODO
+	UFUNCTION(BlueprintCallable, Category = "MarketplaceClient")
+	void CancelListing(const FString& ListingId, const FString& WalletAddress);
 
 	UPROPERTY(BlueprintAssignable, Category = "MarketplaceClient")
 	FOnFulfillOrderReturned OnFulfillOrderReturned;
@@ -52,4 +54,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "MarketplaceClient")
 	FOnCreateListingReturned OnCreateListingReturned;
+
+	UPROPERTY(BlueprintAssignable, Category = "MarketplaceClient")
+	FOnCancelListingReturned OnCancelListingReturned;
 };

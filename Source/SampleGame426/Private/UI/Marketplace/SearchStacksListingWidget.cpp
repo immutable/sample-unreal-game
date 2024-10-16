@@ -83,9 +83,11 @@ void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 		}
 	}
 
-	for (const auto& Listing : StackBundle.Listings)
+	const auto StackNumber = StackBundle.Listings.Num();
+
+	for (int32 i = 0; i < StackNumber; ++i)
 	{
-		Listings->AddItem(Listing);
+		Listings->AddItem(StackBundle.Listings[i], i % 2 == 0);
 	}
 
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);

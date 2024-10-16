@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "CustomUserWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "SearchStacksListing_ListingItemWidget.h"
 
@@ -12,14 +13,14 @@ namespace ImmutableOpenAPI
 }
 
 UCLASS()
-class USearchStacksListing_ListingsWidget : public UUserWidget
+class USearchStacksListing_ListingsWidget : public UCustomUserWidget
 {
 	GENERATED_BODY()
 
 public:
 	DECLARE_DELEGATE_OneParam(FOnSelectionStatusChange, bool /* IsSelected */)
 	
-	void AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing);
+	void AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing, bool IsIdEven);
 	USearchStacksListing_ListingItemWidget* GetSelectedItemWidget();
 	void RegisterOnSelectionStatusChange(FOnSelectionStatusChange InDelegate);
 

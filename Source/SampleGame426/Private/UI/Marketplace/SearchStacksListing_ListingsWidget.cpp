@@ -1,5 +1,6 @@
 ﻿#include "Marketplace/SearchStacksListing_ListingsWidget.h"
 
+#include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "IContentBrowserSingleton.h"
 #include "OpenAPIFee.h"
@@ -8,13 +9,13 @@
 #include "UI/Utility/MathUtility.h"
 
 
-void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing)
+void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing, bool IsIdEven)
 {
 	if (ScrollBoxListings)
 	{
 		USearchStacksListing_ListingItemWidget* ListingsItemWidget = CreateWidget<USearchStacksListing_ListingItemWidget>(ScrollBoxListings, ItemWidgetClass.LoadSynchronous());
 		UPanelSlot* ScrollBoxSlot = ScrollBoxListings->AddChild(ListingsItemWidget);
-		
+
 		if (ScrollBoxSlot)
 		{
 			auto Decimals = Listing.PriceDetails.Token.Decimals;
@@ -37,15 +38,17 @@ void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAP
 					default:;
 					}
 				}
-				
+
 				ListingsItemWidget->RegisterOnSelection(USearchStacksListing_ListingItemWidget::FOnListingItemSelection::CreateUObject(this, &USearchStacksListing_ListingsWidget::OnItemSelection));
+				ListingsItemWidget->SetIsOwned(Listing.Creator.Equals(GetOwningCustomLocalPLayer()->GetPassportWalletAddress()));
 				ListingsItemWidget->SetListingId(Listing.ListingId);
 				ListingsItemWidget->SetData(Listing.TokenId,
 					Listing.Amount,
 					FeeProtocol,
 					FeeRoyalty,
 					Price,
-					Listing.PriceDetails.Token.Symbol.GetValue());
+					Listing.PriceDetails.Token.Symbol.GetValue(),
+					IsIdEven);
 			}
 		}
 	}
@@ -63,6 +66,8 @@ void USearchStacksListing_ListingsWidget::RegisterOnSelectionStatusChange(FOnSel
 
 void USearchStacksListing_ListingsWidget::OnItemSelection(bool IsSelected, USearchStacksListing_ListingItemWidget* ListingItemWidget)
 {
+	OnSelectionStatusChangeDelegate.ExecuteIfBound(IsSelected);
+	
 	if (SelectedItemWidget == ListingItemWidget && !IsSelected)
 	{
 		SelectedItemWidget->SetSelectionStatus(false);
@@ -79,6 +84,4 @@ void USearchStacksListing_ListingsWidget::OnItemSelection(bool IsSelected, USear
 		}
 		SelectedItemWidget = ListingItemWidget;
 	}
-	
-	OnSelectionStatusChangeDelegate.ExecuteIfBound(IsSelected);
 }

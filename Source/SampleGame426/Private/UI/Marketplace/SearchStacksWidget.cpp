@@ -40,6 +40,7 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	SearchStacksRequest.AccountAddress = GetOwningCustomLocalPLayer()->GetPassportWalletAddress();
 	SearchStacksRequest.ContractAddress = Policy->GetContracts();
 	SearchStacksRequest.ChainName = Policy->GetChainName();
+	SearchStacksRequest.OnlyIfHasActiveListings = true;
 	if (!Policy->GetKeyword().IsEmpty())
 	{
 		SearchStacksRequest.Keyword = Policy->GetKeyword();	

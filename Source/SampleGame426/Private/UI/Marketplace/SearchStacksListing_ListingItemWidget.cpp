@@ -28,6 +28,17 @@ const FString& USearchStacksListing_ListingItemWidget::GetListingId() const
 	return ListingId;
 }
 
+void USearchStacksListing_ListingItemWidget::SetIsOwned(bool IsOwned)
+{
+	bIsOwned = IsOwned;
+	BP_OnSetIsOwned(IsOwned);
+}
+
+bool USearchStacksListing_ListingItemWidget::IsOwned()
+{
+	return bIsOwned;
+}
+
 void USearchStacksListing_ListingItemWidget::SetSelectionStatus(bool IsSelected)
 {
 	if (IsListingItemSelected == IsSelected)
@@ -47,5 +58,8 @@ bool USearchStacksListing_ListingItemWidget::GetSelectionStatus() const
 
 void USearchStacksListing_ListingItemWidget::OnSelectButtonClicked()
 {
-	SetSelectionStatus(!IsListingItemSelected);
+	if (!bIsOwned)
+	{
+		SetSelectionStatus(!IsListingItemSelected);	
+	}
 }

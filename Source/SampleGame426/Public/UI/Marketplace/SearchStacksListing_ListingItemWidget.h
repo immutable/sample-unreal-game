@@ -21,7 +21,14 @@ public:
     const FString& GetListingId() const;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
-	void SetData(const FString& TokenID, const FString& Amount, const FString& FeeProtocol, const FString& FeeRoyalty, const FString& Price, const FString& Currency, bool IsToBuy = true);
+	void SetData(const FString& TokenID, const FString& Amount, const FString& FeeProtocol, const FString& FeeRoyalty, const FString& Price, const FString& Currency, bool IsIdEven);
+
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	void SetIsOwned(bool IsOwned);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
+	void BP_OnSetIsOwned(bool IsOwned);
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	bool IsOwned();
 
 	void SetSelectionStatus(bool IsSelected);
 	bool GetSelectionStatus() const;
@@ -40,4 +47,5 @@ private:
 	FString ListingId;
 	FOnListingItemSelection OnListingItemSelection;
 	bool IsListingItemSelected = false;
+	bool bIsOwned = false;
 };

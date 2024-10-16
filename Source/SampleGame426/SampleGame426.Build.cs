@@ -13,7 +13,9 @@ public class SampleGame426 : ModuleRules
 			"Core", 
 			"CoreUObject", 
 			"Engine", 
-			"InputCore" 
+			"InputCore",
+			"ImmutableOpenAPI", 
+			"ImmutableTsSdkApi",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 
@@ -21,13 +23,19 @@ public class SampleGame426 : ModuleRules
 			"SlateCore",
 			"Slate",
 			"UMG",
-			"GameplayTags"
+			"GameplayTags",
+			"DeveloperSettings",
+			"Immutable",
+			"Json",
+			"JsonUtilities",
+			"HTTP",
+			"ImmutableTsSdkApi"
 		});
-
 
 		PrivateIncludePaths.AddRange(new string[]
 		{
-			"SampleGame426/UI/Public"
+			"SampleGame426/Public/UI",
+			"SampleGame426/Public/Online"
 
 		});
 	}

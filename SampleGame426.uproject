@@ -14,6 +14,10 @@
 		{
 			"Name": "Immutable",
 			"Enabled": true
+		},
+		{
+			"Name": "ImmutableOpenAPI",
+			"Enabled": true
 		}
 	]
 }

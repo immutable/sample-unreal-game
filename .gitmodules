@@ -1,12 +1,12 @@
 [submodule "Plugins/unreal-immutable-sdk"]
 	path = Plugins/unreal-immutable-sdk
-	url = git@github.com:immutable/unreal-immutable-sdk.git
+	url = https://github.com/immutable/unreal-immutable-sdk.git
 	branch = feat/blui-enabled
 [submodule "Plugins/BLUI"]
 	path = Plugins/BLUI
-	url = git@github.com:immutable/immutable-BLUI.git
+	url = https://github.com/immutable/immutable-BLUI.git
 	branch = immutable
 [submodule "Backend"]
 	path = Backend
-	url = git@github.com:immutable/unity-sdk-game-tutorial.git
+	url = https://github.com/immutable/unity-sdk-game-tutorial.git
 	branch = feat/list-asset

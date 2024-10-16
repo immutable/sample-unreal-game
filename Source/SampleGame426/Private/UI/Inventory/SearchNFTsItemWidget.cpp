@@ -70,6 +70,22 @@ void USearchNFTsItemWidget::RegisterOnSelection(const FOnSearchNFTsItemWidgetSel
 	OnSearchNFTsItemWidgetSelectionDelegate = SelectionDelegate;
 }
 
+void USearchNFTsItemWidget::SetListForSellStatus(bool ListedStatus)
+{
+	if (IsListed == ListedStatus)
+	{
+		return;
+	}
+
+	IsListed = ListedStatus;
+	BP_OnSetListForSellStatus(IsListed);
+}
+
+bool USearchNFTsItemWidget::IsListedForSell() const
+{
+	return IsListed;
+}
+
 FString USearchNFTsItemWidget::GetTokenId() const
 {
 	if (NFTBundle.IsValid())

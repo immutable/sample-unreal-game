@@ -12,6 +12,7 @@ FGameplayTag FUIControlPanelButtons::Forward;
 FGameplayTag FUIControlPanelButtons::Back;
 FGameplayTag FUIControlPanelButtons::Buy;
 FGameplayTag FUIControlPanelButtons::Sell;
+FGameplayTag FUIControlPanelButtons::CancelSell;
 
 FGameplayTag FUIDialogTypes::None;
 FGameplayTag FUIDialogTypes::ErrorSimple;
@@ -46,6 +47,7 @@ void FUIControlPanelButtons::InitUIGameplayTags_ControlPanelButtons()
 	FUIControlPanelButtons::Back			= RequestGameplayTag(Prefix, TEXT("Back"));
 	FUIControlPanelButtons::Buy				= RequestGameplayTag(Prefix, TEXT("Buy"));
 	FUIControlPanelButtons::Sell			= RequestGameplayTag(Prefix, TEXT("Sell"));
+	FUIControlPanelButtons::CancelSell		= RequestGameplayTag(Prefix, TEXT("CancelSell"));
 }
 
 void FUIDialogTypes::InitUIGameplayTags_DialogTypes()

@@ -5,8 +5,6 @@
 #include "SearchStacksListing_ListingItemWidget.generated.h"
 
 
-
-
 UCLASS(Abstract, Blueprintable)
 class SAMPLEGAME426_API USearchStacksListing_ListingItemWidget : public UUserWidget
 {
@@ -25,8 +23,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
 	void SetData(const FString& TokenID, const FString& Amount, const FString& FeeProtocol, const FString& FeeRoyalty, const FString& Price, const FString& Currency, bool IsToBuy = true);
 
+	void SetSelectionStatus(bool IsSelected);
+	bool GetSelectionStatus() const;
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
-	void BP_OnSelectButtonClick(bool IsSelected);
+	void BP_OnSelectStatusUpdate(bool IsSelected);
 
 private:
 	UFUNCTION()
@@ -35,10 +35,9 @@ private:
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UButton* SelectButton = nullptr;
-	UPROPERTY(BlueprintReadOnly)
-	bool IsListingItemSelected = false;
 
 private:
 	FString ListingId;
 	FOnListingItemSelection OnListingItemSelection;
+	bool IsListingItemSelected = false;
 };

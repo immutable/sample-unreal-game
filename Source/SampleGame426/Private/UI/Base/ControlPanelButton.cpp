@@ -52,6 +52,11 @@ void UControlPanelButton::Show()
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
+bool UControlPanelButton::IsButtonEnabled() const
+{
+	return ButtonHitbox->GetIsEnabled();
+}
+
 bool UControlPanelButton::Initialize()
 {
 	bool IsInitialized = Super::Initialize();

@@ -32,6 +32,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic, Category = "Control Panel")
 	void BP_OnActivationStatusChanged(bool IsEnabled);
 
+	bool IsButtonEnabled() const;
+
 	/* UUserWidget */
 	virtual bool Initialize() override;
 	/* UUserWidget */

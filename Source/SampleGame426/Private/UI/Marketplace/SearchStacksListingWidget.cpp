@@ -93,10 +93,12 @@ void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 
 void USearchStacksListingWidget::OnSelectionStatusChange(bool IsAnyItemSelected)
 {
-	if (BuyButton)
+	if (!BuyButton || IsAnyItemSelected == BuyButton->IsButtonEnabled())
 	{
-		IsAnyItemSelected ? BuyButton->Enable() : BuyButton->Disable();
+		return;
 	}
+	
+	IsAnyItemSelected ? BuyButton->Enable() : BuyButton->Disable();
 }
 
 void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)

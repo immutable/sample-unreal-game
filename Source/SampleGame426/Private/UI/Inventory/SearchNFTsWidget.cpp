@@ -40,6 +40,7 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 	SearchNFTsRequest.PageCursor = PageCursor;
 	SearchNFTsRequest.AccountAddress = GetOwningCustomLocalPLayer()->GetPassportWalletAddress();
 	SearchNFTsRequest.ContractAddress = Policy->GetContracts();
+	SearchNFTsRequest.OnlyIncludeOwnerListings = true;
 	
 	Policy->GetStacksAPI()->SearchNFTs(SearchNFTsRequest, ImmutableOpenAPI::OpenAPIStacksApi::FSearchNFTsDelegate::CreateUObject(this, &USearchNfTsWidget::OnSearchNFTsResponse));
 }
@@ -63,10 +64,14 @@ void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostPanel
 	Super::SetupControlButtons(HostPanel);
 
 	SellButton = HostPanel->GetButton(FUIControlPanelButtons::Sell);
-
+	CancelSellButton = HostPanel->GetButton(FUIControlPanelButtons::CancelSell);
 	if (SellButton)
 	{
-		SellButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchNfTsWidget::OnSellButtonClicked);
+		SellButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchNfTsWidget::OnButtonClicked);	
+	}
+	if (CancelSellButton)
+	{
+		CancelSellButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchNfTsWidget::OnButtonClicked);	
 	}
 }
 
@@ -90,14 +95,16 @@ void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStac
 		int32 Column = ResultId - Row * NumberOfColumns;
 		auto Item = ListPanel->GetItem(Column, Row);
 
-		if (auto ItemInterface = Cast<IInventoryOpenAPIProcessorInterface>(Item))
-		{
-			ItemInterface->ProcessModel(Response.Content.Result[ResultId]);
-		}
+		auto ItemData = Response.Content.Result[ResultId];
+		auto ItemWidget = Cast<USearchNFTsItemWidget>(Item);
+		auto ItemInterface = Cast<IInventoryOpenAPIProcessorInterface>(Item);
 
-		if (auto ItemWidget = Cast<USearchNFTsItemWidget>(Item))
+		ItemInterface->ProcessModel(ItemData);
+		ItemWidget->RegisterOnSelection(USearchNFTsItemWidget::FOnSearchNFTsItemWidgetSelection::CreateUObject(this, &USearchNfTsWidget::OnItemSelection));
+
+		if (ItemData.Listings.Num())
 		{
-			ItemWidget->RegisterOnSelection(USearchNFTsItemWidget::FOnSearchNFTsItemWidgetSelection::CreateUObject(this, &USearchNfTsWidget::OnItemSelection));
+			ItemWidget->SetListForSellStatus(true);
 		}
 	}
 }
@@ -123,9 +130,28 @@ void USearchNfTsWidget::OnItemSelection(bool IsSelected, USearchNFTsItemWidget* 
 		
 		SelectedItemWidget = ItemWidget;
 
-		if (SellButton && !SellButton->IsEnabled())
+		if (SelectedItemWidget->IsListedForSell())
 		{
-			SellButton->Enable();	
+			if (SellButton)
+			{
+				SellButton->Disable();	
+			}
+			if (CancelSellButton)
+			{
+				CancelSellButton->Enable();	
+			}
+			
+		}
+		else
+		{
+			if (SellButton)
+			{
+				SellButton->Enable();	
+			}
+			if (CancelSellButton)
+			{
+				CancelSellButton->Disable();	
+			}
 		}
 	}
 }
@@ -144,16 +170,19 @@ void USearchNfTsWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& Page
 	}
 }
 
-void USearchNfTsWidget::OnSellButtonClicked(FGameplayTag ButtonTag)
+void USearchNfTsWidget::OnButtonClicked(FGameplayTag ButtonTag)
 {
-	if (!SelectedItemWidget)
+	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::Sell))
 	{
-		return;
+		UDialog* SellDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Sell, UDialogSubsystem::CreateSellDescriptor(TEXT(""), TEXT("Please enter price and confirm that you are ready to list your NFT")));
+
+		SellDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnPlayerConfirmedSell);	
 	}
 
-	UDialog* SellDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Sell, UDialogSubsystem::CreateSellDescriptor(TEXT(""), TEXT("Please enter price and confirm that you are ready to list your NFT")));
-
-	SellDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnPlayerConfirmedSell);
+	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::CancelSell))
+	{
+		
+	}
 }
 
 void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult Result)

@@ -63,16 +63,22 @@ void USearchStacksListing_ListingsWidget::RegisterOnSelectionStatusChange(FOnSel
 
 void USearchStacksListing_ListingsWidget::OnItemSelection(bool IsSelected, USearchStacksListing_ListingItemWidget* ListingItemWidget)
 {
-	OnSelectionStatusChangeDelegate.ExecuteIfBound(IsSelected);
-	
 	if (SelectedItemWidget == ListingItemWidget && !IsSelected)
 	{
+		SelectedItemWidget->SetSelectionStatus(false);
 		SelectedItemWidget = nullptr;
+		
 		return;
 	}
 	
 	if (SelectedItemWidget != ListingItemWidget && IsSelected)
 	{
+		if (SelectedItemWidget)
+		{
+			SelectedItemWidget->SetSelectionStatus(false);	
+		}
 		SelectedItemWidget = ListingItemWidget;
 	}
+	
+	OnSelectionStatusChangeDelegate.ExecuteIfBound(IsSelected);
 }

@@ -16,6 +16,9 @@ class SAMPLEGAME426_API UItemWidget : public UCustomUserWidget
 public:
 	virtual void SetOriginalState();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
+	void ShowThrobber();
+
 protected:
 	virtual bool Initialize() override; 
 

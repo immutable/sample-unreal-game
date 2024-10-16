@@ -28,9 +28,24 @@ const FString& USearchStacksListing_ListingItemWidget::GetListingId() const
 	return ListingId;
 }
 
+void USearchStacksListing_ListingItemWidget::SetSelectionStatus(bool IsSelected)
+{
+	if (IsListingItemSelected == IsSelected)
+	{
+		return;	
+	}
+	
+	IsListingItemSelected = IsSelected;
+	OnListingItemSelection.ExecuteIfBound(IsListingItemSelected, this);
+	BP_OnSelectStatusUpdate(IsSelected);
+}
+
+bool USearchStacksListing_ListingItemWidget::GetSelectionStatus() const
+{
+	return IsListingItemSelected;
+}
+
 void USearchStacksListing_ListingItemWidget::OnSelectButtonClicked()
 {
-	IsListingItemSelected = !IsListingItemSelected;
-	OnListingItemSelection.ExecuteIfBound(IsListingItemSelected, this);
-	BP_OnSelectButtonClick(IsListingItemSelected);
+	SetSelectionStatus(!IsListingItemSelected);
 }

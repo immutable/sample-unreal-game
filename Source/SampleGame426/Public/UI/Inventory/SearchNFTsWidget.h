@@ -37,7 +37,7 @@ protected:
 private:
 	void HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData);
 	UFUNCTION()
-	void OnSellButtonClicked(FGameplayTag ButtonTag);
+	void OnButtonClicked(FGameplayTag ButtonTag);
 	UFUNCTION()
 	void OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult Result);
 	void OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingResponse& Response);
@@ -59,5 +59,6 @@ private:
 	USearchNFTsItemWidget* SelectedItemWidget = nullptr;
 	ImmutableOpenAPI::OpenAPIPage PageCursors;
 	UControlPanelButton* SellButton = nullptr;
+	UControlPanelButton* CancelSellButton = nullptr;
 
 };

@@ -27,11 +27,16 @@ public:
 	
 	void RegisterOnSelection(const FOnSearchNFTsItemWidgetSelection& SelectionDelegate);
 
+	void SetListForSellStatus(bool ListedStatus);
+	bool IsListedForSell() const;
 	FString GetTokenId() const;
 	FString GetContractAddress() const;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
 	void BP_OnSelectButtonClick(bool IsSelected);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
+	void BP_OnSetListForSellStatus(bool IsItemListed);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void SetSelectionStatus(bool IsSelected);
@@ -60,5 +65,7 @@ protected:
 private:
 	TSharedPtr<ImmutableOpenAPI::OpenAPINFTBundle> NFTBundle;
 	FOnSearchNFTsItemWidgetSelection OnSearchNFTsItemWidgetSelectionDelegate;
+
+	bool IsListed;
 	
 };

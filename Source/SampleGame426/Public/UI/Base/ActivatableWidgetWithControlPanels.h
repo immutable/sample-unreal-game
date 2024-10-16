@@ -26,9 +26,13 @@ protected:
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 	virtual void SynchronizeProperties() override;
 	virtual void OnWidgetRebuilt() override;
+	virtual void NativeDestruct() override;
 	/* UUserWidget interface */
 
+	/* UActivatableWidget interface */
+	virtual void NativeOnActivated() override;
 	virtual void NativeOnDeactivated() override;
+	/* UActivatableWidget interface */
 
 	UFUNCTION(BlueprintImplementableEvent, Category = Immutable, meta = (DisplayName = "On Back Button Clicked"))
 	void BP_OnBackButtonClicked();

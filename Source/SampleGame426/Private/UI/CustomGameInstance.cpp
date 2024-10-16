@@ -2,6 +2,7 @@
 
 #include "CustomLocalPlayer.h"
 #include "GameUIManagerSubsystem.h"
+#include "InformationSubsystem.h"
 #include "LogSampleGame.h"
 #include "UIGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
@@ -25,9 +26,20 @@ UDialog* UCustomGameInstance::SendDialogMessage(const UObject* WorldContextObjec
 	return nullptr;
 }
 
-void UCustomGameInstance::SendRunningLineMessage(const UObject* WorldContextObject, const FString& Message)
+void UCustomGameInstance::SendDisplayMessage(const UObject* WorldContextObject, const FString& Message)
 {
-	UE_LOG(LogSampleGame, Log, TEXT("%s"), *Message);
+	auto GameInstance = Cast<UCustomGameInstance>(UGameplayStatics::GetGameInstance(WorldContextObject));
+
+	if (!GameInstance)
+	{
+		UE_LOG(LogSampleGame, Error, TEXT("Failed to SendDisplayMessage for %s"), *WorldContextObject->GetName());
+		return;
+	}
+	
+	if (UInformationSubsystem* InformationSubsystem = GameInstance->GetFirstGamePlayer()->GetSubsystem<UInformationSubsystem>())
+	{
+		InformationSubsystem->ShowDisplayMessage(Message);
+	}
 }
 
 //

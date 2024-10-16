@@ -74,16 +74,6 @@ const FDialogType* UDialogSubsystem::GetDialogType(FGameplayTag DialogType) cons
 	return nullptr;
 }
 
-void UDialogSubsystem::Initialize(FSubsystemCollectionBase& Collection)
-{
-	Super::Initialize(Collection);
-}
-
-void UDialogSubsystem::Deinitialize()
-{
-	Super::Deinitialize();
-}
-
 UDialog* UDialogSubsystem::ShowDialog(const FGameplayTag& DialogType, UDialogDescriptor* Descriptor)
 {
 	auto DialogData = GetDialogType(DialogType);

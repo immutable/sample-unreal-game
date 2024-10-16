@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "ImmutableTsSdkApi_DefaultApi.h"
+#include "OpenAPIOrderbookApi.h"
 #include "Engine/LocalPlayer.h"
 #include "Immutable/ImmutableDataTypes.h"
 #include "Immutable/ImmutablePassport.h"
@@ -50,8 +50,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void UpdateBalance();
 
-	void SignSubmitApproval(const FString& To, const FString& Data, const FString& DisplayMessage);
-	void CreateListing(const FString& SingableMessageJson, TFunction<void(const FString& Signature)> Callback);
+	void SignSubmitApproval(const FString& To, const FString& Data, TFunction<void()> Callback);
+	void SignData(const FString& SingableMessageJson, TFunction<void(const FString& Signature)> Callback);
 
 private:
 	void InitializePassport();
@@ -59,7 +59,7 @@ private:
 	void OnPassportInitialized(FImmutablePassportResult Result);
 	void OnPassportLoggedIn(FImmutablePassportResult Result);
 	void OnPassportLoggedOut(FImmutablePassportResult Result);
-	void OnBalanceUpdateResponse(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkTokenBalanceGetResponse& Response);
+	void OnBalanceUpdateResponse(const ImmutableTsSdkApi::OpenAPIOrderbookApi::TokenBalanceResponse& Response);
 
 	void CollectPassportData();
 	bool CheckAllPassportDataObtained();

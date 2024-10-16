@@ -2,8 +2,7 @@
 
 #include "CustomGameInstance.h"
 #include "GameUIManagerSubsystem.h"
-#include "LogSampleGame.h"
-#include "ImmutableTsSdkApi_DefaultApiOperations.h"
+#include "OpenAPIOrderbookApiOperations.h"
 #include "UIGameplayTags.h"
 #include "Dialog/DialogSubsystem.h"
 #include "Immutable/ImmutableSubsystem.h"
@@ -65,9 +64,8 @@ void UCustomLocalPlayer::LoginPassport()
 	 {
 	 	Passport->HasStoredCredentials(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
 	 	{
-	 		Passport->Connect(true, Result.Success, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));
+	 		Passport->Connect(true, Result.Success, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));	
 	 	}));
-	 	
 	 }
 }
 
@@ -100,15 +98,15 @@ void UCustomLocalPlayer::UpdateBalance()
 		return;
 	}
 
-	ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkTokenBalanceGetRequest Request;
+	ImmutableTsSdkApi::OpenAPIOrderbookApi::TokenBalanceRequest Request;
 
 	Request.WalletAddress = PassportWalletAddress;
 	Request.ContractAddress = MarketplacePolicy->GetBalanceContractAddress();
 
-	MarketplacePolicy->GetTsSdkAPI()->V1TsSdkTokenBalanceGet(Request, ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::FV1TsSdkTokenBalanceGetDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
+	MarketplacePolicy->GetTsSdkAPI()->TokenBalance(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FTokenBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
 }
 
-void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Data, const FString& DisplayMessage)
+void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Data, TFunction<void()> Callback)
 {
 	FImtblTransactionRequest Request;
 
@@ -116,23 +114,22 @@ void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Da
 	Request.data = Data;
 	Request.value = "0";
 	
-	Passport->ZkEvmSendTransactionWithConfirmation(Request, UImmutablePassport::FImtblPassportResponseDelegate::CreateWeakLambda(this, [this, DisplayMessage](FImmutablePassportResult Result)
+	Passport->ZkEvmSendTransactionWithConfirmation(Request, UImmutablePassport::FImtblPassportResponseDelegate::CreateWeakLambda(this, [this, Callback](FImmutablePassportResult Result)
 	{
 		if (!Result.Success)
 		{
 			UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to sign and submit transaction"), Result.Error));
 			return;
 		}
-		
-		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Message, UDialogSubsystem::CreateMessageDescriptor(TEXT("Message"), *DisplayMessage));
+		Callback();
 	}));
 }
 
-void UCustomLocalPlayer::CreateListing(const FString& SingableMessageJson, TFunction<void(const FString& Signature)> Callback)
+void UCustomLocalPlayer::SignData(const FString& SingableMessageJson, TFunction<void(const FString& Signature)> Callback)
 {
 	if (SingableMessageJson.IsEmpty())
 	{
-		UCustomGameInstance::SendRunningLineMessage(this, TEXT("CreateListing: Input json string is empty!"));
+		UCustomGameInstance::SendDisplayMessage(this, TEXT("CreateListing: Input json string is empty!"));
 		return;
 	}
 	
@@ -155,7 +152,7 @@ void UCustomLocalPlayer::CreateListing(const FString& SingableMessageJson, TFunc
 	}));
 }
 
-void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkTokenBalanceGetResponse& Response)
+void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableTsSdkApi::OpenAPIOrderbookApi::TokenBalanceResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{

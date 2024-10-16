@@ -90,6 +90,18 @@ FString USearchNFTsItemWidget::GetContractAddress() const
 	return TEXT("");
 }
 
+void USearchNFTsItemWidget::SetSelectionStatus(bool IsSelected)
+{
+	if (IsItemSelected == IsSelected)
+	{
+		return;	
+	}
+	
+	IsItemSelected = IsSelected;
+	OnSearchNFTsItemWidgetSelectionDelegate.ExecuteIfBound(IsItemSelected, this);
+	BP_OnSelectButtonClick(IsItemSelected);
+}
+
 void USearchNFTsItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 {
 	if (NFTThumbnail)
@@ -121,7 +133,5 @@ void USearchNFTsItemWidget::SetBalance(int32 Balance)
 
 void USearchNFTsItemWidget::OnSelectButtonClicked()
 {
-	IsItemSelected = !IsItemSelected;
-	OnSearchNFTsItemWidgetSelectionDelegate.ExecuteIfBound(IsItemSelected, this);
-	BP_OnSelectButtonClick(IsItemSelected);
+	SetSelectionStatus(!IsItemSelected);
 }

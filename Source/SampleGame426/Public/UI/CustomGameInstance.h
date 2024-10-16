@@ -24,7 +24,7 @@ public:
 	static UDialog* SendDialogMessage(const UObject* WorldContextObject, FGameplayTag DialogType, UDialogDescriptor* Descriptor);
 
 	UFUNCTION(BlueprintCallable, Category = "Immutable")
-	static void SendRunningLineMessage(const UObject* WorldContextObject, const FString& Message);
+	static void SendDisplayMessage(const UObject* WorldContextObject, const FString& Message);
 
 
 	// UFUNCTION(BlueprintCallable, Category = CommonUser)

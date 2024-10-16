@@ -9,8 +9,8 @@
 #include "UIGameplayTags.h"
 #include "Marketplace/MarketplacePolicy.h"
 #include "Marketplace/SearchStacksListing_ListingsWidget.h"
-#include "ImmutableTsSdkApi_DefaultApiOperations.h"
-#include "ImmutableTsSdkApi_V1TsSdkOrderbookFulfillOrderPostRequest.h"
+#include "OpenAPIFulfillOrderRequest.h"
+#include "OpenAPIOrderbookApiOperations.h"
 
 #define MP_DESCRIPTION_DESCRIPTION TEXT("Description")
 #define MP_DESCRIPTION_CREATED_AT TEXT("Created at")
@@ -111,18 +111,18 @@ void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)
 	
 	if(Listings->GetSelectedItemWidget())
 	{
-		ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookFulfillOrderPostRequest RequestData;
-		ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookFulfillOrderPostRequest Request;
+		ImmutableTsSdkApi::OpenAPIFulfillOrderRequest RequestData;
+		ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderRequest Request;
 
 		RequestData.ListingId = Listings->GetSelectedItemWidget()->GetListingId();
 		RequestData.TakerAddress = LocalPlayer->GetPassportWalletAddress();
-		Request.ImmutableTsSdkApiV1TsSdkOrderbookFulfillOrderPostRequest = RequestData;
+		Request.OpenAPIFulfillOrderRequest = RequestData;
 		
-		Policy->GetTsSdkAPI()->V1TsSdkOrderbookFulfillOrderPost(Request, ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::FV1TsSdkOrderbookFulfillOrderPostDelegate::CreateUObject(this, &USearchStacksListingWidget::OnOrderbookFulfillOrder));
+		Policy->GetTsSdkAPI()->FulfillOrder(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FFulfillOrderDelegate::CreateUObject(this, &USearchStacksListingWidget::OnFulfillOrder));
 	}
 }
 
-void USearchStacksListingWidget::OnOrderbookFulfillOrder(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookFulfillOrderPostResponse& Response)
+void USearchStacksListingWidget::OnFulfillOrder(const ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -141,18 +141,24 @@ void USearchStacksListingWidget::OnOrderbookFulfillOrder(const ImmutableTsSdkApi
 		auto Actions = Response.Content.Actions.GetValue();
 		for (auto Action : Actions)
 		{
-			if (Action.Type == ImmutableTsSdkApi::ImmutableTsSdkApi_TransactionAction::TypeEnum::Transaction)
+			if (Action.Type == ImmutableTsSdkApi::OpenAPITransactionAction::TypeEnum::Transaction)
 			{
-				if (Action.Purpose.GetValue().Value == ImmutableTsSdkApi::ImmutableTsSdkApi_TransactionPurpose::Values::Approval)
+				if (Action.Purpose.GetValue().Value == ImmutableTsSdkApi::OpenAPITransactionPurpose::Values::Approval)
 				{
-					GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), TEXT("Approval for purchase is processed!"));
+					GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), [this]()
+					{
+						UCustomGameInstance::SendDisplayMessage(this, TEXT("Approval for purchase is processed!"));
+					});
 				}
 
-				if (Action.Purpose.GetValue().Value == ImmutableTsSdkApi::ImmutableTsSdkApi_TransactionPurpose::Values::FulfillOrder)
+				if (Action.Purpose.GetValue().Value == ImmutableTsSdkApi::OpenAPITransactionPurpose::Values::FulfillOrder)
 				{
 					if (Action.PopulatedTransactions->To.IsSet() && Action.PopulatedTransactions->Data.IsSet())
 					{
-						GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), TEXT("Transaction complete successfully! Enjoy your new purchase!"));
+						GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), [this]()
+						{
+							UCustomGameInstance::SendDisplayMessage(this, TEXT("Transaction complete successfully! Enjoy your new purchase!"));
+						});
 						GetOwningCustomLocalPLayer()->UpdateBalance();
 					}
 					else

@@ -24,6 +24,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	void Disable();
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
+	bool IsEnabled();
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	void Hide();
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	void Show();

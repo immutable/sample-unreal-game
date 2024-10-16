@@ -22,10 +22,6 @@
 		{
 			"Name": "ImmutableTsSdkApi",
 			"Enabled": true
-		},
-		{
-			"Name": "ImmutableIndexerSearchAPI",
-			"Enabled": true
 		}
 	]
 }

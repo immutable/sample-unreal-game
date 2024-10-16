@@ -46,11 +46,32 @@ void UActivatableWidgetWithControlPanels::OnWidgetRebuilt()
 	Super::OnWidgetRebuilt();
 }
 
+void UActivatableWidgetWithControlPanels::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	ControlPanelButtons.Reset();
+	ControlPanelButtonsData.Reset();
+}
+
+void UActivatableWidgetWithControlPanels::NativeOnActivated()
+{
+	Super::NativeOnActivated();
+
+	for (auto Button : ControlPanelButtons)
+	{
+		Button.Value->Show();
+	}
+}
+
 void UActivatableWidgetWithControlPanels::NativeOnDeactivated()
 {
 	Super::NativeOnDeactivated();
-
 	
+	for (auto Button : ControlPanelButtons)
+	{
+		Button.Value->Hide();
+	}
 }
 
 void UActivatableWidgetWithControlPanels::OnBackButtonClicked(FGameplayTag ButtonTag)

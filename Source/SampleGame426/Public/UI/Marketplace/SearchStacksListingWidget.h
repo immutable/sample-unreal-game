@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "ImmutableTsSdkApi_DefaultApi.h"
+#include "OpenAPIOrderbookApi.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 
@@ -34,7 +34,7 @@ protected:
 
 private:
 	void OnSelectionStatusChange(bool IsAnyItemSelected);
-	void OnOrderbookFulfillOrder(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookFulfillOrderPostResponse& Response);
+	void OnFulfillOrder(const ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderResponse& Response);
 	UFUNCTION()
 	void OnBuyButtonClicked(FGameplayTag ButtonTag);
 	

@@ -2,10 +2,12 @@
 
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "UI/Interfaces/IItemListInterface.h"
+#include "Marketplace/MarketplacePolicy.h"
 #include "Base/ItemListWidget.h"
 #include "Inventory/SearchNFTsItemWidget.h"
 #include "OpenAPIStacksApi.h"
-#include "ImmutableTsSdkApi_DefaultApi.h"
+#include "OpenAPIOrderbookApi.h"
+#include "OpenAPIOrdersApi.h"
 #include "OpenAPIPage.h"
 
 #include "SearchNFTsWidget.generated.h"
@@ -20,6 +22,9 @@ public:
 	virtual void RefreshItemList(TOptional<FString> PageCursor) override;
 
 protected:
+	/* UUserWidget */
+	virtual void NativeOnInitialized() override;
+	/* UUserWidget */
 	/* UActivatableWidget */
 	virtual void NativeOnActivated() override;
 	/* UActivatableWidget */
@@ -35,8 +40,11 @@ private:
 	void OnSellButtonClicked(FGameplayTag ButtonTag);
 	UFUNCTION()
 	void OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult Result);
-	void OnOrderbookPrepareListingPost(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookPrepareListingPostResponse& Response);
-	void OnOrderbookCreateListingPost(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookCreateListingPostResponse& Response);
+	void OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingResponse& Response);
+	void OnCreateListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::CreateListingResponse& Response);
+
+	void ConfirmListing(const FString& ListingId);
+	void OnGetListing(const ImmutableOpenAPI::OpenAPIOrdersApi::GetListingResponse& Response);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
@@ -47,6 +55,7 @@ protected:
 	UControlPanelButton* NextPageButton = nullptr;
 
 private:
+	TWeakObjectPtr<UMarketplacePolicy> Policy;
 	USearchNFTsItemWidget* SelectedItemWidget = nullptr;
 	ImmutableOpenAPI::OpenAPIPage PageCursors;
 	UControlPanelButton* SellButton = nullptr;

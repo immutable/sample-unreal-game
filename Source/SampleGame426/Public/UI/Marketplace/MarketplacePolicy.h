@@ -1,7 +1,8 @@
 ﻿#pragma once
 
+#include "OpenAPIOrderbookApi.h"
 #include "OpenAPIStacksApi.h"
-#include "ImmutableTsSdkApi_DefaultApi.h"
+#include "OpenAPIOrdersApi.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
 #include "NFT/NFT_TableRowBase.h"
 
@@ -18,11 +19,6 @@ class UMarketplacePolicy : public UObject
 	GENERATED_BODY()
 
 public:
-	enum
-	{
-		
-	};
-	
 	/* UObject Interface */
 	virtual void PostInitProperties() override;
 	/* UObject Interface */
@@ -31,20 +27,41 @@ public:
 	UDataTable* GetNFTDatatable();
 	FNFT_TableRowBase* FindNFTTextureRow(FName RowName);
 
-	ImmutableOpenAPI::OpenAPIStacksApi* GetImmutableOpenAPI();
-	TSharedPtr<ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest> GetImmutableOpenAPI_SearchStacksRequest();
-	TSharedPtr<ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsRequest> GetImmutableOpenAPI_SearchNfTsRequest();
+	ImmutableOpenAPI::OpenAPIStacksApi* GetStacksAPI()
+	{
+		return StacksAPI.Get();
+	}
 	
-	ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi* GetTsSdkAPI();
+	ImmutableOpenAPI::OpenAPIOrdersApi* GetOrdersAPI()
+	{
+		return OrdersAPI.Get();
+	}
+
+	const FString& GetChainName()
+	{
+		return SearchAPIChainName;
+	}
+
+	const TArray<FString>& GetContracts()
+	{
+		return StackContractAddress;
+	}
+	
+	ImmutableTsSdkApi::OpenAPIOrderbookApi* GetTsSdkAPI();
 	
 	FString GetBalanceContractAddress() const; 
 
-	void SetPageSize(int32 PageSize);
-	void SetPageCursor(TOptional<FString> PageCursor);
-	void SetAccount(const FString& Account);
 	void SetKeyword(const FString& Keyword);
 	void SetTraits(const TArray<FNFTMetadataAttribute_TraitType>& Traits);
-	void SetOnlyIncludeOwnerListings(bool OnlyIncludeOwnerListings);
+	const FString& GetKeyword() const
+	{
+		return SearchStacksKeyword;		
+	}
+
+	const FString& GetTraits() const
+	{
+		return SearchStacksTraits;
+	}
 	
 protected:
 	// must be global
@@ -53,7 +70,7 @@ protected:
 	
 	// Online values:
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
-	FString MarketplaceAPIURL;
+	FString ImmutableAPIURL;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	FString TsSdkAPIURL;
@@ -80,11 +97,14 @@ protected:
 	int32 NumberFractionalDigits = 4;
 
 private:
-	TUniquePtr<ImmutableOpenAPI::OpenAPIStacksApi> ImmutableOpenAPI;
-	TUniquePtr<ImmutableOpenAPI::HttpRetryManager> ImmutableOpenAPI_HttpRetryManager;
+	TUniquePtr<ImmutableOpenAPI::HttpRetryManager> HttpRetryManager;
 
-	TUniquePtr<ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi> TsSdkAPI;
+	TUniquePtr<ImmutableOpenAPI::OpenAPIStacksApi> StacksAPI;
+	TUniquePtr<ImmutableOpenAPI::OpenAPIOrdersApi> OrdersAPI;
 
-	TSharedPtr<ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest> ImmutableOpenAPI_SearchStacksRequest;
-	TSharedPtr<ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsRequest> ImmutableOpenAPI_SearchNFTsRequest;
+	TUniquePtr<ImmutableTsSdkApi::OpenAPIOrderbookApi> TsSdkAPI;
+
+	FString SearchStacksKeyword;
+	FString SearchStacksTraits;
+	
 };

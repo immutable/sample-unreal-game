@@ -33,9 +33,23 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 		return;
 	}
 
-	Policy->SetPageSize(ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows());
-	Policy->SetPageCursor(PageCursor);
-	Policy->GetImmutableOpenAPI()->SearchStacks(*Policy->GetImmutableOpenAPI_SearchStacksRequest(), ImmutableOpenAPI::OpenAPIStacksApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
+	ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest SearchStacksRequest;
+
+	SearchStacksRequest.PageSize = ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows();
+	SearchStacksRequest.PageCursor = PageCursor;
+	SearchStacksRequest.AccountAddress = GetOwningCustomLocalPLayer()->GetPassportWalletAddress();
+	SearchStacksRequest.ContractAddress = Policy->GetContracts();
+	SearchStacksRequest.ChainName = Policy->GetChainName();
+	if (!Policy->GetKeyword().IsEmpty())
+	{
+		SearchStacksRequest.Keyword = Policy->GetKeyword();	
+	}
+	if (!Policy->GetTraits().IsEmpty())
+	{
+		SearchStacksRequest.Trait = Policy->GetTraits();
+	}
+		
+	Policy->GetStacksAPI()->SearchStacks(SearchStacksRequest, ImmutableOpenAPI::OpenAPIStacksApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
 }
 
 void USearchStacksWidget::NativeOnActivated()
@@ -54,7 +68,7 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search stacks result"), Response.GetResponseString()));
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search stacks result"), Response.GetHttpResponse()->GetContentAsString()));
 		
 		return;
 	}

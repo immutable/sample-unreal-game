@@ -3,8 +3,8 @@
 #include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
-#include "ImmutableTsSdkApi_DefaultApiOperations.h"
-#include "ImmutableTsSdkApi_V1TsSdkOrderbookPrepareListingPostRequest.h"
+#include "OpenAPIOrderbookApiOperations.h"
+#include "OpenAPIOrdersApiOperations.h"
 #include "OpenAPIStacksApiOperations.h"
 #include "UIGameplayTags.h"
 #include "Base/ItemWidget.h"
@@ -28,17 +28,27 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 	
 	ListPanel->ResetPanelItems();
 
-	UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
-
-	if (!Policy)
+	if (!Policy.IsValid())
 	{
 		return;
 	}
 
-	Policy->SetPageSize(ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows());
-	Policy->SetPageCursor(PageCursor);
-	Policy->SetAccount(GetOwningCustomLocalPLayer()->GetPassportWalletAddress());
-	Policy->GetImmutableOpenAPI()->SearchNFTs(*Policy->GetImmutableOpenAPI_SearchNfTsRequest(), ImmutableOpenAPI::OpenAPIStacksApi::FSearchNFTsDelegate::CreateUObject(this, &USearchNfTsWidget::OnSearchNFTsResponse));
+	ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsRequest SearchNFTsRequest;
+	
+	SearchNFTsRequest.ChainName = Policy->GetChainName();
+	SearchNFTsRequest.PageSize = (ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows());
+	SearchNFTsRequest.PageCursor = PageCursor;
+	SearchNFTsRequest.AccountAddress = GetOwningCustomLocalPLayer()->GetPassportWalletAddress();
+	SearchNFTsRequest.ContractAddress = Policy->GetContracts();
+	
+	Policy->GetStacksAPI()->SearchNFTs(SearchNFTsRequest, ImmutableOpenAPI::OpenAPIStacksApi::FSearchNFTsDelegate::CreateUObject(this, &USearchNfTsWidget::OnSearchNFTsResponse));
+}
+
+void USearchNfTsWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	
+	Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
 }
 
 void USearchNfTsWidget::NativeOnActivated()
@@ -94,22 +104,26 @@ void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStac
 
 void USearchNfTsWidget::OnItemSelection(bool IsSelected, USearchNFTsItemWidget* ItemWidget)
 {
-	if (SelectedItemWidget == ItemWidget && !IsSelected)
+	if (SelectedItemWidget == ItemWidget)
 	{
 		SelectedItemWidget = nullptr;
+		ItemWidget->SetSelectionStatus(false);
+		
 		if (SellButton)
 		{
 			SellButton->Disable();	
 		}
-
-		return;
 	}
-	
-	if (SelectedItemWidget != ItemWidget && IsSelected)
+	else
 	{
+		if (SelectedItemWidget)
+		{
+			SelectedItemWidget->SetSelectionStatus(false);	
+		}
+		
 		SelectedItemWidget = ItemWidget;
 
-		if (SellButton)
+		if (SellButton && !SellButton->IsEnabled())
 		{
 			SellButton->Enable();	
 		}
@@ -152,92 +166,106 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 	}
 	
 	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
-	UMarketplacePolicy* Policy = LocalPlayer->GetGameUIPolicy()->GetMarketplacePolicy();
 
-	if (!Policy)
+	if (!Policy.IsValid())
 	{
 		return;
 	}
 	
-	ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookPrepareListingPostRequest RequestData;
-	ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookPrepareListingPostRequest Request;
-	ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookPrepareListingPostRequestBuy BuyData;
-	ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookPrepareListingPostRequestSell SellData;
+	ImmutableTsSdkApi::OpenAPIPrepareListingRequest RequestData;
+	ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingRequest Request;
+	ImmutableTsSdkApi::OpenAPIPrepareListingRequestBuy BuyData;
+	ImmutableTsSdkApi::OpenAPIPrepareListingRequestSell SellData;
 
 	BuyData.Amount = FMathUtility::ConvertFloatValueStringToWeiString(18, Dialog->GetPrice());
 	BuyData.ContractAddress = Policy->GetBalanceContractAddress();
-	BuyData.Type = ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookPrepareListingPostRequestBuy::TypeEnum::ERC20;
+	BuyData.Type = ImmutableTsSdkApi::OpenAPIPrepareListingRequestBuy::TypeEnum::ERC20;
 
 	SellData.ContractAddress = SelectedItemWidget->GetContractAddress();
-	SellData.Type = ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookPrepareListingPostRequestSell::TypeEnum::ERC721;
+	SellData.Type = ImmutableTsSdkApi::OpenAPIPrepareListingRequestSell::TypeEnum::ERC721;
 	SellData.TokenId = SelectedItemWidget->GetTokenId();
 
 	RequestData.MakerAddress = LocalPlayer->GetPassportWalletAddress();
 	RequestData.Buy = BuyData;
 	RequestData.Sell = SellData;
 
-	Request.ImmutableTsSdkApiV1TsSdkOrderbookPrepareListingPostRequest = RequestData;
+	Request.OpenAPIPrepareListingRequest = RequestData;
 
-	Policy->GetTsSdkAPI()->V1TsSdkOrderbookPrepareListingPost(Request, ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::FV1TsSdkOrderbookPrepareListingPostDelegate::CreateUObject(this, &USearchNfTsWidget::OnOrderbookPrepareListingPost));
+	Policy->GetTsSdkAPI()->PrepareListing(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FPrepareListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnPrepareListing));
 	DialogPtr->KillDialog();
 }
 
-void USearchNfTsWidget::OnOrderbookPrepareListingPost(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookPrepareListingPostResponse& Response)
+void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingResponse& Response)
 {
-	for (auto Action : Response.Content.Actions)
+	if (!Response.IsSuccessful())
 	{
-		if (!Action.Purpose.IsSet())
-		{
-			UCustomGameInstance::SendRunningLineMessage(this, TEXT("OnOrderbookPrepareListingPost: Purpose is not set!"));
-			continue;
-		}
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to prepare listing"), Response.GetHttpResponse()->GetContentAsString()));
+		
+		return;
+	}
+	
+	const auto* TransactionAction = Response.Content.Actions.FindByPredicate([this](const ImmutableTsSdkApi::OpenAPIAction& Action){ return Action.Type == ImmutableTsSdkApi::OpenAPIAction::TypeEnum::Transaction; });
 
-		if (Action.Purpose.GetValue().Value != ImmutableTsSdkApi::ImmutableTsSdkApi_SignablePurpose::Values::CreateListing)
-		{
-			UCustomGameInstance::SendRunningLineMessage(this, TEXT("OnOrderbookPrepareListingPost: Purpose is not CREATE_LISTING!"));
-			continue;
-		}
+	const auto* SignableAction = Response.Content.Actions.FindByPredicate([this](const ImmutableTsSdkApi::OpenAPIAction& Action){ return Action.Type == ImmutableTsSdkApi::OpenAPIAction::TypeEnum::Signable; });
 
-		if (!Action.Message.IsSet())
-		{
-			UCustomGameInstance::SendRunningLineMessage(this, TEXT("OnOrderbookPrepareListingPost: Purpose message is not set!"));
-			continue;
-		}
+	if (!TransactionAction || !SignableAction)
+	{
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorSimple, UDialogSubsystem::CreateErrorSimpleDescriptor(TEXT("Error"), TEXT("Failed to find required actions in prepare listing response")));
+		
+		return;
+	}
 
+	if (!TransactionAction->PopulatedTransactions.IsSet())
+	{
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorSimple, UDialogSubsystem::CreateErrorSimpleDescriptor(TEXT("Error"), TEXT("Failed to find TRANSACTION action's populated transactions in prepare listing response")));
+		
+		return;
+	}
+
+	if (!SignableAction->Message.IsSet())
+	{
+		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorSimple, UDialogSubsystem::CreateErrorSimpleDescriptor(TEXT("Error"), TEXT("Failed to find SIGNABLE action's message in prepare listing response")));
+		
+		return;
+	}
+
+	FString PopulatedTransactionsTo = TransactionAction->PopulatedTransactions.GetValue().To.GetValue();
+	FString PopulatedTransactionsData = TransactionAction->PopulatedTransactions.GetValue().Data.GetValue();
+
+	GetOwningCustomLocalPLayer()->SignSubmitApproval(PopulatedTransactionsTo, PopulatedTransactionsData, [this, Content = Response.Content, Message = SignableAction->Message.GetValue()]()
+	{
+		UCustomGameInstance::SendDisplayMessage(this, "Signed and submitted transaction for listing");
+		
 		FString JsonText;
 		TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonText);
 
-		Action.Message->WriteJson(JsonWriter);
+		Message.WriteJson(JsonWriter);
 		JsonWriter->Close();
 
-		GetOwningCustomLocalPLayer()->CreateListing(JsonText, [this, Content = Response.Content](const FString& Signature)
+		GetOwningCustomLocalPLayer()->SignData(JsonText, [this, Content](const FString& Signature)
 		{
+			UCustomGameInstance::SendDisplayMessage(this, "Signed typed data for listing");
+			
 			UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
 
 			if (!Policy)
 			{
 				return;
 			}
-			ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookCreateListingPostRequest Request;
-			ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookCreateListingPostRequest RequestData;
-			
+			ImmutableTsSdkApi::OpenAPIOrderbookApi::CreateListingRequest Request;
+			ImmutableTsSdkApi::OpenAPICreateListingRequest RequestData;
+
 			RequestData.OrderComponents = Content.OrderComponents;
 			RequestData.OrderHash = Content.OrderHash;
 			RequestData.OrderSignature = Signature;
-
-			Request.ImmutableTsSdkApiV1TsSdkOrderbookCreateListingPostRequest = RequestData;
-
-			FString JsonText;
-			TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonText);
-			Request.ImmutableTsSdkApiV1TsSdkOrderbookCreateListingPostRequest->WriteJson(JsonWriter);
-			JsonWriter->Close();
+			Request.OpenAPICreateListingRequest = RequestData;
 			
-			Policy->GetTsSdkAPI()->V1TsSdkOrderbookCreateListingPost(Request, ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::FV1TsSdkOrderbookCreateListingPostDelegate::CreateUObject(this, &USearchNfTsWidget::OnOrderbookCreateListingPost));
+			Policy->GetTsSdkAPI()->CreateListing(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FCreateListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnCreateListing));
 		});
-	}
+	});
 }
 
-void USearchNfTsWidget::OnOrderbookCreateListingPost(const ImmutableTsSdkApi::ImmutableTsSdkApi_DefaultApi::V1TsSdkOrderbookCreateListingPostResponse& Response)
+void USearchNfTsWidget::OnCreateListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::CreateListingResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -248,7 +276,7 @@ void USearchNfTsWidget::OnOrderbookCreateListingPost(const ImmutableTsSdkApi::Im
 
 	if (Response.GetHttpResponseCode() == EHttpResponseCodes::Type::Ok)
 	{
-		ImmutableTsSdkApi::ImmutableTsSdkApi_V1TsSdkOrderbookCreateListingPost200Response OkResponse;
+		ImmutableTsSdkApi::OpenAPICreateListing200Response OkResponse;
 
 		TSharedPtr<FJsonValue> JsonValue;
 		auto Reader = TJsonReaderFactory<>::Create(Response.GetHttpResponse()->GetContentAsString());
@@ -265,5 +293,23 @@ void USearchNfTsWidget::OnOrderbookCreateListingPost(const ImmutableTsSdkApi::Im
 				RefreshItemList(TOptional<FString>());
 			}
 		}
+	}
+}
+
+void USearchNfTsWidget::ConfirmListing(const FString& ListingId)
+{
+	ImmutableOpenAPI::OpenAPIOrdersApi::GetListingRequest ListingRequest;
+
+	ListingRequest.ChainName = Policy->GetChainName();
+	ListingRequest.ChainName = ListingId;
+
+	Policy->GetOrdersAPI()->GetListing(ListingRequest, ImmutableOpenAPI::OpenAPIOrdersApi::FGetListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnGetListing));
+}
+
+void USearchNfTsWidget::OnGetListing(const ImmutableOpenAPI::OpenAPIOrdersApi::GetListingResponse& Response)
+{
+	if (!Response.IsSuccessful())
+	{
+		return;
 	}
 }

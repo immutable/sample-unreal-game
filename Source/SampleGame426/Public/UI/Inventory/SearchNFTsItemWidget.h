@@ -33,6 +33,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
 	void BP_OnSelectButtonClick(bool IsSelected);
 
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	void SetSelectionStatus(bool IsSelected);
+
 protected:
 	void SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture);
 	void SetName(const FString& Name);

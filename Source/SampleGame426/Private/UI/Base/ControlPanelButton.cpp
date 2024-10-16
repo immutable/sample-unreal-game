@@ -37,6 +37,11 @@ void UControlPanelButton::Disable()
 	BP_OnActivationStatusChanged(false);
 }
 
+bool UControlPanelButton::IsEnabled()
+{
+	return ButtonHitbox->GetIsEnabled();
+}
+
 void UControlPanelButton::Hide()
 {
 	SetVisibility(ESlateVisibility::Collapsed);

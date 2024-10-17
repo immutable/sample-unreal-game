@@ -20,7 +20,7 @@ FGameplayTag FUIDialogTypes::ErrorFull;
 FGameplayTag FUIDialogTypes::Confirmation;
 FGameplayTag FUIDialogTypes::Message;
 FGameplayTag FUIDialogTypes::Sell;
-FGameplayTag FUIDialogTypes::CancelSell;
+FGameplayTag FUIDialogTypes::Process;
 
 
 inline FGameplayTag RequestGameplayTag(const FString& Prefix, const FString& Name)
@@ -61,5 +61,5 @@ void FUIDialogTypes::InitUIGameplayTags_DialogTypes()
 	FUIDialogTypes::Confirmation	= RequestGameplayTag(Prefix, TEXT("Confirmation"));
 	FUIDialogTypes::Message			= RequestGameplayTag(Prefix, TEXT("Message"));
 	FUIDialogTypes::Sell			= RequestGameplayTag(Prefix, TEXT("Sell"));
-	FUIDialogTypes::CancelSell		= RequestGameplayTag(Prefix, TEXT("CancelSell"));
+	FUIDialogTypes::Process			= RequestGameplayTag(Prefix, TEXT("Process"));
 }

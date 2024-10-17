@@ -76,7 +76,10 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, OpenAPIPrep
 void OpenAPIPrepareListingRequestSell::WriteJson(JsonWriter& Writer) const
 {
 	Writer->WriteObjectStart();
-	Writer->WriteIdentifierPrefix(TEXT("amount")); WriteJsonValue(Writer, Amount);
+	if (Amount.IsSet())
+	{
+		Writer->WriteIdentifierPrefix(TEXT("amount")); WriteJsonValue(Writer, Amount.GetValue());
+	}
 	Writer->WriteIdentifierPrefix(TEXT("contractAddress")); WriteJsonValue(Writer, ContractAddress);
 	Writer->WriteIdentifierPrefix(TEXT("tokenId")); WriteJsonValue(Writer, TokenId);
 	Writer->WriteIdentifierPrefix(TEXT("type")); WriteJsonValue(Writer, Type);

@@ -37,10 +37,13 @@ private:
 	void OnFulfillOrder(const ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderResponse& Response);
 	UFUNCTION()
 	void OnBuyButtonClicked(FGameplayTag ButtonTag);
+	UFUNCTION()
+	void OnProcessDialogAction(UDialog* DialogPtr, EDialogResult Result);
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class USearchStacksListing_ListingsWidget* Listings = nullptr;
 
 	UControlPanelButton* BuyButton = nullptr;
+	UDialog* ProcessingDialog = nullptr;
 };

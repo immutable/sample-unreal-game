@@ -6,6 +6,11 @@
 #include "ThirdParty/PhysX3/NvCloth/samples/external/imgui/1.49/imgui.h"
 
 
+FString UActivatableWidgetWithControlPanels::GetWidgetTitle() const
+{
+	return WidgetTitle;
+}
+
 const TMap<FGameplayTag, EAWStackControlPanelSide>& UActivatableWidgetWithControlPanels::GetControlButtonsData() const
 {
 	return ControlPanelButtonsData; 

@@ -3,6 +3,7 @@
 #include "UIGameplayTags.h"
 #include "Base/ActivatableWidget.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
+#include "Base/AWStackTopControlPanel.h"
 #include "Widgets/Images/SImage.h"
 
 
@@ -14,7 +15,7 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 
 	if (!TopPanelWidget && TopPanelWidgetClass)
 	{
-		TopPanelWidget = CreateWidget<UCustomUserWidget>(this, TopPanelWidgetClass);
+		TopPanelWidget = CreateWidget<UAWStackTopControlPanel>(this, TopPanelWidgetClass);
 		TopPanelSlate = TopPanelWidget->TakeWidget();
 	}
 
@@ -152,6 +153,11 @@ void UAWStackWithControlPanels::OnWidgetAddedToList(UActivatableWidget& AddedWid
 	if (UActivatableWidgetWithControlPanels* Widget = Cast<UActivatableWidgetWithControlPanels>(&AddedWidget))
 	{
 		Widget->SetupControlButtons(this);
+
+		if (TopPanelWidget)
+		{
+			TopPanelWidget->SetTitle(Widget->GetWidgetTitle());
+		}
 	}
 }
 

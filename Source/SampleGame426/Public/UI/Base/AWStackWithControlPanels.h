@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "AWStackTopControlPanel.h"
 #include "GameplayTagContainer.h"
 #include "Base/ActivatableWidgetContainer.h"
 #include "Data/ControlPanelButtonDataAsset.h"
@@ -45,7 +46,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
 	TSoftObjectPtr<UControlPanelButtonDataAsset> ControlPanelButtonDefaults;
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
-	TSubclassOf<UCustomUserWidget> TopPanelWidgetClass;
+	TSubclassOf<UAWStackTopControlPanel> TopPanelWidgetClass;
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
 	TSubclassOf<UCustomUserWidget> BottomPanelWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
@@ -73,7 +74,7 @@ protected:
 
 private:
 	UPROPERTY(Transient)
-	UCustomUserWidget* TopPanelWidget = nullptr;
+	UAWStackTopControlPanel* TopPanelWidget = nullptr;
 	UPROPERTY(Transient)
 	UCustomUserWidget* BottomPanelWidget = nullptr;
 

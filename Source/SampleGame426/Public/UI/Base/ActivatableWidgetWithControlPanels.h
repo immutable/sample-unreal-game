@@ -13,6 +13,8 @@ class UActivatableWidgetWithControlPanels : public UActivatableWidget
 	GENERATED_BODY()
 
 public:
+	FString GetWidgetTitle() const;
+	
 	const TMap<FGameplayTag, EAWStackControlPanelSide>& GetControlButtonsData() const;
 
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel);
@@ -47,6 +49,8 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
+	FString WidgetTitle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
 	TMap<FGameplayTag, EAWStackControlPanelSide> ControlPanelButtonsData;
 	UPROPERTY()
 	TMap<FGameplayTag, UControlPanelButton*> ControlPanelButtons;
@@ -56,5 +60,5 @@ protected:
 	UControlPanelButton* NextWidgetButton = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	bool SwitchBetweenWindowsHandler = true;
-	
+
 };

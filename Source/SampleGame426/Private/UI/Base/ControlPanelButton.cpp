@@ -3,6 +3,7 @@
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 
 void UControlPanelButton::SetIcon(const FSlateBrush& InBrush)
 {
@@ -12,17 +13,17 @@ void UControlPanelButton::SetIcon(const FSlateBrush& InBrush)
 	}
 }
 
-void UControlPanelButton::SetIconColor(const FLinearColor& InColor)
-{
-	if (Icon)
-	{
-		Icon->SetBrushTintColor(InColor);
-	}
-}
-
 void UControlPanelButton::SetButtonTag(FGameplayTag& InTag)
 {
 	ButtonTag = InTag;
+}
+
+void UControlPanelButton::SetName(const FText& InName)
+{
+	if (ButtonName)
+	{
+		ButtonName->SetText(InName);
+	}
 }
 
 void UControlPanelButton::Enable()

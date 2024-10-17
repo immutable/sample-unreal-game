@@ -17,8 +17,10 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnControlPanelButtonClicked, FGameplayTag, ButtonTag);
 	
 	void SetIcon(const FSlateBrush& InBrush);
-	void SetIconColor(const FLinearColor& InColor);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic, Category = "Control Panel")
+	void SetColor(const FLinearColor& InColor);
 	void SetButtonTag(FGameplayTag& InTag);
+	void SetName(const FText& InName);
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	void Enable();
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
@@ -54,6 +56,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UButton* ButtonHitbox;
+
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	class UTextBlock* ButtonName = nullptr;
 
 	FGameplayTag ButtonTag;
 	

@@ -106,7 +106,7 @@ void UCustomLocalPlayer::UpdateBalance()
 	MarketplacePolicy->GetTsSdkAPI()->TokenBalance(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FTokenBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
 }
 
-void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Data, TFunction<void()> Callback)
+void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Data, TFunction<void(FString TransactionHash, FString Status)> Callback)
 {
 	FImtblTransactionRequest Request;
 
@@ -121,7 +121,17 @@ void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Da
 			UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to sign and submit transaction"), Result.Error));
 			return;
 		}
-		Callback();
+
+		auto Receipt = JsonObjectToUStruct<FZkEvmTransactionReceipt>(Result.Response.JsonObject);
+		FString TransactionHash, Status;
+
+		if (Receipt.IsSet())
+		{
+			TransactionHash = Receipt.GetValue().transactionHash;
+			Status = Receipt.GetValue().status;
+		}
+		
+		Callback(TransactionHash, Status);
 	}));
 }
 

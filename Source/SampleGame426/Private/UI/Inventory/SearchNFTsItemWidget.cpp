@@ -72,18 +72,18 @@ void USearchNFTsItemWidget::RegisterOnSelection(const FOnSearchNFTsItemWidgetSel
 
 void USearchNFTsItemWidget::SetListForSellStatus(bool ListedStatus)
 {
-	if (IsListed == ListedStatus)
+	if (bIsListed == ListedStatus)
 	{
 		return;
 	}
 
-	IsListed = ListedStatus;
-	BP_OnSetListForSellStatus(IsListed);
+	bIsListed = ListedStatus;
+	BP_OnSetListForSellStatus(bIsListed);
 }
 
 bool USearchNFTsItemWidget::IsListedForSell() const
 {
-	return IsListed;
+	return bIsListed;
 }
 
 FString USearchNFTsItemWidget::GetTokenId() const
@@ -101,6 +101,16 @@ FString USearchNFTsItemWidget::GetContractAddress() const
 	if (NFTBundle.IsValid())
 	{
 		return NFTBundle->NftWithStack.ContractAddress;	
+	}
+
+	return TEXT("");
+}
+
+FString USearchNFTsItemWidget::GetListingId() const
+{
+	if (NFTBundle.IsValid() && NFTBundle->Listings.Num())
+	{
+		return NFTBundle->Listings[0].ListingId;	
 	}
 
 	return TEXT("");

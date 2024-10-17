@@ -71,7 +71,6 @@ public:
 	FDialogAction TwoAction;
 };
 
-
 UCLASS()
 class UErrorDialogDescriptorWithErrorText : public UDialogDescriptor_OneAction
 {
@@ -91,5 +90,16 @@ class USellDialogDescriptor : public UDialogDescriptor_TwoActions
 public:
 	UPROPERTY(BlueprintReadWrite)
 	FText Price;
+	
+};
+
+UCLASS()
+class UProcessDialogDescriptor : public UDialogDescriptor_OneAction
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	bool IsInProgress = true;
 	
 };

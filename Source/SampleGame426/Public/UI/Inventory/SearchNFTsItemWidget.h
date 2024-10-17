@@ -31,6 +31,7 @@ public:
 	bool IsListedForSell() const;
 	FString GetTokenId() const;
 	FString GetContractAddress() const;
+	FString GetListingId() const;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
 	void BP_OnSelectButtonClick(bool IsSelected);
@@ -66,6 +67,6 @@ private:
 	TSharedPtr<ImmutableOpenAPI::OpenAPINFTBundle> NFTBundle;
 	FOnSearchNFTsItemWidgetSelection OnSearchNFTsItemWidgetSelectionDelegate;
 
-	bool IsListed;
+	bool bIsListed;
 	
 };

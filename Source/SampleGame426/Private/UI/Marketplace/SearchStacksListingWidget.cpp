@@ -149,7 +149,7 @@ void USearchStacksListingWidget::OnFulfillOrder(const ImmutableTsSdkApi::OpenAPI
 			{
 				if (Action.Purpose.GetValue().Value == ImmutableTsSdkApi::OpenAPITransactionPurpose::Values::Approval)
 				{
-					GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), [this]()
+					GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), [this](FString TransactionHash, FString Status)
 					{
 						UCustomGameInstance::SendDisplayMessage(this, TEXT("Approval for purchase is processed!"));
 					});
@@ -159,7 +159,7 @@ void USearchStacksListingWidget::OnFulfillOrder(const ImmutableTsSdkApi::OpenAPI
 				{
 					if (Action.PopulatedTransactions->To.IsSet() && Action.PopulatedTransactions->Data.IsSet())
 					{
-						GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), [this]()
+						GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), [this](FString TransactionHash, FString Status)
 						{
 							UCustomGameInstance::SendDisplayMessage(this, TEXT("Transaction complete successfully! Enjoy your new purchase!"));
 						});

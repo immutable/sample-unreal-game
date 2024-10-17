@@ -13,6 +13,7 @@
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 #include "UI/Utility/MathUtility.h"
 
+#define LOCTEXT_NAMESPACE "ImmutableUI"
 
 void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 {
@@ -176,12 +177,20 @@ void USearchNfTsWidget::OnButtonClicked(FGameplayTag ButtonTag)
 	{
 		UDialog* SellDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Sell, UDialogSubsystem::CreateSellDescriptor(TEXT(""), TEXT("Please enter price and confirm that you are ready to list your NFT")));
 
-		SellDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnPlayerConfirmedSell);	
+		if (SellDialog)
+		{
+			SellDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnPlayerConfirmedSell);	
+		}
 	}
 
 	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::CancelSell))
 	{
-		
+		UDialog* ConfirmationDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Confirmation, UDialogSubsystem::CreateConfirmMessageDescriptor(TEXT(""), TEXT("Do you wish to cancel your listing")));
+
+		if (ConfirmationDialog)
+		{
+			ConfirmationDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnPlayerConfirmedCancelSell);	
+		}
 	}
 }
 
@@ -193,14 +202,13 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 	{
 		return;
 	}
-	
-	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
 
 	if (!Policy.IsValid())
 	{
 		return;
 	}
-	
+
+	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
 	ImmutableTsSdkApi::OpenAPIPrepareListingRequest RequestData;
 	ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingRequest Request;
 	ImmutableTsSdkApi::OpenAPIPrepareListingRequestBuy BuyData;
@@ -222,6 +230,29 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 
 	Policy->GetTsSdkAPI()->PrepareListing(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FPrepareListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnPrepareListing));
 	DialogPtr->KillDialog();
+}
+
+void USearchNfTsWidget::OnPlayerConfirmedCancelSell(UDialog* DialogPtr, EDialogResult Result)
+{
+	if (!DialogPtr || Result != EDialogResult::Confirmed)
+	{
+		return;
+	}
+
+	DialogPtr->KillDialog();
+	
+	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
+	ImmutableTsSdkApi::OpenAPIOrderbookApi::CancelOrdersOnChainRequest Request;
+	ImmutableTsSdkApi::OpenAPICancelOrdersOnChainRequest RequestData;
+
+	RequestData.AccountAddress = LocalPlayer->GetPassportWalletAddress();
+	RequestData.OrderIds.AddUnique(SelectedItemWidget->GetListingId());
+
+	Request.OpenAPICancelOrdersOnChainRequest = RequestData;
+	
+	ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::CancelSell, UDialogSubsystem::CreateProcessDescriptor(TEXT("Canceling listing..."), TEXT("Started..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
+	ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnProcessDialogAction);	
+	Policy->GetTsSdkAPI()->CancelOrdersOnChain(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FCancelOrdersOnChainDelegate::CreateUObject(this, &USearchNfTsWidget::OnCancelOrdersOnChain));
 }
 
 void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingResponse& Response)
@@ -261,7 +292,7 @@ void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbo
 	FString PopulatedTransactionsTo = TransactionAction->PopulatedTransactions.GetValue().To.GetValue();
 	FString PopulatedTransactionsData = TransactionAction->PopulatedTransactions.GetValue().Data.GetValue();
 
-	GetOwningCustomLocalPLayer()->SignSubmitApproval(PopulatedTransactionsTo, PopulatedTransactionsData, [this, Content = Response.Content, Message = SignableAction->Message.GetValue()]()
+	GetOwningCustomLocalPLayer()->SignSubmitApproval(PopulatedTransactionsTo, PopulatedTransactionsData, [this, Content = Response.Content, Message = SignableAction->Message.GetValue()](FString TransactionHash, FString Status)
 	{
 		UCustomGameInstance::SendDisplayMessage(this, "Signed and submitted transaction for listing");
 		
@@ -322,6 +353,63 @@ void USearchNfTsWidget::OnCreateListing(const ImmutableTsSdkApi::OpenAPIOrderboo
 				RefreshItemList(TOptional<FString>());
 			}
 		}
+	}
+}
+
+void USearchNfTsWidget::OnCancelOrdersOnChain(const ImmutableTsSdkApi::OpenAPIOrderbookApi::CancelOrdersOnChainResponse& Response)
+{
+	if (!Response.IsSuccessful() || Response.GetHttpResponseCode() != EHttpResponseCodes::Type::Ok)
+	{
+		ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Canceling listing error!"), TEXT("Failed to cancel order"), { EDialogResult::Closed, LOCTEXT("Close", "Close") }));
+		
+		return;
+	}
+
+	ImmutableTsSdkApi::OpenAPICancelOrdersOnChain200Response OkResponse;
+	TSharedPtr<FJsonValue> JsonValue;
+
+	FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Response.GetHttpResponse()->GetContentAsString()), JsonValue);
+
+	if (!JsonValue.IsValid() || !OkResponse.FromJson(JsonValue) || !OkResponse.CancellationAction.IsSet() || !OkResponse.CancellationAction.GetValue().PopulatedTransactions.IsSet())
+	{
+		ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Canceling listing error!"), TEXT("Failed to cancel order due to missing data"), { EDialogResult::Closed, LOCTEXT("Close", "Close") }));
+
+		return;
+	}
+
+	auto Action = OkResponse.CancellationAction.GetValue();
+	
+	if (Action.Purpose.GetValue().Value != ImmutableTsSdkApi::OpenAPITransactionPurpose::Values::Cancel)
+	{
+		ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Canceling listing error!"), TEXT("Failed to cancel order due to wrong transaction purpose"), { EDialogResult::Closed, LOCTEXT("Close", "Close") }));
+		
+		return;
+	}
+
+	FString PopulatedTransactionsTo = Action.PopulatedTransactions.GetValue().To.GetValue();
+	FString PopulatedTransactionsData = Action.PopulatedTransactions.GetValue().Data.GetValue();
+
+	GetOwningCustomLocalPLayer()->SignSubmitApproval(PopulatedTransactionsTo, PopulatedTransactionsData, [this](FString TransactionHash, FString Status)
+	{
+		FString DisplayMessage = FString::Format(TEXT("Your listing was canceled with transaction hash: {0} and status: {1}"), { TransactionHash, Status });
+
+		UCustomGameInstance::SendDisplayMessage(this, *DisplayMessage);
+		ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Canceling listing success!"), TEXT("Your listing is canceled"), { EDialogResult::Closed, LOCTEXT("Close", "Close") }, false));
+		SelectedItemWidget->SetListForSellStatus(false);
+	});
+}
+
+void USearchNfTsWidget::OnProcessDialogAction(UDialog* DialogPtr, EDialogResult Result)
+{
+	if (Result == EDialogResult::Closed || Result == EDialogResult::Cancelled)
+	{
+		DialogPtr->KillDialog();
+		return;
+	}
+
+	if (DialogPtr->GetDialogTag().MatchesTagExact(FUIDialogTypes::CancelSell))
+	{
+		
 	}
 }
 

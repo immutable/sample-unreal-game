@@ -34,6 +34,7 @@ struct SAMPLEGAME426_API FUIDialogTypes
 	static FGameplayTag Confirmation;
 	static FGameplayTag Message;
 	static FGameplayTag Sell;
+	static FGameplayTag CancelSell;
 
 	static void InitUIGameplayTags_DialogTypes();
 };

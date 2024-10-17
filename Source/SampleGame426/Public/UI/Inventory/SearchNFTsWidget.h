@@ -40,9 +40,15 @@ private:
 	void OnButtonClicked(FGameplayTag ButtonTag);
 	UFUNCTION()
 	void OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult Result);
+	UFUNCTION()
+	void OnPlayerConfirmedCancelSell(UDialog* DialogPtr, EDialogResult Result);
 	void OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingResponse& Response);
 	void OnCreateListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::CreateListingResponse& Response);
+	void OnCancelOrdersOnChain(const ImmutableTsSdkApi::OpenAPIOrderbookApi::CancelOrdersOnChainResponse& Response);
 
+	UFUNCTION()
+	void OnProcessDialogAction(UDialog* DialogPtr, EDialogResult Result);
+	
 	void ConfirmListing(const FString& ListingId);
 	void OnGetListing(const ImmutableOpenAPI::OpenAPIOrdersApi::GetListingResponse& Response);
 
@@ -60,5 +66,6 @@ private:
 	ImmutableOpenAPI::OpenAPIPage PageCursors;
 	UControlPanelButton* SellButton = nullptr;
 	UControlPanelButton* CancelSellButton = nullptr;
+	UDialog* ProcessingDialog = nullptr;
 
 };

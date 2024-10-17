@@ -3,6 +3,7 @@
 #include "DialogButton.h"
 #include "Base/ActivatableWidget.h"
 #include "DialogDescriptors.h"
+#include "GameplayTagContainer.h"
 
 #include "Dialog.generated.h"
 
@@ -24,15 +25,24 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Immutable")
 	void SetupDialog(const UDialogDescriptor* Descriptor);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Immutable")
+	void UpdateDialogDescriptor(const UDialogDescriptor* Descriptor);
+
 	UFUNCTION(BlueprintCallable, Category = "Immutable")
 	virtual void ExecuteDialogAction(const UDialogButton* Button);
 
 	UFUNCTION(BlueprintCallable, Category = "Immutable")
 	virtual void KillDialog();
 
+	void SetDialogTag(FGameplayTag Tag);
+	FGameplayTag GetDialogTag() const;
+
 public:
 	UPROPERTY(BlueprintAssignable)
 	FDialogResultDelegate DialogResultDelegate;
+
+private:
+	FGameplayTag DialogTag;
 	
 };
 

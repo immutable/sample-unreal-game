@@ -45,6 +45,20 @@ UDialogDescriptor_OneAction* UDialogSubsystem::CreateMessageDescriptor(const FSt
 	return Descriptor;
 }
 
+UDialogDescriptor_TwoActions* UDialogSubsystem::CreateConfirmMessageDescriptor(const FString& Header, const FString& Body)
+{
+	UDialogDescriptor_TwoActions* Descriptor = NewObject<UDialogDescriptor_TwoActions>();
+
+	Descriptor->Header = FText::FromString(Header);
+	Descriptor->Body = FText::FromString(Body);
+	Descriptor->OneAction.Result = EDialogResult::Confirmed;
+	Descriptor->OneAction.ActionText = LOCTEXT("Confirm", "Confirm");
+	Descriptor->TwoAction.Result = EDialogResult::Cancelled;
+	Descriptor->TwoAction.ActionText = LOCTEXT("Cancel", "Cancel");
+
+	return Descriptor;
+}
+
 UDialogDescriptor_TwoActions* UDialogSubsystem::CreateSellDescriptor(const FString& Header, const FString& Body)
 {
 	UDialogDescriptor_TwoActions* Descriptor = NewObject<UDialogDescriptor_TwoActions>();
@@ -55,6 +69,19 @@ UDialogDescriptor_TwoActions* UDialogSubsystem::CreateSellDescriptor(const FStri
 	Descriptor->OneAction.ActionText = LOCTEXT("List", "List");
 	Descriptor->TwoAction.Result = EDialogResult::Cancelled;
 	Descriptor->TwoAction.ActionText = LOCTEXT("Cancel", "Cancel");
+
+	return Descriptor;
+}
+
+UProcessDialogDescriptor* UDialogSubsystem::CreateProcessDescriptor(const FString& Header, const FString& Body, const FDialogAction& Action, bool IsInProgress)
+{
+	UProcessDialogDescriptor* Descriptor = NewObject<UProcessDialogDescriptor>();
+
+	Descriptor->Header = FText::FromString(Header);
+	Descriptor->Body = FText::FromString(Body);
+	Descriptor->Action.Result = Action.Result;
+	Descriptor->Action.ActionText = Action.ActionText;
+	Descriptor->IsInProgress = IsInProgress;
 
 	return Descriptor;
 }

@@ -31,6 +31,16 @@ void UDialog::KillDialog()
 	NativeDestruct();
 }
 
+void UDialog::SetDialogTag(FGameplayTag Tag)
+{
+	DialogTag = Tag;
+}
+
+FGameplayTag UDialog::GetDialogTag() const
+{
+	return DialogTag;
+}
+
 void USellDialog::ExecuteDialogAction(const UDialogButton* Button)
 {
 	check(Button && Button->GetButtonAction().Result != EDialogResult::Unknown);

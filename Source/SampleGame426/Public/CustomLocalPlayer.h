@@ -50,7 +50,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void UpdateBalance();
 
-	void SignSubmitApproval(const FString& To, const FString& Data, TFunction<void()> Callback);
+	void SignSubmitApproval(const FString& To, const FString& Data, TFunction<void(FString TransactionHash, FString Status)> Callback);
 	void SignData(const FString& SingableMessageJson, TFunction<void(const FString& Signature)> Callback);
 
 private:

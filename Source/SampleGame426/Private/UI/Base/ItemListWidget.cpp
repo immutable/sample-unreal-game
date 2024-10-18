@@ -40,6 +40,11 @@ UItemWidget* UItemListWidget::GetItem(int32 Column, int32 Row)
 	return CachedItems[Row * NumberOfColumns + Column];
 }
 
+UItemWidget* UItemListWidget::GetSelectedItem()
+{
+	return nullptr;
+}
+
 TSharedRef<SWidget> UItemListWidget::RebuildWidget()
 {
 	CachedItems.Reset(NumberOfColumns * NumberOfRows);

@@ -26,21 +26,19 @@ void UControlPanelButton::SetName(const FText& InName)
 	}
 }
 
-void UControlPanelButton::Enable()
+void UControlPanelButton::SetEnable(bool IsEnabled)
 {
-	ButtonHitbox->SetIsEnabled(true);
-	BP_OnActivationStatusChanged(true);
-}
-
-void UControlPanelButton::Disable()
-{
-	ButtonHitbox->SetIsEnabled(false);
-	BP_OnActivationStatusChanged(false);
+	if (bIsEnabled == IsEnabled)
+	{
+		return;
+	}
+	bIsEnabled = IsEnabled;
+	BP_OnActivationStatusChanged(IsEnabled);
 }
 
 bool UControlPanelButton::IsEnabled()
 {
-	return ButtonHitbox->GetIsEnabled();
+	return bIsEnabled;
 }
 
 void UControlPanelButton::Hide()
@@ -50,12 +48,7 @@ void UControlPanelButton::Hide()
 
 void UControlPanelButton::Show()
 {
-	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-}
-
-bool UControlPanelButton::IsButtonEnabled() const
-{
-	return ButtonHitbox->GetIsEnabled();
+	SetVisibility(ESlateVisibility::Visible);
 }
 
 bool UControlPanelButton::Initialize()
@@ -65,9 +58,8 @@ bool UControlPanelButton::Initialize()
 	if (IsInitialized)
 	{
 		ButtonTag = FGameplayTag::RequestGameplayTag(TEXT("UI.ControlPanel.Button.Empty"));
-		ButtonHitbox->OnClicked.AddUniqueDynamic(this, &UControlPanelButton::HandleButtonClicked);
 		Show();
-		Disable();
+		SetEnable(false);
 	}
 	
 	return IsInitialized;
@@ -80,7 +72,35 @@ void UControlPanelButton::NativeDestruct()
 	Super::NativeDestruct();
 }
 
+void UControlPanelButton::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+	BP_OnHovered();
+}
+
+void UControlPanelButton::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	BP_OnUnhovered();
+}
+
+FReply UControlPanelButton::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	auto Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	OnPanelButtonClicked.Broadcast(ButtonTag);
+
+	return Reply;
+}
+
+FReply UControlPanelButton::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	return Super::NativeOnMouseButtonDoubleClick(InGeometry, InMouseEvent);
+}
+
 void UControlPanelButton::HandleButtonClicked()
 {
-	OnPanelButtonClicked.Broadcast(ButtonTag);
+
 }

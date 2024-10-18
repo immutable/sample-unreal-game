@@ -22,9 +22,7 @@ public:
 	void SetButtonTag(FGameplayTag& InTag);
 	void SetName(const FText& InName);
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
-	void Enable();
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
-	void Disable();
+	void SetEnable(bool IsEnabled = true);
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	bool IsEnabled();
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
@@ -34,14 +32,23 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic, Category = "Control Panel")
 	void BP_OnActivationStatusChanged(bool IsEnabled);
 
-	bool IsButtonEnabled() const;
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic, Category = "Control Panel")
+	void BP_OnHovered();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic, Category = "Control Panel")
+	void BP_OnUnhovered();
 
 	/* UUserWidget */
 	virtual bool Initialize() override;
 	/* UUserWidget */
 	
 protected:
+	/* UUserWidget interface */
 	virtual void NativeDestruct() override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+	virtual FReply NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+	/* UUserWidget interface */
 	
 	UFUNCTION()
 	void HandleButtonClicked();
@@ -53,13 +60,11 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UImage* Icon;
-
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
-	class UButton* ButtonHitbox;
-
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UTextBlock* ButtonName = nullptr;
 
+private:
 	FGameplayTag ButtonTag;
+	bool bIsEnabled = true;
 	
 };

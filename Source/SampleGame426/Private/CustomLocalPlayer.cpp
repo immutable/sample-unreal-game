@@ -20,7 +20,7 @@ FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerControllerSet(FPlaye
 
 	if (PC)
 	{
-		Delegate.Execute(this, PC);
+		Delegate.ExecuteIfBound(this, PC);
 	}
 
 	return OnPlayerControllerSet.Add(Delegate);
@@ -30,7 +30,7 @@ FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPassportInitialized(FPlaye
 {
 	if (IsPassportInitialized)
 	{
-		Delegate.Execute(IsPassportInitialized);	
+		Delegate.ExecuteIfBound(IsPassportInitialized);	
 	}
 
 	return OnPlayerPassportInitialized.Add(Delegate);
@@ -45,7 +45,7 @@ FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerPassportDataObtained
 {
 	if (CheckAllPassportDataObtained())
 	{
-		Delegate.Execute();
+		Delegate.ExecuteIfBound();
 	}
 
 	return OnPlayerPassportDataObtained.Add(Delegate);

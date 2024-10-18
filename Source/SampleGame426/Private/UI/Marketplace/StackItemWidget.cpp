@@ -1,19 +1,19 @@
-﻿#include "Marketplace/MarketplaceItemWIdget.h"
+﻿#include "Marketplace/StackItemWidget.h"
 
 #include "CustomLocalPlayer.h"
-#include "GameUIManagerSubsystem.h"
+#include "GameUIPolicy.h"
 #include "LogSampleGame.h"
 #include "OpenAPIStackBundle.h"
-#include "UIGameplayTags.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Marketplace/MarketplacePolicy.h"
 #include "Math/BigInt.h"
 #include "Marketplace/SearchStacksListingWidget.h"
 #include "UI/Utility/MathUtility.h"
 #include "NFT/NFT_TableRowBase.h"
 
 
-void UMarketplaceItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
+void UStackItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 {
 	StackBundle = MakeShareable(new ImmutableOpenAPI::OpenAPIStackBundle(static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data)));
 	
@@ -57,24 +57,17 @@ void UMarketplaceItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
-void UMarketplaceItemWidget::SetOriginalState()
+void UStackItemWidget::SetOriginalState()
 {
 	Super::SetOriginalState();
 }
 
-FReply UMarketplaceItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+TSharedPtr<ImmutableOpenAPI::OpenAPIStackBundle> UStackItemWidget::GetStackBundle() const
 {
-	FReply Reply = Super::NativeOnMouseButtonDoubleClick(InGeometry,InMouseEvent);
-
-	if (auto Widget = Cast<USearchStacksListingWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FUILayers::MenuWithControls, MarketplaceItemFullWidgetClass.LoadSynchronous())))
-	{
-		Widget->ProcessModel(*StackBundle);
-	}
-	
-	return Reply; 
+	return StackBundle;
 }
 
-void UMarketplaceItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
+void UStackItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 {
 	if (NFTThumbnail)
 	{
@@ -87,7 +80,7 @@ void UMarketplaceItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 	}
 }
 
-void UMarketplaceItemWidget::SetName(const FString& Name)
+void UStackItemWidget::SetName(const FString& Name)
 {
 	if (NFTName)
 	{
@@ -95,7 +88,7 @@ void UMarketplaceItemWidget::SetName(const FString& Name)
 	}
 }
 
-void UMarketplaceItemWidget::SetPrice(const ImmutableOpenAPI::OpenAPIMarketPriceDetails& PriceDetails)
+void UStackItemWidget::SetPrice(const ImmutableOpenAPI::OpenAPIMarketPriceDetails& PriceDetails)
 {
 	if (NFTLowestPrice && PriceDetails.Token.Decimals.IsSet())
 	{
@@ -107,7 +100,7 @@ void UMarketplaceItemWidget::SetPrice(const ImmutableOpenAPI::OpenAPIMarketPrice
 	}
 }
 
-void UMarketplaceItemWidget::SetPriceTokenName(const FString& Name)
+void UStackItemWidget::SetPriceTokenName(const FString& Name)
 {
 	if (NFTPriceTokenName)
 	{
@@ -115,7 +108,7 @@ void UMarketplaceItemWidget::SetPriceTokenName(const FString& Name)
 	}
 }
 
-void UMarketplaceItemWidget::SetListingCount(int32 Count)
+void UStackItemWidget::SetListingCount(int32 Count)
 {
 	if (NFTListingCount)
 	{

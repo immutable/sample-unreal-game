@@ -2,13 +2,17 @@
 
 #include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
+#include "GameUIManagerSubsystem.h"
 #include "GameUIPolicy.h"
+#include "IDetailTreeNode.h"
 #include "OpenAPIStacksApiOperations.h"
 #include "UIGameplayTags.h"
 #include "UI/Marketplace/MarketplacePolicy.h"
 #include "Base/ItemWidget.h"
 #include "Dialog/DialogSubsystem.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Marketplace/SearchStacksListingWidget.h"
+#include "Marketplace/StackItemWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 
 
@@ -86,7 +90,13 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 		
 		if (auto ItemWidget = Cast<IMarketplaceOpenAPIProcessorInterface>(ListPanel->GetItem(Column, Row)))
 		{
-			ItemWidget->ProcessModel(Response.Content.Result[ResultId]);	
+			ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
+		}
+
+		if (auto ItemWidget = ListPanel->GetItem(Column, Row))
+		{
+			ItemWidget->RegisterOnSelectionChange(UItemWidget::FOnSelectionChange::CreateUObject(this, &USearchStacksWidget::OnItemSelectionChange));
+			ItemWidget->RegisterOnDoubleClick(UItemWidget::FOnDoubleClick::CreateUObject(this, &USearchStacksWidget::OnItemDoubleClick));
 		}
 	}
 }
@@ -97,14 +107,19 @@ void USearchStacksWidget::SetupControlButtons(UAWStackWithControlPanels* HostPan
 
 	PreviousPageButton = HostPanel->GetButton(FUIControlPanelButtons::PreviousPage);
 	NextPageButton = HostPanel->GetButton(FUIControlPanelButtons::NextPage);
+	NFTInfoButton = HostPanel->GetButton(FUIControlPanelButtons::NFTInfo);
 
 	if (PreviousPageButton)
 	{
-		PreviousPageButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnPageDirectionButtonClicked);
+		PreviousPageButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnControlButtonClicked);
 	}
 	if (NextPageButton)
 	{
-		NextPageButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnPageDirectionButtonClicked);	
+		NextPageButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnControlButtonClicked);	
+	}
+	if (NFTInfoButton)
+	{
+		NFTInfoButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnControlButtonClicked);
 	}
 }
 
@@ -122,7 +137,7 @@ void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& Pa
 	}
 }
 
-void USearchStacksWidget::OnPageDirectionButtonClicked(FGameplayTag ButtonTag)
+void USearchStacksWidget::OnControlButtonClicked(FGameplayTag ButtonTag)
 {
 	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::PreviousPage))
 	{
@@ -131,5 +146,25 @@ void USearchStacksWidget::OnPageDirectionButtonClicked(FGameplayTag ButtonTag)
 	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::NextPage))
 	{
 		RefreshItemList(PageCursors.NextCursor);
+	}
+	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::NFTInfo))
+	{
+		
+	}
+}
+
+void USearchStacksWidget::OnItemSelectionChange(bool IsSelected, UItemWidget* ItemWidget)
+{
+	
+}
+
+void USearchStacksWidget::OnItemDoubleClick(UItemWidget* InItemWidget)
+{
+	auto ListingWidget = Cast<USearchStacksListingWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FUILayers::MenuWithControls, SearchStacksListingWidgetClass.LoadSynchronous()));
+	UStackItemWidget* ItemWidget = Cast<UStackItemWidget>(InItemWidget);
+
+	if (ListingWidget && ItemWidget && ItemWidget->GetStackBundle().IsValid())
+	{
+		ListingWidget->ProcessModel(*ItemWidget->GetStackBundle().Get());
 	}
 }

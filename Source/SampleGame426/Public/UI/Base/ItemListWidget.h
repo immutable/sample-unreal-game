@@ -7,6 +7,8 @@
 #include "ItemListWidget.generated.h"
 
 
+class UItemWidget;
+
 /**
  * 
  */
@@ -19,8 +21,9 @@ public:
 	void ResetPanelItems();
 	int32 GetNumberOfColumns() const;
 	int32 GetNumberOfRows() const;
-	class UItemWidget* GetItem(int32 id);
-	class UItemWidget* GetItem(int32 Column, int32 Row);
+	UItemWidget* GetItem(int32 id);
+	UItemWidget* GetItem(int32 Column, int32 Row);
+	UItemWidget* GetSelectedItem();
 
 protected:
 	/* UUserWidget */

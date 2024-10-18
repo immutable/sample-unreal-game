@@ -10,16 +10,6 @@
 #include "Marketplace/MarketplacePolicy.h"
 
 
-void USearchNFTsItemWidget::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-
-	if (SelectButton)
-	{
-		SelectButton->OnClicked.AddUniqueDynamic(this, &USearchNFTsItemWidget::OnSelectButtonClicked);
-	}
-}
-
 void USearchNFTsItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 {
 	NFTBundle = MakeShareable(new ImmutableOpenAPI::OpenAPINFTBundle(static_cast<const ImmutableOpenAPI::OpenAPINFTBundle&>(Data)));
@@ -62,12 +52,7 @@ void USearchNFTsItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 	
 	SetBalance(Balance);
 
-	SetVisibility(ESlateVisibility::SelfHitTestInvisible);	
-}
-
-void USearchNFTsItemWidget::RegisterOnSelection(const FOnSearchNFTsItemWidgetSelection& SelectionDelegate)
-{
-	OnSearchNFTsItemWidgetSelectionDelegate = SelectionDelegate;
+	Show();
 }
 
 void USearchNFTsItemWidget::SetListForSellStatus(bool ListedStatus)
@@ -116,18 +101,6 @@ FString USearchNFTsItemWidget::GetListingId() const
 	return TEXT("");
 }
 
-void USearchNFTsItemWidget::SetSelectionStatus(bool IsSelected)
-{
-	if (IsItemSelected == IsSelected)
-	{
-		return;	
-	}
-	
-	IsItemSelected = IsSelected;
-	OnSearchNFTsItemWidgetSelectionDelegate.ExecuteIfBound(IsItemSelected, this);
-	BP_OnSelectButtonClick(IsItemSelected);
-}
-
 void USearchNFTsItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 {
 	if (NFTThumbnail)
@@ -155,9 +128,4 @@ void USearchNFTsItemWidget::SetBalance(int32 Balance)
 	{
 		NFTBalance->SetText(FText::AsNumber(Balance));
 	}
-}
-
-void USearchNFTsItemWidget::OnSelectButtonClicked()
-{
-	SetSelectionStatus(!IsItemSelected);
 }

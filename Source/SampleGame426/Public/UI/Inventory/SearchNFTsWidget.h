@@ -32,7 +32,7 @@ protected:
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel) override;
 
 	void OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsResponse& Response);
-	void OnItemSelection(bool IsSelected, USearchNFTsItemWidget* ItemWidget);
+	void OnItemSelection(bool IsSelected, UItemWidget* ItemWidget);
 	
 private:
 	void HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData);

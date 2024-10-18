@@ -102,7 +102,7 @@ void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStac
 		auto ItemInterface = Cast<IInventoryOpenAPIProcessorInterface>(Item);
 
 		ItemInterface->ProcessModel(ItemData);
-		ItemWidget->RegisterOnSelection(USearchNFTsItemWidget::FOnSearchNFTsItemWidgetSelection::CreateUObject(this, &USearchNfTsWidget::OnItemSelection));
+		ItemWidget->RegisterOnSelectionChange(UItemWidget::FOnSelectionChange::CreateUObject(this, &USearchNfTsWidget::OnItemSelection));
 
 		if (ItemData.Listings.Num())
 		{
@@ -111,49 +111,39 @@ void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStac
 	}
 }
 
-void USearchNfTsWidget::OnItemSelection(bool IsSelected, USearchNFTsItemWidget* ItemWidget)
+void USearchNfTsWidget::OnItemSelection(bool IsSelected, UItemWidget* ItemWidget)
 {
-	if (SelectedItemWidget == ItemWidget)
-	{
-		SelectedItemWidget = nullptr;
-		ItemWidget->SetSelectionStatus(false);
-		
-		if (SellButton)
-		{
-			SellButton->Disable();	
-		}
-	}
-	else
+	if (IsSelected && SelectedItemWidget != ItemWidget)
 	{
 		if (SelectedItemWidget)
 		{
-			SelectedItemWidget->SetSelectionStatus(false);	
+			SelectedItemWidget->SetSelection(false);
 		}
-		
-		SelectedItemWidget = ItemWidget;
+		SelectedItemWidget = Cast<USearchNFTsItemWidget>(ItemWidget);
 
-		if (SelectedItemWidget->IsListedForSell())
+		bool IsListed = SelectedItemWidget->IsListedForSell();
+		if (SellButton)
 		{
-			if (SellButton)
-			{
-				SellButton->Disable();	
-			}
-			if (CancelSellButton)
-			{
-				CancelSellButton->Enable();	
-			}
-			
+			SellButton->SetEnable(!IsListed);	
 		}
-		else
+		if (CancelSellButton)
 		{
-			if (SellButton)
-			{
-				SellButton->Enable();	
-			}
-			if (CancelSellButton)
-			{
-				CancelSellButton->Disable();	
-			}
+			CancelSellButton->SetEnable(IsListed);	
+		}
+			
+		return;
+	}
+
+	if (!IsSelected && SelectedItemWidget == ItemWidget)
+	{
+		SelectedItemWidget = nullptr;
+		if (SellButton)
+		{
+			SellButton->SetEnable(false);
+		}
+		if (CancelSellButton)
+		{
+			CancelSellButton->SetEnable(false);	
 		}
 	}
 }

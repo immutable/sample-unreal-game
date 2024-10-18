@@ -33,16 +33,25 @@ private:
 	void HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData);
 
 	UFUNCTION()
-	void OnPageDirectionButtonClicked(FGameplayTag ButtonTag);
+	void OnControlButtonClicked(FGameplayTag ButtonTag);
+
+	void OnItemSelectionChange(bool IsSelected, UItemWidget* ItemWidget);
+	void OnItemDoubleClick(UItemWidget* InItemWidget);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UItemListWidget* ListPanel = nullptr;
+	UPROPERTY(EditAnywhere, Category = "Marketplace")
+	TSoftClassPtr<class USearchStacksListingWidget> SearchStacksListingWidgetClass;
+
+private:
+	ImmutableOpenAPI::OpenAPIPage PageCursors;
+	UItemWidget* SelectedItemWidget = nullptr;
 	UPROPERTY(Transient)
 	UControlPanelButton* PreviousPageButton = nullptr;
 	UPROPERTY(Transient)
 	UControlPanelButton* NextPageButton = nullptr;
-
-	ImmutableOpenAPI::OpenAPIPage PageCursors;
+	UPROPERTY(Transient)
+	UControlPanelButton* NFTInfoButton = nullptr;
 	
 };

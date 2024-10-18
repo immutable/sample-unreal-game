@@ -21,7 +21,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic, Category = "ItemWidget")
 	void BP_OnSelectionChange(bool IsSelected);
 
-	void SetSelection(bool IsSelected);
+	virtual void SetSelection(bool IsSelected);
 
 	DECLARE_DELEGATE_TwoParams(FOnSelectionChange, bool /* IsSelected */, UItemWidget* /* ItemWidget */)
 	DECLARE_DELEGATE_OneParam(FOnDoubleClick, UItemWidget* /* ItemWidget */)

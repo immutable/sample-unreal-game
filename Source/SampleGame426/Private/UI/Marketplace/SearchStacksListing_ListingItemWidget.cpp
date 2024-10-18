@@ -3,19 +3,12 @@
 #include "Components/Button.h"
 
 
-void USearchStacksListing_ListingItemWidget::NativeOnInitialized()
+void USearchStacksListing_ListingItemWidget::SetSelection(bool IsSelected)
 {
-	Super::NativeOnInitialized();
-
-	if (SelectButton)
+	if (!bIsOwned)
 	{
-		SelectButton->OnClicked.AddUniqueDynamic(this, &USearchStacksListing_ListingItemWidget::OnSelectButtonClicked);
+		Super::SetSelection(IsSelected);
 	}
-}
-
-void USearchStacksListing_ListingItemWidget::RegisterOnSelection(const FOnListingItemSelection& SelectionDelegate)
-{
-	OnListingItemSelection = SelectionDelegate; 
 }
 
 void USearchStacksListing_ListingItemWidget::SetListingId(const FString& Id)
@@ -37,29 +30,4 @@ void USearchStacksListing_ListingItemWidget::SetIsOwned(bool IsOwned)
 bool USearchStacksListing_ListingItemWidget::IsOwned()
 {
 	return bIsOwned;
-}
-
-void USearchStacksListing_ListingItemWidget::SetSelectionStatus(bool IsSelected)
-{
-	if (IsListingItemSelected == IsSelected)
-	{
-		return;	
-	}
-	
-	IsListingItemSelected = IsSelected;
-	OnListingItemSelection.ExecuteIfBound(IsListingItemSelected, this);
-	BP_OnSelectStatusUpdate(IsSelected);
-}
-
-bool USearchStacksListing_ListingItemWidget::GetSelectionStatus() const
-{
-	return IsListingItemSelected;
-}
-
-void USearchStacksListing_ListingItemWidget::OnSelectButtonClicked()
-{
-	if (!bIsOwned)
-	{
-		SetSelectionStatus(!IsListingItemSelected);	
-	}
 }

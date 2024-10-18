@@ -9,7 +9,7 @@
 #include "UI/Utility/MathUtility.h"
 
 
-void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing, bool IsIdEven)
+void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing, bool IsIdEven, const UItemWidget::FOnSelectionChange& InOnSelectionChangeDelegate)
 {
 	if (ScrollBoxListings)
 	{
@@ -39,7 +39,7 @@ void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAP
 					}
 				}
 
-				ListingsItemWidget->RegisterOnSelection(USearchStacksListing_ListingItemWidget::FOnListingItemSelection::CreateUObject(this, &USearchStacksListing_ListingsWidget::OnItemSelection));
+				ListingsItemWidget->RegisterOnSelectionChange(InOnSelectionChangeDelegate);
 				ListingsItemWidget->SetIsOwned(Listing.Creator.Equals(GetOwningCustomLocalPLayer()->GetPassportWalletAddress()));
 				ListingsItemWidget->SetListingId(Listing.ListingId);
 				ListingsItemWidget->SetData(Listing.TokenId,
@@ -49,39 +49,8 @@ void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAP
 					Price,
 					Listing.PriceDetails.Token.Symbol.GetValue(),
 					IsIdEven);
+				ListingsItemWidget->Show();
 			}
 		}
-	}
-}
-
-USearchStacksListing_ListingItemWidget* USearchStacksListing_ListingsWidget::GetSelectedItemWidget()
-{
-	return SelectedItemWidget;
-}
-
-void USearchStacksListing_ListingsWidget::RegisterOnSelectionStatusChange(FOnSelectionStatusChange InDelegate)
-{
-	OnSelectionStatusChangeDelegate = InDelegate;
-}
-
-void USearchStacksListing_ListingsWidget::OnItemSelection(bool IsSelected, USearchStacksListing_ListingItemWidget* ListingItemWidget)
-{
-	OnSelectionStatusChangeDelegate.ExecuteIfBound(IsSelected);
-	
-	if (SelectedItemWidget == ListingItemWidget && !IsSelected)
-	{
-		SelectedItemWidget->SetSelectionStatus(false);
-		SelectedItemWidget = nullptr;
-		
-		return;
-	}
-	
-	if (SelectedItemWidget != ListingItemWidget && IsSelected)
-	{
-		if (SelectedItemWidget)
-		{
-			SelectedItemWidget->SetSelectionStatus(false);	
-		}
-		SelectedItemWidget = ListingItemWidget;
 	}
 }

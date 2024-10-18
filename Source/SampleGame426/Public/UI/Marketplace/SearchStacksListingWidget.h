@@ -2,6 +2,7 @@
 
 #include "OpenAPIOrderbookApi.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
+#include "Base/ItemWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 
 #include "SearchStacksListingWidget.generated.h"
@@ -33,7 +34,7 @@ protected:
 	void SetName(const FString& Name);
 
 private:
-	void OnSelectionStatusChange(bool IsAnyItemSelected);
+	void OnItemSelectionStatusChange(bool IsItemSelected, UItemWidget* ItemWidget);
 	void OnFulfillOrder(const ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderResponse& Response);
 	UFUNCTION()
 	void OnBuyButtonClicked(FGameplayTag ButtonTag);
@@ -44,6 +45,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class USearchStacksListing_ListingsWidget* Listings = nullptr;
 
+	UItemWidget* SelectedItem = nullptr;
 	UControlPanelButton* BuyButton = nullptr;
 	UDialog* ProcessingDialog = nullptr;
 };

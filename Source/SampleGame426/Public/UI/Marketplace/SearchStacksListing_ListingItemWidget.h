@@ -1,21 +1,19 @@
 ﻿#pragma once
 
-#include "Blueprint/UserWidget.h"
+#include "Base/ItemWidget.h"
 
 #include "SearchStacksListing_ListingItemWidget.generated.h"
 
 
 UCLASS(Abstract, Blueprintable)
-class SAMPLEGAME426_API USearchStacksListing_ListingItemWidget : public UUserWidget
+class SAMPLEGAME426_API USearchStacksListing_ListingItemWidget : public UItemWidget
 {
 	GENERATED_BODY()
 
 public:
-	virtual void NativeOnInitialized() override;
-	
-	DECLARE_DELEGATE_TwoParams(FOnListingItemSelection, bool /* IsSelected */, USearchStacksListing_ListingItemWidget* /* ListingItemWidget */)
-	
-	void RegisterOnSelection(const FOnListingItemSelection& SelectionDelegate);
+	/* UItemWidget interface */
+	virtual void SetSelection(bool IsSelected) override;
+	/* UItemWidget interface */
 	
 	void SetListingId(const FString& Id);
     const FString& GetListingId() const;
@@ -30,22 +28,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	bool IsOwned();
 
-	void SetSelectionStatus(bool IsSelected);
-	bool GetSelectionStatus() const;
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
-	void BP_OnSelectStatusUpdate(bool IsSelected);
-
-private:
-	UFUNCTION()
-	void OnSelectButtonClicked();
-
-protected:
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
-	class UButton* SelectButton = nullptr;
-
 private:
 	FString ListingId;
-	FOnListingItemSelection OnListingItemSelection;
-	bool IsListingItemSelected = false;
 	bool bIsOwned = false;
 };

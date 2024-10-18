@@ -20,20 +20,12 @@ class USearchStacksListing_ListingsWidget : public UCustomUserWidget
 public:
 	DECLARE_DELEGATE_OneParam(FOnSelectionStatusChange, bool /* IsSelected */)
 	
-	void AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing, bool IsIdEven);
-	USearchStacksListing_ListingItemWidget* GetSelectedItemWidget();
-	void RegisterOnSelectionStatusChange(FOnSelectionStatusChange InDelegate);
+	void AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing, bool IsIdEven, const UItemWidget::FOnSelectionChange& InOnSelectionChangeDelegate);
 
 protected:
-	void OnItemSelection(bool IsSelected, USearchStacksListing_ListingItemWidget* ListingItemWidget);
-	
-protected:
-	FOnSelectionStatusChange OnSelectionStatusChangeDelegate;
 	UPROPERTY(EditAnywhere, Category = "Marketplace")
 	TSoftClassPtr<USearchStacksListing_ListingItemWidget> ItemWidgetClass;
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UScrollBox* ScrollBoxListings = nullptr;
-
-private:
-	USearchStacksListing_ListingItemWidget* SelectedItemWidget = nullptr;
+	
 };

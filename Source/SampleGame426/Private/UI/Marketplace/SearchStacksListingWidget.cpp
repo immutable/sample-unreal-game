@@ -21,11 +21,6 @@
 void USearchStacksListingWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	
-	if (Listings)
-	{
-		Listings->RegisterOnSelectionStatusChange(USearchStacksListing_ListingsWidget::FOnSelectionStatusChange::CreateUObject(this, &USearchStacksListingWidget::OnSelectionStatusChange));		
-	}
 }
 
 void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPanels* HostPanel)
@@ -88,20 +83,25 @@ void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 
 	for (int32 i = 0; i < StackNumber; ++i)
 	{
-		Listings->AddItem(StackBundle.Listings[i], i % 2 == 0);
+		Listings->AddItem(StackBundle.Listings[i], i % 2 == 0, UItemWidget::FOnSelectionChange::CreateUObject(this, &USearchStacksListingWidget::OnItemSelectionStatusChange));
 	}
-
-	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
-void USearchStacksListingWidget::OnSelectionStatusChange(bool IsAnyItemSelected)
+void USearchStacksListingWidget::OnItemSelectionStatusChange(bool IsItemSelected, UItemWidget* ItemWidget)
 {
-	if (!BuyButton || IsAnyItemSelected == BuyButton->IsEnabled())
+	if (BuyButton)
 	{
-		return;
+		BuyButton->SetEnable(IsItemSelected);
 	}
-	
-	BuyButton->SetEnable(IsAnyItemSelected);
+
+	if (IsItemSelected)
+	{
+		SelectedItem = ItemWidget;
+	}
+	else
+	{
+		SelectedItem = nullptr;
+	}
 }
 
 void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)
@@ -113,13 +113,15 @@ void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)
 	{
 		return;
 	}
+
+	auto ListingItemWidget = Cast<USearchStacksListing_ListingItemWidget>(SelectedItem);
 	
-	if(Listings->GetSelectedItemWidget())
+	if(ListingItemWidget)
 	{
 		ImmutableTsSdkApi::OpenAPIFulfillOrderRequest RequestData;
 		ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderRequest Request;
 
-		RequestData.ListingId = Listings->GetSelectedItemWidget()->GetListingId();
+		RequestData.ListingId = ListingItemWidget->GetListingId();
 		RequestData.TakerAddress = LocalPlayer->GetPassportWalletAddress();
 		Request.OpenAPIFulfillOrderRequest = RequestData;
 

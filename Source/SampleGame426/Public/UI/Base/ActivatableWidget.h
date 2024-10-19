@@ -29,9 +29,13 @@ public:
 	FSimpleMulticastDelegate& OnActivated() const { return OnActivatedEvent; }
 	FSimpleMulticastDelegate& OnDeactivated() const { return OnDeactivatedEvent; }
 
-public:
 	bool SetsVisibilityOnActivated() const { return bSetVisibilityOnActivated; }
 	bool SetsVisibilityOnDeactivated() const { return bSetVisibilityOnDeactivated; }
+
+	virtual bool CanBeReleased() const;
+
+	void SetSwitcherIndex(int32 Index) { SwitcherIndex = Index; }
+	int32 GetSwitcherIndex() const { return SwitcherIndex; }
 
 protected:
 	virtual void NativeConstruct() override;
@@ -62,6 +66,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Activation)
 	bool bAutoActivate = false;
 
+	// /* Prevent to be released on deactivate */
+	// /* ActivatableWidgetContainer releases widget as soon as they are deactivated */
+	// UPROPERTY(EditAnywhere, Category = Activation)
+	// bool bAutoRemove = true;
+
 private:
 	/** Fires when the widget is activated. */
 	UPROPERTY(BlueprintAssignable, Category = Events, meta = (AllowPrivateAccess = true, DisplayName = "On Widget Activated"))
@@ -73,9 +82,6 @@ private:
 	
 	UPROPERTY(BlueprintReadOnly, Category = ActivatableWidget, meta = (AllowPrivateAccess = true))
 	bool bIsActive = false;
-
-	/** True if we should switch to activated visibility only when all bound widgets are active */
-	bool bAllActive = true;
 
 	/** Handle to default back action, if bound */
 	// FUIActionBindingHandle DefaultBackActionHandle;
@@ -95,6 +101,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Activation, meta = (EditCondition = "bSetVisibilityOnDeactivated"))
 	ESlateVisibility DeactivatedVisibility = ESlateVisibility::Collapsed;
+
+	int32 SwitcherIndex = -1;
 	
 	virtual void InternalProcessActivation();
 	virtual void InternalProcessDeactivation();

@@ -85,10 +85,33 @@ public:
 	template <typename ActivatableWidgetT = UActivatableWidget>
 	ActivatableWidgetT* PushWidgetToLayerStack(FGameplayTag LayerName, UClass* ActivatableWidgetClass, TFunctionRef<void(ActivatableWidgetT&)> InitInstanceFunc)
 	{
-		static_assert(TIsDerivedFrom<ActivatableWidgetT, UActivatableWidget>::IsDerived, "Only CommonActivatableWidgets can be used here");
+		static_assert(TIsDerivedFrom<ActivatableWidgetT, UActivatableWidget>::IsDerived, "Only ActivatableWidgets can be used here");
 
 		if (UActivatableWidgetContainer* Layer = GetLayerWidget(LayerName))
 		{
+			return Layer->AddWidget<ActivatableWidgetT>(ActivatableWidgetClass, InitInstanceFunc);
+		}
+
+		return nullptr;
+	}
+
+	template <typename ActivatableWidgetT = UActivatableWidget>
+	ActivatableWidgetT* FindOrPushWidgetOfClassToLayerStack(FGameplayTag LayerName, UClass* ActivatableWidgetClass, TFunctionRef<void(ActivatableWidgetT&)> InitInstanceFunc)
+	{
+		static_assert(TIsDerivedFrom<ActivatableWidgetT, UActivatableWidget>::IsDerived, "Only ActivatableWidgets can be used here");
+
+		if (UActivatableWidgetContainer* Layer = GetLayerWidget(LayerName))
+		{
+			auto WidgetList = Layer->GetWidgetList();
+
+			for (auto Widget : WidgetList)
+			{
+				if (Widget->GetClass() == ActivatableWidgetClass)
+				{
+					return Widget;
+				}
+			}
+
 			return Layer->AddWidget<ActivatableWidgetT>(ActivatableWidgetClass, InitInstanceFunc);
 		}
 

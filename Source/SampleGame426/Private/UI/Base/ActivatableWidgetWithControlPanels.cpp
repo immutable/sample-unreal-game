@@ -1,12 +1,11 @@
 ﻿#include "Base/ActivatableWidgetWithControlPanels.h"
 
 #include "UIGameplayTags.h"
-#include "Components/Button.h"
+#include "Base/AWStackWithControlPanels.h"
 #include "Marketplace/SearchStacksWidget.h"
-#include "ThirdParty/PhysX3/NvCloth/samples/external/imgui/1.49/imgui.h"
 
 
-FString UActivatableWidgetWithControlPanels::GetWidgetTitle() const
+FString UActivatableWidgetWithControlPanels::GetTitle() const
 {
 	return WidgetTitle;
 }

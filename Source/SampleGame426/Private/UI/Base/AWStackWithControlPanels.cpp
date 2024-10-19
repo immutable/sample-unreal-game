@@ -1,5 +1,6 @@
 ﻿#include "Base/AWStackWithControlPanels.h"
 
+#include "LogSampleGame.h"
 #include "UIGameplayTags.h"
 #include "Base/ActivatableWidget.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
@@ -127,6 +128,18 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 	return MyVerticalBox.ToSharedRef();
 }
 
+void UAWStackWithControlPanels::OnWidgetRebuilt()
+{
+	Super::OnWidgetRebuilt();
+
+	if (IsDesignTime())
+	{
+		return;
+	}
+
+	BuildTopPanel();
+}
+
 void UAWStackWithControlPanels::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
@@ -153,10 +166,91 @@ void UAWStackWithControlPanels::OnWidgetAddedToList(UActivatableWidget& AddedWid
 	if (UActivatableWidgetWithControlPanels* Widget = Cast<UActivatableWidgetWithControlPanels>(&AddedWidget))
 	{
 		Widget->SetupControlButtons(this);
+	}
+}
 
-		if (TopPanelWidget)
+void UAWStackWithControlPanels::OnMainPanelButtonClicked(UTopPanelButton* Button)
+{
+	TopPanelWidget->ShowSecondaryButtons(Button);
+	auto Group = MapMainButtonToWidgetGroup.Find(Button);
+
+	if (!Group)
+	{
+		return;
+	}
+
+	if ((*Group)->WidgetsInGroup.Num() && (*Group)->WidgetsInGroup[0])
+	{
+		(*Group)->WidgetsInGroup[0]->ActivateWidget();
+	}
+	else if ((*Group)->WidgetClassesGroup.Num())
+	{
+		(*Group)->WidgetsInGroup[0] = AddWidget<UActivatableWidgetWithControlPanels>((*Group)->WidgetClassesGroup[0].LoadSynchronous());
+	}
+}
+
+void UAWStackWithControlPanels::OnSecondaryPanelButtonClicked(UTopPanelButton* Button)
+{
+	auto MainButton = TopPanelWidget->GetMainButton(Button);
+	auto Group = MapMainButtonToWidgetGroup.Find(MainButton);
+
+	if (!Group)
+	{
+		return;
+	}
+	
+	UActivatableWidgetWithControlPanels* Widget = (*Group)->WidgetsInGroup[Button->GetIndex()];
+
+	if (!Widget)
+	{
+		(*Group)->WidgetsInGroup[Button->GetIndex()] = AddWidget<UActivatableWidgetWithControlPanels>((*Group)->WidgetClassesGroup[Button->GetIndex()].LoadSynchronous());
+	}
+	else
+	{
+		SetSwitcherIndex(Widget->GetSwitcherIndex());
+	}
+}
+
+void UAWStackWithControlPanels::BuildTopPanel()
+{
+	if (TopPanelWidget)
+	{
+		for (int32 i = 0; i < WidgetGroups.Num(); ++i)
 		{
-			TopPanelWidget->SetTitle(Widget->GetWidgetTitle());
+			auto& Group = WidgetGroups[i];
+			auto* MainButton = TopPanelWidget->AddMainButton(Group.GroupName, i);
+
+			check(MainButton);
+			MainButton->OnClickDelegate = UTopPanelButton::FOnClick::CreateUObject(this, &UAWStackWithControlPanels::OnMainPanelButtonClicked);
+			MapMainButtonToWidgetGroup.Add(MainButton, &Group);
+
+			auto ListOfSoftWidgetClass = Group.WidgetClassesGroup;
+
+			Group.WidgetsInGroup.Init(nullptr, Group.WidgetClassesGroup.Num());
+			// for (const auto SoftWidgetClass : ListOfSoftWidgetClass)
+			for (int32 WidgetClassIndex = 0; WidgetClassIndex < Group.WidgetClassesGroup.Num(); ++WidgetClassIndex)
+			{
+				auto* WidgetClass = Group.WidgetClassesGroup[WidgetClassIndex].LoadSynchronous();
+
+				if (!WidgetClass)
+				{
+					UE_LOG(LogTemp, Error, TEXT("Widget class cannot be loaded %s"), *Group.WidgetClassesGroup[WidgetClassIndex].ToString());
+					
+					continue;
+				}
+				
+				auto WidgetCDO = Cast<UActivatableWidgetWithControlPanels>(WidgetClass->GetDefaultObject(false));
+
+				if (!WidgetCDO)
+				{
+					UE_LOG(LogSampleGame, Error, TEXT("Failed to cast group widget %s"), *Group.WidgetClassesGroup[WidgetClassIndex].ToString());
+				}
+
+				auto* SecondaryButton = TopPanelWidget->AddSecondaryButton(MainButton, WidgetCDO->GetTitle(), WidgetClassIndex);
+
+				check(SecondaryButton);
+				SecondaryButton->OnClickDelegate = UTopPanelButton::FOnClick::CreateUObject(this, &UAWStackWithControlPanels::OnSecondaryPanelButtonClicked);
+			}
 		}
 	}
 }

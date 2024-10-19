@@ -5,6 +5,13 @@
 
 #include "ControlPanelButton.generated.h"
 
+UENUM(BlueprintType)
+enum class EAWStackControlPanelSide : uint8
+{
+	Left,
+	Right,
+};
+
 /**
  * 
  */

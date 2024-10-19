@@ -198,11 +198,21 @@ void UActivatableWidgetContainer::HandleActiveWidgetDeactivated(UActivatableWidg
 
 void UActivatableWidgetContainer::ReleaseWidget(const TSharedRef<SWidget>& WidgetToRelease)
 {
-	if (UActivatableWidget* ActivatableWidget = ActivatableWidgetFromSlate(WidgetToRelease))
+	UActivatableWidget* ActivatableWidget = ActivatableWidgetFromSlate(WidgetToRelease);
+
+	if (!ActivatableWidget)
 	{
-		GeneratedWidgetsPool.Release(ActivatableWidget, true);
-		WidgetList.Remove(ActivatableWidget);
+		UE_LOG(LogTemp, Error, TEXT("ActivatableWidget %s is null"), *WidgetToRelease->GetTag().ToString());
+		return;
 	}
+
+	if (!ActivatableWidget->CanBeReleased())
+	{
+		return;
+	}
+	
+	GeneratedWidgetsPool.Release(ActivatableWidget, true);
+	WidgetList.Remove(ActivatableWidget);
 
 	if (MySwitcher->RemoveSlot(WidgetToRelease) != INDEX_NONE)
 	{
@@ -279,7 +289,10 @@ void UActivatableWidgetStack::OnWidgetAddedToList(UActivatableWidget& AddedWidge
 		// Toss the widget onto the end of the switcher's children and transition to it immediately
 		MySwitcher->AddSlot() [AddedWidget.TakeWidget()];
 
-		SetSwitcherIndex(MySwitcher->GetNumWidgets() - 1);
+		int32 SwitcherIndex = MySwitcher->GetNumWidgets() - 1;
+
+		AddedWidget.SetSwitcherIndex(SwitcherIndex);
+		SetSwitcherIndex(SwitcherIndex);
 	}
 }
 

@@ -4,6 +4,11 @@
 #include "LogSampleGame.h"
 
 
+bool UActivatableWidget::CanBeReleased() const
+{
+	return true;
+}
+
 void UActivatableWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

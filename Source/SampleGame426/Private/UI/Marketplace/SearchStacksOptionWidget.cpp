@@ -2,8 +2,16 @@
 
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
+#include "UIGameplayTags.h"
+#include "Base/AWStackWithControlPanels.h"
 #include "Marketplace/MarketplacePolicy.h"
 
+
+// USearchStacksOptionWidget::USearchStacksOptionWidget(const FObjectInitializer& ObjectInitializer)
+// 	: Super(ObjectInitializer)
+// {
+// 	ControlPanelButtonsData.Add(FUIControlPanelButtons::Search, EAWStackControlPanelSide::Right); 
+// }
 
 void USearchStacksOptionWidget::NativeOnActivated()
 {
@@ -15,6 +23,20 @@ void USearchStacksOptionWidget::NativeOnActivated()
 		{
 			AddMetadataFilter(Trait.Name, Trait.Values);	
 		}
+	}
+	if (SearchButton)
+	{
+		SearchButton->Show();
+	}
+}
+
+void USearchStacksOptionWidget::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+
+	if (SearchButton)
+	{
+		SearchButton->Hide();
 	}
 }
 
@@ -31,5 +53,20 @@ void USearchStacksOptionWidget::SetTraits(const TArray<FNFTMetadataAttribute_Tra
 	if (UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy())
 	{
 		Policy->SetTraits(Traits);
+	}
+}
+
+void USearchStacksOptionWidget::SetupControlButtons(UAWStackWithControlPanels* HostLayer)
+{
+	Super::SetupControlButtons(HostLayer);
+
+	SearchButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::Search);
+
+	if (SearchButton)
+	{
+		SearchButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateWeakLambda(this, [HostLayer](FGameplayTag ButtonTag)
+		{
+			HostLayer->MoveToNextWidgetInGroup();
+		}));
 	}
 }

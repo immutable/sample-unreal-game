@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "ActivatableWidget.h"
+#include "SelectionSet.h"
 #include "Data/ControlPanelButtonDataAsset.h"
 
 #include "ActivatableWidgetWithControlPanels.generated.h"
@@ -30,16 +31,19 @@ class UActivatableWidgetWithControlPanels : public UActivatableWidget
 	GENERATED_BODY()
 
 public:
-	FString GetTitle() const;
+	// UActivatableWidgetWithControlPanels(const FObjectInitializer& ObjectInitializer);
 	
-	const TMap<FGameplayTag, EAWStackControlPanelSide>& GetControlButtonsData() const;
+	FString GetTitle() const;
+	void SetIndexInGroup(int32 InIndex) { IndexInGroup = InIndex; }
+	int32 GetIndexInGroup() const { return IndexInGroup; }
+	void SetGroup(FActivatableWidgetWithControlPanelsGroup* InGroup) { PartOfGroup = InGroup; }
+	const FActivatableWidgetWithControlPanelsGroup* GetGroup() const { return PartOfGroup; }
+	
+	// const TMap<FGameplayTag, EAWStackControlPanelSide>& GetControlButtonsData() const;
 
-	virtual bool CanBeReleased() const override { return false; } 
-	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel);
-	UFUNCTION(BlueprintImplementableEvent, Category = "Immutable")
-	void BP_SetupControlButtons(const TMap<FGameplayTag, UControlPanelButton*>& Buttons);
-
-	bool IsSwitchBetweenWindowsHandler() const { return SwitchBetweenWindowsHandler; }
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer);
+	virtual bool CanBeReleased() const override { return bCanBeReleased; }
+	void SetCanBeReleased() { bCanBeReleased = true; }
 
 protected:
 	/* UUserWidget interface */
@@ -68,17 +72,12 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
 	FString WidgetTitle;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
-	int32 WidgetPriority;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
-	TMap<FGameplayTag, EAWStackControlPanelSide> ControlPanelButtonsData;
 	UPROPERTY()
 	TMap<FGameplayTag, UControlPanelButton*> ControlPanelButtons;
-	UPROPERTY(Transient)
-	UControlPanelButton* PreviousWidgetButton = nullptr;
-	UPROPERTY(Transient)
-	UControlPanelButton* NextWidgetButton = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
-	bool SwitchBetweenWindowsHandler = true;
+
+private:
+	bool bCanBeReleased = false;
+	int32 IndexInGroup = -1;
+	FActivatableWidgetWithControlPanelsGroup* PartOfGroup = nullptr;
 
 };

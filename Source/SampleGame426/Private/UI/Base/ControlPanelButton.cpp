@@ -5,6 +5,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
+
 void UControlPanelButton::SetIcon(const FSlateBrush& InBrush)
 {
 	if (Icon)
@@ -65,10 +66,13 @@ bool UControlPanelButton::Initialize()
 	return IsInitialized;
 }
 
+void UControlPanelButton::RegisterOnClick(const FOnControlPanelButtonClick& InOnControlPanelButtonClick)
+{
+	OnControlPanelButtonClickDelegate = InOnControlPanelButtonClick;
+}
+
 void UControlPanelButton::NativeDestruct()
 {
-	OnPanelButtonClicked.Clear();
-	
 	Super::NativeDestruct();
 }
 
@@ -90,7 +94,7 @@ FReply UControlPanelButton::NativeOnMouseButtonDown(const FGeometry& InGeometry,
 {
 	auto Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-	OnPanelButtonClicked.Broadcast(ButtonTag);
+	OnControlPanelButtonClickDelegate.ExecuteIfBound(ButtonTag);
 
 	return Reply;
 }

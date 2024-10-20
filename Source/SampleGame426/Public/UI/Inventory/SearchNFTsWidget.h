@@ -29,14 +29,13 @@ protected:
 	virtual void NativeOnActivated() override;
 	/* UActivatableWidget */
 	
-	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel) override;
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
 
 	void OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsResponse& Response);
 	void OnItemSelection(bool IsSelected, UItemWidget* ItemWidget);
 	
 private:
 	void HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData);
-	UFUNCTION()
 	void OnButtonClicked(FGameplayTag ButtonTag);
 	UFUNCTION()
 	void OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult Result);

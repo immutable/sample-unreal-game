@@ -19,22 +19,22 @@ class SAMPLEGAME426_API USearchStacksWidget : public UActivatableWidgetWithContr
 
 public:
 	virtual void RefreshItemList(TOptional<FString> PageCursor) override;
+	UItemWidget* GetSelectedItem() const { return SelectedItemWidget; }
 
 protected:
 	/* UActivatableWidget */
 	virtual void NativeOnActivated() override;
+	virtual void NativeOnDeactivated() override;
 	virtual void OnWidgetRebuilt() override;
 	/* UActivatableWidget */
 
 	void OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksResponse& Response);
-	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel) override;
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
 
 private:
 	void HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData);
-
-	UFUNCTION()
+	void ItemSelectionChange(bool IsSelected, UItemWidget* ItemWidget);
 	void OnControlButtonClicked(FGameplayTag ButtonTag);
-
 	void OnItemSelectionChange(bool IsSelected, UItemWidget* ItemWidget);
 	void OnItemDoubleClick(UItemWidget* InItemWidget);
 

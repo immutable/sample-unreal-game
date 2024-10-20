@@ -12,7 +12,10 @@ class SAMPLEGAME426_API USearchStacksOptionWidget : public UActivatableWidgetWit
 	GENERATED_BODY()
 
 public:
+	// USearchStacksOptionWidget(const FObjectInitializer& ObjectInitializer);
+	
 	virtual void NativeOnActivated() override;
+	virtual void NativeOnDeactivated() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void AddMetadataFilter(const FString& Name, const TArray<FString>& Values);
@@ -24,7 +27,14 @@ public:
 	void SetTraits(const TArray<FNFTMetadataAttribute_TraitType>& Traits);
 
 protected:
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
+
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Metadata")
 	TSoftObjectPtr<UNFTMetadataAttributeDataAsset> AttributeMetadata;
+
+private:
+	UPROPERTY(Transient)
+	UControlPanelButton* SearchButton = nullptr;
 	
 };

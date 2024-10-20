@@ -11,6 +11,9 @@
 #include "Marketplace/SearchStacksListing_ListingsWidget.h"
 #include "OpenAPIFulfillOrderRequest.h"
 #include "OpenAPIOrderbookApiOperations.h"
+#include "Base/AWStackWithControlPanels.h"
+#include "Marketplace/SearchStacksWidget.h"
+#include "Marketplace/StackItemWidget.h"
 
 #define MP_DESCRIPTION_DESCRIPTION TEXT("Description")
 #define MP_DESCRIPTION_CREATED_AT TEXT("Created at")
@@ -18,20 +21,57 @@
 
 #define LOCTEXT_NAMESPACE "ImmutableUI"
 
-void USearchStacksListingWidget::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-}
 
-void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPanels* HostPanel)
+void USearchStacksListingWidget::NativeOnActivated()
 {
-	Super::SetupControlButtons(HostPanel);
-
-	BuyButton = HostPanel->GetButton(FUIControlPanelButtons::Buy);
+	Super::NativeOnActivated();
 
 	if (BuyButton)
 	{
-		BuyButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksListingWidget::OnBuyButtonClicked);
+		BuyButton->Show();
+	}
+
+	auto Group = GetGroup();
+	
+	if (!Group)
+	{
+		return;
+	}
+
+	USearchStacksWidget* ResultsWidget = Cast<USearchStacksWidget>(Group->WidgetsInGroup[GetIndexInGroup() - 1]);
+
+	if (!ResultsWidget)
+	{
+		return;
+	}
+
+	UStackItemWidget* ItemWidget = Cast<UStackItemWidget>(ResultsWidget->GetSelectedItem());
+	
+	if (ItemWidget && ItemWidget->GetStackBundle().IsValid())
+	{
+		ProcessModel(*ItemWidget->GetStackBundle().Get());
+	}
+}
+
+void USearchStacksListingWidget::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+
+	if (BuyButton)
+	{
+		BuyButton->Hide();
+	}
+}
+
+void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPanels* HostLayer)
+{
+	Super::SetupControlButtons(HostLayer);
+
+	BuyButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::Buy);
+
+	if (BuyButton)
+	{
+		BuyButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchStacksListingWidget::OnBuyButtonClicked));
 	}
 }
 

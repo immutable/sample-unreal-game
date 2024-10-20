@@ -70,10 +70,6 @@ void UActivatableWidgetContainer::RemoveWidget(UActivatableWidget& WidgetToRemov
 		{
 			WidgetToRemove.DeactivateWidget();
 		}
-		else
-		{
-			bRemoveDisplayedWidgetPostTransition = true;
-		}
 	}
 	else
 	{
@@ -132,6 +128,28 @@ void UActivatableWidgetContainer::OnWidgetRebuilt()
 	}
 }
 
+void UActivatableWidgetContainer::SetSwitcherActiveWidget(UActivatableWidget& AddedWidget, bool bInstantTransition)
+{
+	TSharedPtr<SWidget> SlateWidget = AddedWidget.GetCachedWidget();
+
+	if (MySwitcher && SlateWidget)
+	{
+		// if (DisplayedWidget && DisplayedWidget->IsActivated())
+		// {
+		// 	DisplayedWidget->DeactivateWidget();
+		// }
+
+		//AddedWidget.ActivateWidget();
+		int32 WidgetIndex = MySwitcher->GetWidgetIndex(SlateWidget.ToSharedRef());
+
+		if (WidgetIndex != INDEX_NONE)
+		{
+			//MySwitcher->SetActiveWidget(SlateWidget.ToSharedRef());
+			SetSwitcherIndex(WidgetIndex);
+		}
+	}
+}
+
 void UActivatableWidgetContainer::SetSwitcherIndex(int32 TargetIndex, bool bInstantTransition /*= false*/)
 {
 	if (MySwitcher && MySwitcher->GetActiveWidgetIndex() != TargetIndex)
@@ -141,12 +159,6 @@ void UActivatableWidgetContainer::SetSwitcherIndex(int32 TargetIndex, bool bInst
 			if (DisplayedWidget->IsActivated())
 			{
 				DisplayedWidget->DeactivateWidget();
-			}
-			else if (MySwitcher->GetActiveWidgetIndex() != 0)
-			{
-				// The displayed widget has already been deactivated by something other than us, so it should be removed from the container
-				// We still need it to remain briefly though until we transition to the new index - then we can remove this entry's slot
-				bRemoveDisplayedWidgetPostTransition = true;
 			}
 		}
 
@@ -172,7 +184,6 @@ UActivatableWidget* UActivatableWidgetContainer::AddWidgetInternal(TSubclassOf<U
 
 void UActivatableWidgetContainer::RegisterInstanceInternal(UActivatableWidget& NewWidget)
 {
-	//@todo DanH: We should do something here to force-disable the bAutoActivate property on the provided widget, since it quite simply makes no sense
 	if (ensure(!WidgetList.Contains(&NewWidget)))
 	{
 		WidgetList.Add(&NewWidget);
@@ -233,9 +244,19 @@ void UActivatableWidgetContainer::ReleaseWidget(const TSharedRef<SWidget>& Widge
 void UActivatableWidgetContainer::HandleActiveIndexChanged(int32 ActiveWidgetIndex)
 {
 	// Remove all slots above the currently active one and release the widgets back to the pool
-	while (MySwitcher->GetNumWidgets() - 1 > ActiveWidgetIndex)
+	// while (MySwitcher->GetNumWidgets() - 1 > ActiveWidgetIndex)
+	// {
+	// 	TSharedPtr<SWidget> WidgetToRelease = MySwitcher->GetWidget(MySwitcher->GetNumWidgets() - 1);
+	// 	if (ensure(WidgetToRelease))
+	// 	{
+	// 		ReleaseWidget(WidgetToRelease.ToSharedRef());
+	// 	}
+	// }
+
+	for (int32 i = 0; i < MySwitcher->GetNumWidgets(); ++i)
 	{
-		TSharedPtr<SWidget> WidgetToRelease = MySwitcher->GetWidget(MySwitcher->GetNumWidgets() - 1);
+		TSharedPtr<SWidget> WidgetToRelease = MySwitcher->GetWidget(i);
+
 		if (ensure(WidgetToRelease))
 		{
 			ReleaseWidget(WidgetToRelease.ToSharedRef());
@@ -243,14 +264,13 @@ void UActivatableWidgetContainer::HandleActiveIndexChanged(int32 ActiveWidgetInd
 	}
 
 	// Also remove the widget that we just transitioned away from if desired
-	if (DisplayedWidget && bRemoveDisplayedWidgetPostTransition)
+	if (DisplayedWidget && DisplayedWidget->CanBeReleased())
 	{
 		if (TSharedPtr<SWidget> DisplayedSlateWidget = DisplayedWidget->GetCachedWidget())
 		{
 			ReleaseWidget(DisplayedSlateWidget.ToSharedRef());
 		}
 	}
-	bRemoveDisplayedWidgetPostTransition = false;
 
 	// Activate the widget that's now being displayed
 	DisplayedWidget = ActivatableWidgetFromSlate(MySwitcher->GetActiveWidget());
@@ -288,11 +308,7 @@ void UActivatableWidgetStack::OnWidgetAddedToList(UActivatableWidget& AddedWidge
 
 		// Toss the widget onto the end of the switcher's children and transition to it immediately
 		MySwitcher->AddSlot() [AddedWidget.TakeWidget()];
-
-		int32 SwitcherIndex = MySwitcher->GetNumWidgets() - 1;
-
-		AddedWidget.SetSwitcherIndex(SwitcherIndex);
-		SetSwitcherIndex(SwitcherIndex);
+		SetSwitcherIndex(MySwitcher->GetNumWidgets() - 1);
 	}
 }
 

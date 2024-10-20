@@ -66,6 +66,7 @@ FReply UItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, 
 {
 	auto Reply = Super::NativeOnMouseButtonDoubleClick(InGeometry, InMouseEvent);
 
+	SetSelection(true);
 	OnDoubleClick();
 	OnDoubleClickDelegate.ExecuteIfBound(this);
 

@@ -21,8 +21,6 @@ class SAMPLEGAME426_API UControlPanelButton : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnControlPanelButtonClicked, FGameplayTag, ButtonTag);
-	
 	void SetIcon(const FSlateBrush& InBrush);
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic, Category = "Control Panel")
 	void SetColor(const FLinearColor& InColor);
@@ -47,7 +45,11 @@ public:
 	/* UUserWidget */
 	virtual bool Initialize() override;
 	/* UUserWidget */
+
+	DECLARE_DELEGATE_OneParam(FOnControlPanelButtonClick, FGameplayTag);
 	
+	void RegisterOnClick(const FOnControlPanelButtonClick& InOnControlPanelButtonClick);
+
 protected:
 	/* UUserWidget interface */
 	virtual void NativeDestruct() override;
@@ -60,10 +62,6 @@ protected:
 	UFUNCTION()
 	void HandleButtonClicked();
 
-public:
-	UPROPERTY(BlueprintAssignable)
-	FOnControlPanelButtonClicked OnPanelButtonClicked;
-
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class UImage* Icon;
@@ -71,6 +69,7 @@ protected:
 	class UTextBlock* ButtonName = nullptr;
 
 private:
+	FOnControlPanelButtonClick OnControlPanelButtonClickDelegate;
 	FGameplayTag ButtonTag;
 	bool bIsEnabled = true;
 	

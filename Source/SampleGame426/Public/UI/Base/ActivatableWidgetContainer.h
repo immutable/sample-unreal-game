@@ -86,6 +86,7 @@ protected:
 
 	virtual void OnWidgetAddedToList(UActivatableWidget& AddedWidget) { unimplemented(); }
 
+	void SetSwitcherActiveWidget(UActivatableWidget& AddedWidget, bool bInstantTransition = false);
 	void SetSwitcherIndex(int32 TargetIndex, bool bInstantTransition = false);
 
 	/** The type of transition to play between widgets */

@@ -6,18 +6,14 @@
 
 bool UActivatableWidget::CanBeReleased() const
 {
-	return true;
+	return !bIsActive;
 }
 
 void UActivatableWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (bAutoActivate)
-	{
-		UE_LOG(LogSampleGame, Verbose, TEXT("[%s] auto-activated"), *GetName());
-		ActivateWidget();
-	}
+	ActivateWidget();
 }
 
 void UActivatableWidget::NativeDestruct()

@@ -17,12 +17,17 @@ class UAWStackWithControlPanels : public UActivatableWidgetStack
 	GENERATED_BODY()
 
 public:
+	UAWStackWithControlPanels(const FObjectInitializer& Initializer);
+	
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	UControlPanelButton* AddButtonToLeft(FGameplayTag ButtonTag);
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	UControlPanelButton* AddButtonToRight(FGameplayTag ButtonTag);
 	UControlPanelButton* AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side);
 	UControlPanelButton* GetButton(FGameplayTag ButtonTag);
+
+	void MoveToNextWidgetInGroup();
+	void MoveToPrevWidgetInGroup();
 
 	/* UWidget interface */
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
@@ -37,11 +42,14 @@ protected:
 
 	virtual void OnWidgetAddedToList(UActivatableWidget& AddedWidget) override;
 
+	void OnControlPanelButtonClicked(FGameplayTag ButtonTag);
 	void OnMainPanelButtonClicked(UTopPanelButton* Button);
 	void OnSecondaryPanelButtonClicked(UTopPanelButton* Button);
 
 private:
 	void BuildTopPanel();
+	void BuildControlPanel();
+	void ShowWidgetFromGroup(struct FActivatableWidgetWithControlPanelsGroup*, int32 WidgetIndex = 0);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
@@ -85,10 +93,17 @@ private:
 	UPROPERTY(Transient)
 	TMap<FGameplayTag, UControlPanelButton*> ControlPanelButtons;
 
+	UPROPERTY(Transient)
+	UControlPanelButton* PreviousWidgetInGroupButton = nullptr;
+	UPROPERTY(Transient)
+	UControlPanelButton* NextWidgetInGroupButton = nullptr;
+
 	TSharedPtr<SVerticalBox> MyVerticalBox;
 	TSharedPtr<SVerticalBox> LeftControlPanel;
 	TSharedPtr<SVerticalBox> RightControlPanel;
 
+	UTopPanelButton* ActiveMainButton = nullptr;
 	TMap<UTopPanelButton*, struct FActivatableWidgetWithControlPanelsGroup*> MapMainButtonToWidgetGroup;
+	TPair<FActivatableWidgetWithControlPanelsGroup* /* Group */, int32 /* Widget Index */> DisplayedWidgetGroupPair;
 
 };

@@ -14,6 +14,7 @@ FGameplayTag FUIControlPanelButtons::Buy;
 FGameplayTag FUIControlPanelButtons::Sell;
 FGameplayTag FUIControlPanelButtons::CancelSell;
 FGameplayTag FUIControlPanelButtons::NFTInfo;
+FGameplayTag FUIControlPanelButtons::Search;
 
 FGameplayTag FUIDialogTypes::None;
 FGameplayTag FUIDialogTypes::ErrorSimple;
@@ -51,6 +52,7 @@ void FUIControlPanelButtons::InitUIGameplayTags_ControlPanelButtons()
 	FUIControlPanelButtons::Sell			= RequestGameplayTag(Prefix, TEXT("Sell"));
 	FUIControlPanelButtons::CancelSell		= RequestGameplayTag(Prefix, TEXT("CancelSell"));
 	FUIControlPanelButtons::NFTInfo			= RequestGameplayTag(Prefix, TEXT("NFTInfo"));
+	FUIControlPanelButtons::Search			= RequestGameplayTag(Prefix, TEXT("Search"));
 }
 
 void FUIDialogTypes::InitUIGameplayTags_DialogTypes()

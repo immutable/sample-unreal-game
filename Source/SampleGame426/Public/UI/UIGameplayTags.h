@@ -23,7 +23,8 @@ struct SAMPLEGAME426_API FUIControlPanelButtons
 	static FGameplayTag Sell;
 	static FGameplayTag CancelSell;
 	static FGameplayTag NFTInfo;
-
+	static FGameplayTag Search;
+	
 	static void InitUIGameplayTags_ControlPanelButtons();
 };
 

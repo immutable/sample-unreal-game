@@ -8,6 +8,7 @@
 #include "OpenAPIOrdersApiOperations.h"
 #include "OpenAPIStacksApiOperations.h"
 #include "UIGameplayTags.h"
+#include "Base/AWStackWithControlPanels.h"
 #include "Base/ItemWidget.h"
 #include "Marketplace/MarketplacePolicy.h"
 #include "Marketplace/SearchStacksListingWidget.h"
@@ -61,19 +62,20 @@ void USearchNfTsWidget::NativeOnActivated()
 	RefreshItemList(TOptional<FString>());
 }
 
-void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostPanel)
+void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostLayer)
 {
-	Super::SetupControlButtons(HostPanel);
+	Super::SetupControlButtons(HostLayer);
 
-	SellButton = HostPanel->GetButton(FUIControlPanelButtons::Sell);
-	CancelSellButton = HostPanel->GetButton(FUIControlPanelButtons::CancelSell);
+	SellButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::Sell);
+	CancelSellButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::CancelSell);
+
 	if (SellButton)
 	{
-		SellButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchNfTsWidget::OnButtonClicked);	
+		SellButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchNfTsWidget::OnButtonClicked));	
 	}
 	if (CancelSellButton)
 	{
-		CancelSellButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchNfTsWidget::OnButtonClicked);	
+		CancelSellButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchNfTsWidget::OnButtonClicked));	
 	}
 }
 

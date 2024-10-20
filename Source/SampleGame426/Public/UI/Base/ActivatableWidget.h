@@ -34,9 +34,6 @@ public:
 
 	virtual bool CanBeReleased() const;
 
-	void SetSwitcherIndex(int32 Index) { SwitcherIndex = Index; }
-	int32 GetSwitcherIndex() const { return SwitcherIndex; }
-
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
@@ -62,15 +59,6 @@ protected:
 	void BP_OnDeactivated();
 	virtual void NativeOnDeactivated();
 
-	/** True to automatically activate upon construction */
-	UPROPERTY(EditAnywhere, Category = Activation)
-	bool bAutoActivate = false;
-
-	// /* Prevent to be released on deactivate */
-	// /* ActivatableWidgetContainer releases widget as soon as they are deactivated */
-	// UPROPERTY(EditAnywhere, Category = Activation)
-	// bool bAutoRemove = true;
-
 private:
 	/** Fires when the widget is activated. */
 	UPROPERTY(BlueprintAssignable, Category = Events, meta = (AllowPrivateAccess = true, DisplayName = "On Widget Activated"))
@@ -84,7 +72,6 @@ private:
 	bool bIsActive = false;
 
 	/** Handle to default back action, if bound */
-	// FUIActionBindingHandle DefaultBackActionHandle;
 	mutable FSimpleMulticastDelegate OnActivatedEvent;
 	mutable FSimpleMulticastDelegate OnDeactivatedEvent;
 
@@ -102,8 +89,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Activation, meta = (EditCondition = "bSetVisibilityOnDeactivated"))
 	ESlateVisibility DeactivatedVisibility = ESlateVisibility::Collapsed;
 
-	int32 SwitcherIndex = -1;
-	
 	virtual void InternalProcessActivation();
 	virtual void InternalProcessDeactivation();
 	void Reset();

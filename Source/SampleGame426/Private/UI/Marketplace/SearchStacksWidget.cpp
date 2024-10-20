@@ -2,11 +2,10 @@
 
 #include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
-#include "GameUIManagerSubsystem.h"
 #include "GameUIPolicy.h"
-#include "IDetailTreeNode.h"
 #include "OpenAPIStacksApiOperations.h"
 #include "UIGameplayTags.h"
+#include "Base/AWStackWithControlPanels.h"
 #include "UI/Marketplace/MarketplacePolicy.h"
 #include "Base/ItemWidget.h"
 #include "Dialog/DialogSubsystem.h"
@@ -62,6 +61,41 @@ void USearchStacksWidget::NativeOnActivated()
 	Super::NativeOnActivated();
 
 	RefreshItemList(TOptional<FString>());
+
+	if (PreviousPageButton)
+	{
+		PreviousPageButton->Show();
+	}
+	
+	if (NextPageButton)
+	{
+		NextPageButton->Show();
+	}
+	
+	if (NFTInfoButton)
+	{
+		NFTInfoButton->Show();
+	}
+}
+
+void USearchStacksWidget::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+
+	if (PreviousPageButton)
+	{
+		PreviousPageButton->Hide();
+	}
+	
+	if (NextPageButton)
+	{
+		NextPageButton->Hide();
+	}
+	
+	if (NFTInfoButton)
+	{
+		NFTInfoButton->Hide();
+	}
 }
 
 void USearchStacksWidget::OnWidgetRebuilt()
@@ -101,25 +135,28 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 	}
 }
 
-void USearchStacksWidget::SetupControlButtons(UAWStackWithControlPanels* HostPanel)
+void USearchStacksWidget::SetupControlButtons(UAWStackWithControlPanels* HostLayer)
 {
-	Super::SetupControlButtons(HostPanel);
+	Super::SetupControlButtons(HostLayer);
 
-	PreviousPageButton = HostPanel->GetButton(FUIControlPanelButtons::PreviousPage);
-	NextPageButton = HostPanel->GetButton(FUIControlPanelButtons::NextPage);
-	NFTInfoButton = HostPanel->GetButton(FUIControlPanelButtons::NFTInfo);
+	PreviousPageButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::PreviousPage);
+	NextPageButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::NextPage);
+	NFTInfoButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::NFTInfo);
 
 	if (PreviousPageButton)
 	{
-		PreviousPageButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnControlButtonClicked);
+		PreviousPageButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchStacksWidget::OnControlButtonClicked));
 	}
 	if (NextPageButton)
 	{
-		NextPageButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnControlButtonClicked);	
+		NextPageButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchStacksWidget::OnControlButtonClicked));
 	}
 	if (NFTInfoButton)
 	{
-		NFTInfoButton->OnPanelButtonClicked.AddUniqueDynamic(this, &USearchStacksWidget::OnControlButtonClicked);
+		NFTInfoButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateWeakLambda(this, [HostLayer](FGameplayTag ButtonTag)
+		{
+			HostLayer->MoveToNextWidgetInGroup();
+		}));
 	}
 }
 
@@ -137,6 +174,41 @@ void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& Pa
 	}
 }
 
+void USearchStacksWidget::ItemSelectionChange(bool IsSelected, UItemWidget* ItemWidget)
+{
+	// auto ListingWidget = Cast<USearchStacksListingWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FUILayers::MenuWithControls, SearchStacksListingWidgetClass.LoadSynchronous()));
+	// UStackItemWidget* ItemWidget = Cast<UStackItemWidget>(InItemWidget);
+	//
+	// if (ListingWidget && ItemWidget && ItemWidget->GetStackBundle().IsValid())
+	// {
+	// 	ListingWidget->ProcessModel(*ItemWidget->GetStackBundle().Get());
+	// }
+
+	if (IsSelected && SelectedItemWidget != ItemWidget)
+	{
+		if (SelectedItemWidget)
+		{
+			SelectedItemWidget->SetSelection(false);
+		}
+		SelectedItemWidget = ItemWidget;
+		if (NFTInfoButton)
+		{
+			NFTInfoButton->SetEnable();	
+		}
+			
+		return;
+	}
+
+	if (!IsSelected && SelectedItemWidget == ItemWidget)
+	{
+		SelectedItemWidget = nullptr;
+		if (NFTInfoButton)
+		{
+			NFTInfoButton->SetEnable(false);
+		}
+	}
+}
+
 void USearchStacksWidget::OnControlButtonClicked(FGameplayTag ButtonTag)
 {
 	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::PreviousPage))
@@ -147,24 +219,14 @@ void USearchStacksWidget::OnControlButtonClicked(FGameplayTag ButtonTag)
 	{
 		RefreshItemList(PageCursors.NextCursor);
 	}
-	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::NFTInfo))
-	{
-		
-	}
 }
 
 void USearchStacksWidget::OnItemSelectionChange(bool IsSelected, UItemWidget* ItemWidget)
 {
-	
+	ItemSelectionChange(IsSelected, ItemWidget);
 }
 
 void USearchStacksWidget::OnItemDoubleClick(UItemWidget* InItemWidget)
 {
-	auto ListingWidget = Cast<USearchStacksListingWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FUILayers::MenuWithControls, SearchStacksListingWidgetClass.LoadSynchronous()));
-	UStackItemWidget* ItemWidget = Cast<UStackItemWidget>(InItemWidget);
-
-	if (ListingWidget && ItemWidget && ItemWidget->GetStackBundle().IsValid())
-	{
-		ListingWidget->ProcessModel(*ItemWidget->GetStackBundle().Get());
-	}
+	ItemSelectionChange(true, InItemWidget);
 }

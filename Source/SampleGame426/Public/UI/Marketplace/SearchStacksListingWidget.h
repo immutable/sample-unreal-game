@@ -16,8 +16,9 @@ class SAMPLEGAME426_API USearchStacksListingWidget : public UActivatableWidgetWi
 	GENERATED_BODY()
 
 public:
-	virtual void NativeOnInitialized() override;
-	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostPanel) override;
+	virtual void NativeOnActivated() override;
+	virtual void NativeOnDeactivated() override;
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
 	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
 
 protected:
@@ -36,7 +37,6 @@ protected:
 private:
 	void OnItemSelectionStatusChange(bool IsItemSelected, UItemWidget* ItemWidget);
 	void OnFulfillOrder(const ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderResponse& Response);
-	UFUNCTION()
 	void OnBuyButtonClicked(FGameplayTag ButtonTag);
 	UFUNCTION()
 	void OnProcessDialogAction(UDialog* DialogPtr, EDialogResult Result);

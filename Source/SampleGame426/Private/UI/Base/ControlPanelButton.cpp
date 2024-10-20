@@ -80,21 +80,30 @@ void UControlPanelButton::NativeOnMouseEnter(const FGeometry& InGeometry, const 
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 
-	BP_OnHovered();
+	if (bIsEnabled)
+	{
+		BP_OnHovered();	
+	}
 }
 
 void UControlPanelButton::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
 
-	BP_OnUnhovered();
+	if (bIsEnabled)
+	{
+		BP_OnUnhovered();
+	}
 }
 
 FReply UControlPanelButton::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	auto Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-	OnControlPanelButtonClickDelegate.ExecuteIfBound(ButtonTag);
+	if (bIsEnabled)
+	{
+		OnControlPanelButtonClickDelegate.ExecuteIfBound(ButtonTag);	
+	}
 
 	return Reply;
 }

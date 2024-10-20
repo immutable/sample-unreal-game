@@ -12,8 +12,6 @@ class SAMPLEGAME426_API USearchStacksOptionWidget : public UActivatableWidgetWit
 	GENERATED_BODY()
 
 public:
-	// USearchStacksOptionWidget(const FObjectInitializer& ObjectInitializer);
-	
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnDeactivated() override;
 

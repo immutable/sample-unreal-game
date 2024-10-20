@@ -31,17 +31,13 @@ class UActivatableWidgetWithControlPanels : public UActivatableWidget
 	GENERATED_BODY()
 
 public:
-	// UActivatableWidgetWithControlPanels(const FObjectInitializer& ObjectInitializer);
-	
 	FString GetTitle() const;
 	void SetIndexInGroup(int32 InIndex) { IndexInGroup = InIndex; }
 	int32 GetIndexInGroup() const { return IndexInGroup; }
 	void SetGroup(FActivatableWidgetWithControlPanelsGroup* InGroup) { PartOfGroup = InGroup; }
 	const FActivatableWidgetWithControlPanelsGroup* GetGroup() const { return PartOfGroup; }
 	
-	// const TMap<FGameplayTag, EAWStackControlPanelSide>& GetControlButtonsData() const;
-
-	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer);
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) {}
 	virtual bool CanBeReleased() const override { return bCanBeReleased; }
 	void SetCanBeReleased() { bCanBeReleased = true; }
 

@@ -7,12 +7,6 @@
 #include "Marketplace/MarketplacePolicy.h"
 
 
-// USearchStacksOptionWidget::USearchStacksOptionWidget(const FObjectInitializer& ObjectInitializer)
-// 	: Super(ObjectInitializer)
-// {
-// 	ControlPanelButtonsData.Add(FUIControlPanelButtons::Search, EAWStackControlPanelSide::Right); 
-// }
-
 void USearchStacksOptionWidget::NativeOnActivated()
 {
 	Super::NativeOnActivated();
@@ -27,6 +21,7 @@ void USearchStacksOptionWidget::NativeOnActivated()
 	if (SearchButton)
 	{
 		SearchButton->Show();
+		SearchButton->SetEnable();
 	}
 }
 

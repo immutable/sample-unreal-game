@@ -5,32 +5,9 @@
 #include "Marketplace/SearchStacksWidget.h"
 
 
-// UActivatableWidgetWithControlPanels::UActivatableWidgetWithControlPanels(const FObjectInitializer& ObjectInitializer)
-// 	: Super(ObjectInitializer)
-// {
-// }
-
 FString UActivatableWidgetWithControlPanels::GetTitle() const
 {
 	return WidgetTitle;
-}
-
-// const TMap<FGameplayTag, EAWStackControlPanelSide>& UActivatableWidgetWithControlPanels::GetControlButtonsData() const
-// {
-// 	return ControlPanelButtonsData; 
-// }
-
-void UActivatableWidgetWithControlPanels::SetupControlButtons(UAWStackWithControlPanels* HostLayer)
-{
-	// for(auto ButtonData : ControlPanelButtonsData)
-	// {
-	// 	UControlPanelButton* NewButton = ButtonData.Value == EAWStackControlPanelSide::Left ? HostPanel->AddButtonToLeft(ButtonData.Key) : NewButton = HostPanel->AddButtonToRight(ButtonData.Key);
-	//
-	// 	if (NewButton)
-	// 	{
-	// 		ControlPanelButtons.Add(ButtonData.Key, NewButton);
-	// 	}
-	// }
 }
 
 TSharedRef<SWidget> UActivatableWidgetWithControlPanels::RebuildWidget()

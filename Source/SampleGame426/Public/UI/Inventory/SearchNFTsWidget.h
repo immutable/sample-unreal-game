@@ -27,6 +27,7 @@ protected:
 	/* UUserWidget */
 	/* UActivatableWidget */
 	virtual void NativeOnActivated() override;
+	virtual void NativeOnDeactivated() override;
 	/* UActivatableWidget */
 	
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;

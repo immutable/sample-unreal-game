@@ -200,19 +200,15 @@ void UAWStackWithControlPanels::OnMainPanelButtonClicked(UTopPanelButton* Button
 
 	if (ActiveMainButton != Button)
 	{
-		if (ActiveMainButton)
+		if (ActiveMainButton && DisplayedWidgetGroupPair.Key)
 		{
-			auto ActiveGroup = DisplayedWidgetGroupPair.Key;
-			
-			for (auto Widget : ActiveGroup->WidgetsInGroup)
-			{
-				Widget->SetCanBeReleased();
-			}
+			ClearWidgetFromGroup(DisplayedWidgetGroupPair.Key);
+			DisplayedWidgetGroupPair.Key = nullptr;
+			DisplayedWidgetGroupPair.Value = -1;
 		}
 		ActiveMainButton = Button;
+		ShowWidgetFromGroup(*Group);
 	}
-
-	ShowWidgetFromGroup(*Group);
 
 	// DisplayedWidgetGroupPair.Key = *Group;
 	// DisplayedWidgetGroupPair.Value = 0;
@@ -237,7 +233,10 @@ void UAWStackWithControlPanels::OnSecondaryPanelButtonClicked(UTopPanelButton* B
 		return;
 	}
 
-	ShowWidgetFromGroup(*Group, Button->GetIndex());
+	if (ActiveSecondaryButton != Button)
+	{
+		ShowWidgetFromGroup(*Group, Button->GetIndex());
+	}
 }
 
 void UAWStackWithControlPanels::BuildTopPanel()
@@ -322,6 +321,20 @@ void UAWStackWithControlPanels::ShowWidgetFromGroup(struct FActivatableWidgetWit
 	DisplayedWidgetGroupPair.Value = WidgetIndex;
 }
 
+void UAWStackWithControlPanels::ClearWidgetFromGroup(struct FActivatableWidgetWithControlPanelsGroup* Group)
+{
+	int32 NumberOfWidgets = Group->WidgetsInGroup.Num();
+	for (int32 i = 0; i < NumberOfWidgets; ++i)
+	{
+		if (Group->WidgetsInGroup[i])
+		{
+			Group->WidgetsInGroup[i]->SetCanBeReleased();
+			RemoveWidget(*Group->WidgetsInGroup[i]);
+			Group->WidgetsInGroup[i] = nullptr;
+		}
+	}
+}
+
 void UAWStackWithControlPanels::ReleaseSlateResources(bool bReleaseChildren)
 {
 	Super::ReleaseSlateResources(bReleaseChildren);
@@ -350,6 +363,11 @@ void UAWStackWithControlPanels::ReleaseSlateResources(bool bReleaseChildren)
 	LeftControlPanel.Reset();
 	RightControlPanel.Reset();
 	ControlPanelButtons.Empty();
+
+	for (auto WidgetGroup : WidgetGroups)
+	{
+		ClearWidgetFromGroup(&WidgetGroup);	
+	}
 }
 
 UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side)

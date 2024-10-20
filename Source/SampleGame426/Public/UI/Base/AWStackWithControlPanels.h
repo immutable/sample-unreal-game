@@ -50,6 +50,7 @@ private:
 	void BuildTopPanel();
 	void BuildControlPanel();
 	void ShowWidgetFromGroup(struct FActivatableWidgetWithControlPanelsGroup*, int32 WidgetIndex = 0);
+	void ClearWidgetFromGroup(struct FActivatableWidgetWithControlPanelsGroup* Group);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
@@ -103,6 +104,7 @@ private:
 	TSharedPtr<SVerticalBox> RightControlPanel;
 
 	UTopPanelButton* ActiveMainButton = nullptr;
+	UTopPanelButton* ActiveSecondaryButton = nullptr;
 	TMap<UTopPanelButton*, struct FActivatableWidgetWithControlPanelsGroup*> MapMainButtonToWidgetGroup;
 	TPair<FActivatableWidgetWithControlPanelsGroup* /* Group */, int32 /* Widget Index */> DisplayedWidgetGroupPair;
 

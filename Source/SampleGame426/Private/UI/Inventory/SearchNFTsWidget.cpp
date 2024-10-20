@@ -60,6 +60,29 @@ void USearchNfTsWidget::NativeOnActivated()
 	Super::NativeOnActivated();
 
 	RefreshItemList(TOptional<FString>());
+
+	if (SellButton)
+	{
+		SellButton->Show();
+	}
+	if (CancelSellButton)
+	{
+		CancelSellButton->Show();
+	}
+}
+
+void USearchNfTsWidget::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+
+	if (SellButton)
+	{
+		SellButton->Hide();
+	}
+	if (CancelSellButton)
+	{
+		CancelSellButton->Hide();
+	}
 }
 
 void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostLayer)

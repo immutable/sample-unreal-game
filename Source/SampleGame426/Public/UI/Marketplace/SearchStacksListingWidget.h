@@ -35,6 +35,9 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
 	void SetName(const FString& Name);
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
+	void BP_Reset();
+
 private:
 	void OnItemSelectionStatusChange(bool IsItemSelected, UItemWidget* ItemWidget);
 	void OnFulfillOrder(const ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderResponse& Response);

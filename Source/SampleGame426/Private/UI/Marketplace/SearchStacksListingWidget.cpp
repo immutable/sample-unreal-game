@@ -30,7 +30,6 @@ void USearchStacksListingWidget::NativeOnActivated()
 	{
 		BuyButton->Show();
 	}
-	Refresh();
 }
 
 void USearchStacksListingWidget::NativeOnDeactivated()
@@ -63,6 +62,7 @@ void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 	}
 
 	Listings->Reset();
+	BP_Reset();
 	
 	auto StackBundle = static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data);
 

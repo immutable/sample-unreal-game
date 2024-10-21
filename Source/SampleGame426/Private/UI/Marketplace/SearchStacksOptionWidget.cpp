@@ -21,7 +21,6 @@ void USearchStacksOptionWidget::NativeOnActivated()
 	if (SearchButton)
 	{
 		SearchButton->Show();
-		SearchButton->SetEnable();
 	}
 }
 
@@ -63,5 +62,6 @@ void USearchStacksOptionWidget::SetupControlButtons(UAWStackWithControlPanels* H
 		{
 			HostLayer->MoveToNextWidgetInGroup();
 		}));
+		SearchButton->SetEnable();
 	}
 }

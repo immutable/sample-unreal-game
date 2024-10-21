@@ -30,27 +30,7 @@ void USearchStacksListingWidget::NativeOnActivated()
 	{
 		BuyButton->Show();
 	}
-
-	auto Group = GetGroup();
-	
-	if (!Group)
-	{
-		return;
-	}
-
-	USearchStacksWidget* ResultsWidget = Cast<USearchStacksWidget>(Group->WidgetsInGroup[GetIndexInGroup() - 1]);
-
-	if (!ResultsWidget)
-	{
-		return;
-	}
-
-	UStackItemWidget* ItemWidget = Cast<UStackItemWidget>(ResultsWidget->GetSelectedItem());
-	
-	if (ItemWidget && ItemWidget->GetStackBundle().IsValid())
-	{
-		ProcessModel(*ItemWidget->GetStackBundle().Get());
-	}
+	Refresh();
 }
 
 void USearchStacksListingWidget::NativeOnDeactivated()
@@ -77,6 +57,13 @@ void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPa
 
 void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 {
+	if (!Listings)
+	{
+		return;
+	}
+
+	Listings->Reset();
+	
 	auto StackBundle = static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data);
 
 	FString StackName = StackBundle.Stack.Name.GetValue();
@@ -124,6 +111,30 @@ void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 	for (int32 i = 0; i < StackNumber; ++i)
 	{
 		Listings->AddItem(StackBundle.Listings[i], i % 2 == 0, UItemWidget::FOnSelectionChange::CreateUObject(this, &USearchStacksListingWidget::OnItemSelectionStatusChange));
+	}
+}
+
+void USearchStacksListingWidget::Refresh()
+{
+	auto Group = GetGroup();
+	
+	if (!Group)
+	{
+		return;
+	}
+
+	USearchStacksWidget* ResultsWidget = Cast<USearchStacksWidget>(Group->WidgetsInGroup[GetIndexInGroup() - 1]);
+
+	if (!ResultsWidget)
+	{
+		return;
+	}
+
+	UStackItemWidget* ItemWidget = Cast<UStackItemWidget>(ResultsWidget->GetSelectedItem());
+	
+	if (ItemWidget && ItemWidget->GetStackBundle().IsValid())
+	{
+		ProcessModel(*ItemWidget->GetStackBundle().Get());
 	}
 }
 
@@ -208,6 +219,11 @@ void USearchStacksListingWidget::OnFulfillOrder(const ImmutableTsSdkApi::OpenAPI
 			GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), [this](FString TransactionHash, FString Status)
 			{
 				ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying success!"), TEXT("Transaction complete successfully! Enjoy your new purchase!"), { EDialogResult::Closed, LOCTEXT("Close", "Close") }, false));
+
+				if (USearchStacksListing_ListingItemWidget* ListingItemWidget = Cast<USearchStacksListing_ListingItemWidget>(SelectedItem))
+				{
+					ListingItemWidget->SetIsOwned(true);
+				}
 				GetOwningCustomLocalPLayer()->UpdateBalance();
 			});
 		};

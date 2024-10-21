@@ -5,7 +5,9 @@
 #include "OpenAPIOrderbookApiOperations.h"
 #include "UIGameplayTags.h"
 #include "Dialog/DialogSubsystem.h"
+#include "GameFramework/GameModeBase.h"
 #include "Immutable/ImmutableSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 #include "Settings/SampleGameSettings.h"
 
 
@@ -67,6 +69,20 @@ void UCustomLocalPlayer::LoginPassport()
 	 		Passport->Connect(true, Result.Success, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));	
 	 	}));
 	 }
+}
+
+void UCustomLocalPlayer::LogoutPassport()
+{
+	if (Passport.IsValid())
+	{
+		Passport->Logout(true, UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
+		{
+			if (auto GameMode = UGameplayStatics::GetGameMode(this))
+			{
+				GameMode->ResetLevel();
+			}
+		}));
+	}
 }
 
 bool UCustomLocalPlayer::IsPassportLoggedIn()

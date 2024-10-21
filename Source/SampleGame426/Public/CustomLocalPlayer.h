@@ -42,6 +42,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void LoginPassport();
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	void LogoutPassport();
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	bool IsPassportLoggedIn();
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	FString GetPassportWalletAddress();

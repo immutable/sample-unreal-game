@@ -20,6 +20,7 @@ public:
 	virtual void NativeOnDeactivated() override;
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
 	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
+	virtual void Refresh() override;
 
 protected:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)

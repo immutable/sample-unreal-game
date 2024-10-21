@@ -36,10 +36,12 @@ public:
 	int32 GetIndexInGroup() const { return IndexInGroup; }
 	void SetGroup(FActivatableWidgetWithControlPanelsGroup* InGroup) { PartOfGroup = InGroup; }
 	const FActivatableWidgetWithControlPanelsGroup* GetGroup() const { return PartOfGroup; }
+	virtual void Refresh() {}
 	
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) {}
 	virtual bool CanBeReleased() const override { return bCanBeReleased; }
 	void SetCanBeReleased() { bCanBeReleased = true; }
+	virtual void Reset() override;
 
 protected:
 	/* UUserWidget interface */

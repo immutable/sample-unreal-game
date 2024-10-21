@@ -54,3 +54,11 @@ void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAP
 		}
 	}
 }
+
+void USearchStacksListing_ListingsWidget::Reset()
+{
+	if (ScrollBoxListings)
+	{
+		ScrollBoxListings->ClearChildren();
+	}
+}

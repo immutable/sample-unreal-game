@@ -32,6 +32,7 @@ public:
 	bool SetsVisibilityOnActivated() const { return bSetVisibilityOnActivated; }
 	bool SetsVisibilityOnDeactivated() const { return bSetVisibilityOnDeactivated; }
 
+	virtual void Reset();
 	virtual bool CanBeReleased() const;
 
 protected:
@@ -91,5 +92,4 @@ protected:
 
 	virtual void InternalProcessActivation();
 	virtual void InternalProcessDeactivation();
-	void Reset();
 };

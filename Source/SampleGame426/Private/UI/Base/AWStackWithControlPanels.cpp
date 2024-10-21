@@ -309,8 +309,10 @@ void UAWStackWithControlPanels::ShowWidgetFromGroup(struct FActivatableWidgetWit
 	if (!Widget)
 	{
 		Group->WidgetsInGroup[WidgetIndex] = AddWidget<UActivatableWidgetWithControlPanels>(Group->WidgetClassesGroup[WidgetIndex].LoadSynchronous());
+		Group->WidgetsInGroup[WidgetIndex]->Reset();
 		Group->WidgetsInGroup[WidgetIndex]->SetIndexInGroup(WidgetIndex);
 		Group->WidgetsInGroup[WidgetIndex]->SetGroup(Group);
+		Group->WidgetsInGroup[WidgetIndex]->Refresh();
 	}
 	else
 	{

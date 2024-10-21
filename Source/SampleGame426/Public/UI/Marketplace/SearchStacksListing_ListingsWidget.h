@@ -21,6 +21,7 @@ public:
 	DECLARE_DELEGATE_OneParam(FOnSelectionStatusChange, bool /* IsSelected */)
 	
 	void AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing, bool IsIdEven, const UItemWidget::FOnSelectionChange& InOnSelectionChangeDelegate);
+	void Reset();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Marketplace")

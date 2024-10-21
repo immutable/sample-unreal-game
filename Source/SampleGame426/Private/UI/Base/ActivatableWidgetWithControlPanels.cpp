@@ -10,6 +10,16 @@ FString UActivatableWidgetWithControlPanels::GetTitle() const
 	return WidgetTitle;
 }
 
+void UActivatableWidgetWithControlPanels::Reset()
+{
+	Super::Reset();
+
+	bCanBeReleased = false;
+	IndexInGroup = -1;
+	PartOfGroup = nullptr;
+	ControlPanelButtons.Reset();
+}
+
 TSharedRef<SWidget> UActivatableWidgetWithControlPanels::RebuildWidget()
 {
 	return Super::RebuildWidget();

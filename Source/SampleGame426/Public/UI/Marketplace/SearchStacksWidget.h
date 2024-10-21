@@ -2,11 +2,18 @@
 
 #include "OpenAPIPage.h"
 #include "OpenAPIStacksApi.h"
+#include "OpenAPIStacksApiOperations.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Base/ItemListWidget.h"
 #include "UI/Interfaces/IItemListInterface.h"
 
 #include "SearchStacksWidget.generated.h"
+
+UENUM()
+enum class ESearchStacks_SortCategories : uint8
+{
+	Price
+};
 
 
 /*
@@ -21,6 +28,13 @@ public:
 	virtual void RefreshItemList(TOptional<FString> PageCursor) override;
 	UItemWidget* GetSelectedItem() const { return SelectedItemWidget; }
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintPure)
+	ESearchStacks_SortCategories GetSortCategory();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintPure)
+	bool GetSortOrder();
+
+	virtual void Refresh() override;
+
 protected:
 	/* UActivatableWidget */
 	virtual void NativeOnActivated() override;
@@ -33,6 +47,7 @@ protected:
 
 private:
 	void HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData);
+	void HandleSorting(TOptional<ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest::SortByEnum>& Sorting);
 	void ItemSelectionChange(bool IsSelected, UItemWidget* ItemWidget);
 	void OnControlButtonClicked(FGameplayTag ButtonTag);
 	void OnItemSelectionChange(bool IsSelected, UItemWidget* ItemWidget);

@@ -36,6 +36,8 @@ public:
 	int32 GetIndexInGroup() const { return IndexInGroup; }
 	void SetGroup(FActivatableWidgetWithControlPanelsGroup* InGroup) { PartOfGroup = InGroup; }
 	const FActivatableWidgetWithControlPanelsGroup* GetGroup() const { return PartOfGroup; }
+
+	UFUNCTION(BlueprintCallable)
 	virtual void Refresh() {}
 	
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) {}

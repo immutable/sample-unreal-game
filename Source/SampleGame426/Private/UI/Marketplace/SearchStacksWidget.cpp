@@ -44,6 +44,9 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	SearchStacksRequest.ContractAddress = Policy->GetContracts();
 	SearchStacksRequest.ChainName = Policy->GetChainName();
 	SearchStacksRequest.OnlyIfHasActiveListings = true;
+
+	HandleSorting(SearchStacksRequest.SortBy);
+	
 	if (!Policy->GetKeyword().IsEmpty())
 	{
 		SearchStacksRequest.Keyword = Policy->GetKeyword();	
@@ -54,6 +57,13 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	}
 		
 	Policy->GetStacksAPI()->SearchStacks(SearchStacksRequest, ImmutableOpenAPI::OpenAPIStacksApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
+}
+
+void USearchStacksWidget::Refresh()
+{
+	Super::Refresh();
+
+	RefreshItemList(TOptional<FString>());
 }
 
 void USearchStacksWidget::NativeOnActivated()
@@ -171,6 +181,25 @@ void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& Pa
 	if (PreviousPageButton)
 	{
 		PageCursors.PreviousCursor.IsSet() ? PreviousPageButton->Show() : PreviousPageButton->Hide();
+	}
+}
+
+void USearchStacksWidget::HandleSorting(TOptional<ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest::SortByEnum>& Sorting)
+{
+	switch (GetSortCategory())
+	{
+	case ESearchStacks_SortCategories::Price:
+		if (GetSortOrder())
+		{
+			Sorting = ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest::SortByEnum::CheapestFirst;	
+		}
+		else
+		{
+			Sorting.Reset();
+		}
+		break;
+	default:
+		Sorting.Reset();		
 	}
 }
 

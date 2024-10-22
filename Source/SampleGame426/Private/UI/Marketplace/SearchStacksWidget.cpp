@@ -36,6 +36,7 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 		return;
 	}
 
+	// The request object containing the search parameters.
 	ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest SearchStacksRequest;
 
 	SearchStacksRequest.PageSize = ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows();
@@ -56,6 +57,8 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 		SearchStacksRequest.Trait = Policy->GetTraits();
 	}
 		
+	
+	// This function sends a search request to Immutable API and binds the response to OnSearchStacksResponse method
 	Policy->GetStacksAPI()->SearchStacks(SearchStacksRequest, ImmutableOpenAPI::OpenAPIStacksApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
 }
 
@@ -123,20 +126,22 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 	}
 
 	int32 NumberOfColumns = ListPanel->GetNumberOfColumns();
-	// int32 NumberOfRows = ListPanel->GetNumberOfRows();
 	int32 NumberOfResults = Response.Content.Result.Num();
 
 	HandlePageData(Response.Content.Page);
+	// Assign the results data to the list panel's items
 	for (int32 ResultId = 0; ResultId < NumberOfResults; ResultId++)
 	{
 		int32 Row = ResultId / NumberOfColumns;
 		int32 Column = ResultId - Row * NumberOfColumns;
 		
+		// Assign via processing a signle stack bundle data received from Immutable API
 		if (auto ItemWidget = Cast<IMarketplaceOpenAPIProcessorInterface>(ListPanel->GetItem(Column, Row)))
 		{
 			ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
 		}
 
+		// click and selection handlers
 		if (auto ItemWidget = ListPanel->GetItem(Column, Row))
 		{
 			ItemWidget->RegisterOnSelectionChange(UItemWidget::FOnSelectionChange::CreateUObject(this, &USearchStacksWidget::OnItemSelectionChange));
@@ -205,14 +210,6 @@ void USearchStacksWidget::HandleSorting(TOptional<ImmutableOpenAPI::OpenAPIStack
 
 void USearchStacksWidget::ItemSelectionChange(bool IsSelected, UItemWidget* ItemWidget)
 {
-	// auto ListingWidget = Cast<USearchStacksListingWidget>(UGameUIManagerSubsystem::PushWidgetToLayer(GetOwningCustomLocalPLayer(), FUILayers::MenuWithControls, SearchStacksListingWidgetClass.LoadSynchronous()));
-	// UStackItemWidget* ItemWidget = Cast<UStackItemWidget>(InItemWidget);
-	//
-	// if (ListingWidget && ItemWidget && ItemWidget->GetStackBundle().IsValid())
-	// {
-	// 	ListingWidget->ProcessModel(*ItemWidget->GetStackBundle().Get());
-	// }
-
 	if (IsSelected && SelectedItemWidget != ItemWidget)
 	{
 		if (SelectedItemWidget)

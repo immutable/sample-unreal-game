@@ -134,7 +134,7 @@ void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Da
 	{
 		if (!Result.Success)
 		{
-			UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to sign and submit transaction"), Result.Error));
+			UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to sign and submit transaction"), Result.Error));
 			return;
 		}
 
@@ -171,7 +171,7 @@ void UCustomLocalPlayer::SignData(const FString& SingableMessageJson, TFunction<
 	{
 		if (!Result.Success)
 		{
-			UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to sign type data"), Result.Error));
+			UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to sign type data"), Result.Error));
 			return;
 		}
 		Callback(UImmutablePassport::GetResponseResultAsString(Result.Response));
@@ -182,7 +182,7 @@ void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableTsSdkApi::OpenAP
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update balance"), Response.GetResponseString()));
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update balance"), Response.GetResponseString()));
 		
 		return;
 	}
@@ -256,7 +256,7 @@ void UCustomLocalPlayer::OnPassportInitialized(FImmutablePassportResult Result)
 	}
 	if (!IsPassportInitialized)
 	{
-		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Immutable Passport is not initialized with error"), Result.Error));
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Immutable Passport is not initialized with error"), Result.Error));
 	}
 }
 
@@ -267,7 +267,7 @@ void UCustomLocalPlayer::OnPassportLoggedIn(FImmutablePassportResult Result)
 
 	if (!Result.Success)
 	{
-		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to login into Immutable Passport"), Result.Error));
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to login into Immutable Passport"), Result.Error));
 	}
 	else
 	{
@@ -304,7 +304,7 @@ void UCustomLocalPlayer::CollectPassportData()
 					}
 					else
 					{
-						UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to obtain Immutable Passport data"), Result.Error));
+						UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to obtain Immutable Passport data"), Result.Error));
 					}
 				}));
 			}
@@ -326,7 +326,7 @@ void UCustomLocalPlayer::NotifyIfAllPassportDataObtained()
 {
 	if (!CheckAllPassportDataObtained())
 	{
-		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorSimple, UDialogSubsystem::CreateErrorSimpleDescriptor(TEXT("Error"), TEXT("Some Immutable Passport data is missing")));
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorSimple, UDialogSubsystem::CreateErrorSimpleDescriptor(TEXT("Error"), TEXT("Some Immutable Passport data is missing")));
 		
 		return;
 	}

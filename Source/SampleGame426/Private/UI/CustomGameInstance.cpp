@@ -57,11 +57,11 @@ void UCustomGameInstance::SendDisplayMessage(const UObject* WorldContextObject, 
 // 	{
 // 		if (Error.IsEmpty())
 // 		{
-// 			DialogSubsystem->ShowError(FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(Title, Body, Error));	
+// 			DialogSubsystem->ShowError(NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(Title, Body, Error));	
 // 		}
 // 		else
 // 		{
-// 			DialogSubsystem->ShowError(FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(Title, Body, Error));
+// 			DialogSubsystem->ShowError(NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(Title, Body, Error));
 // 		}
 // 	}
 // }

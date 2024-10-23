@@ -106,8 +106,8 @@ void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostLayer
 {
 	Super::SetupControlButtons(HostLayer);
 
-	SellButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::Sell);
-	CancelSellButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::CancelSell);
+	SellButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_Sell);
+	CancelSellButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_CancelSell);
 
 	if (SellButton)
 	{
@@ -123,7 +123,7 @@ void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStac
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search NFTs result"), Response.GetHttpResponse()->GetContentAsString()));
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search NFTs result"), Response.GetHttpResponse()->GetContentAsString()));
 		
 		return;
 	}
@@ -213,9 +213,9 @@ void USearchNfTsWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& Page
 
 void USearchNfTsWidget::OnButtonClicked(FGameplayTag ButtonTag)
 {
-	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::Sell))
+	if (ButtonTag.MatchesTagExact(NativeUIGameplayTags.UI_ControlPanel_Button_Sell))
 	{
-		UDialog* SellDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Sell, UDialogSubsystem::CreateSellDescriptor(TEXT(""), TEXT("Please enter price and confirm that you are ready to list your NFT")));
+		UDialog* SellDialog = UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_Sell, UDialogSubsystem::CreateSellDescriptor(TEXT(""), TEXT("Please enter price and confirm that you are ready to list your NFT")));
 
 		if (SellDialog)
 		{
@@ -223,9 +223,9 @@ void USearchNfTsWidget::OnButtonClicked(FGameplayTag ButtonTag)
 		}
 	}
 
-	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::CancelSell))
+	if (ButtonTag.MatchesTagExact(NativeUIGameplayTags.UI_ControlPanel_Button_CancelSell))
 	{
-		UDialog* ConfirmationDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Confirmation, UDialogSubsystem::CreateConfirmMessageDescriptor(TEXT(""), TEXT("Do you wish to cancel your listing")));
+		UDialog* ConfirmationDialog = UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_Confirmation, UDialogSubsystem::CreateConfirmMessageDescriptor(TEXT(""), TEXT("Do you wish to cancel your listing")));
 
 		if (ConfirmationDialog)
 		{
@@ -245,7 +245,7 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 
 	DialogPtr->KillDialog();
 
-	ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Listing..."), TEXT("Started preparing listing..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
+	ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Listing..."), TEXT("Started preparing listing..."), {EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel")}));
 	ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnProcessDialogAction);	
 
 	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
@@ -283,7 +283,6 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 	RequestData.Sell = SellData;
 
 	Request.OpenAPIPrepareListingRequest = RequestData;
-	
 	Policy->GetTsSdkAPI()->PrepareListing(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FPrepareListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnPrepareListing));
 }
 
@@ -296,7 +295,7 @@ void USearchNfTsWidget::OnPlayerConfirmedCancelSell(UDialog* DialogPtr, EDialogR
 
 	DialogPtr->KillDialog();
 
-	ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Canceling listing..."), TEXT("Started..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
+	ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Canceling listing..."), TEXT("Started..."), {EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel")}));
 	ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnProcessDialogAction);	
 	
 	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
@@ -320,7 +319,6 @@ void USearchNfTsWidget::OnPlayerConfirmedCancelSell(UDialog* DialogPtr, EDialogR
 	RequestData.OrderIds.AddUnique(SelectedItemWidget->GetListingId());
 
 	Request.OpenAPICancelOrdersOnChainRequest = RequestData;
-
 	Policy->GetTsSdkAPI()->CancelOrdersOnChain(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FCancelOrdersOnChainDelegate::CreateUObject(this, &USearchNfTsWidget::OnCancelOrdersOnChain));
 }
 
@@ -513,7 +511,7 @@ void USearchNfTsWidget::OnProcessDialogAction(UDialog* DialogPtr, EDialogResult 
 		return;
 	}
 
-	// if (DialogPtr->GetDialogTag().MatchesTagExact(FUIDialogTypes::Process))
+	// if (DialogPtr->GetDialogTag().MatchesTagExact(NativeUIGameplayTags.UI_Dialog_Process))
 	// {
 	// 	
 	// }

@@ -46,7 +46,7 @@ void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPa
 {
 	Super::SetupControlButtons(HostLayer);
 
-	BuyButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::Buy);
+	BuyButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_Buy);
 
 	if (BuyButton)
 	{
@@ -169,7 +169,7 @@ void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)
 	
 	if(ListingItemWidget)
 	{
-		ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying..."), TEXT("Started fulfilling order..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
+		ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying..."), TEXT("Started fulfilling order..."), {EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel")}));
 		ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchStacksListingWidget::OnProcessDialogAction);	
 
 		/**

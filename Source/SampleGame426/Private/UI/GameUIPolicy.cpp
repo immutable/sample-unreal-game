@@ -58,7 +58,7 @@ const FDialogType* UGameUIPolicy::GetDialogType(FGameplayTag DialogTag) const
 
 void UGameUIPolicy::ShowThrobber()
 {
-	ThrobberScreenWidget = PushWidget(ThrobberScreenWidgetClass, FUILayers::Modal);
+	ThrobberScreenWidget = PushWidget(ThrobberScreenWidgetClass, NativeUIGameplayTags.UI_Layer_Modal);
 }
 
 void UGameUIPolicy::HideThrobber()
@@ -88,7 +88,7 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
 
 			// add login screen widget as an initial screen
-			LoginScreenWidget = Cast<ULoginScreenWidget>(PushWidget(LoginScreenWidgetClass, FUILayers::Menu));
+			LoginScreenWidget = Cast<ULoginScreenWidget>(PushWidget(LoginScreenWidgetClass, NativeUIGameplayTags.UI_Layer_Menu));
 
 	#if WITH_EDITOR
 			if (GIsEditor)

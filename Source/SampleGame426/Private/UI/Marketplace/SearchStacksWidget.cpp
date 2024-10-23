@@ -143,7 +143,7 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search stacks result"), Response.GetHttpResponse()->GetContentAsString()));
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire search stacks result"), Response.GetHttpResponse()->GetContentAsString()));
 		
 		return;
 	}
@@ -184,9 +184,9 @@ void USearchStacksWidget::SetupControlButtons(UAWStackWithControlPanels* HostLay
 {
 	Super::SetupControlButtons(HostLayer);
 
-	PreviousPageButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::PreviousPage);
-	NextPageButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::NextPage);
-	NFTInfoButton = HostLayer->AddButtonToRight(FUIControlPanelButtons::NFTInfo);
+	PreviousPageButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_PreviousPage);
+	NextPageButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_NextPage);
+	NFTInfoButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_NFTInfo);
 
 	if (PreviousPageButton)
 	{
@@ -267,11 +267,11 @@ void USearchStacksWidget::ItemSelectionChange(bool IsSelected, UItemWidget* Item
 
 void USearchStacksWidget::OnControlButtonClicked(FGameplayTag ButtonTag)
 {
-	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::PreviousPage))
+	if (ButtonTag.MatchesTagExact(NativeUIGameplayTags.UI_ControlPanel_Button_PreviousPage))
 	{
 		RefreshItemList(PageCursors.PreviousCursor);
 	}
-	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::NextPage))
+	if (ButtonTag.MatchesTagExact(NativeUIGameplayTags.UI_ControlPanel_Button_NextPage))
 	{
 		RefreshItemList(PageCursors.NextCursor);
 	}

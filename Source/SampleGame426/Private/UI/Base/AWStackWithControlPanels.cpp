@@ -158,8 +158,8 @@ void UAWStackWithControlPanels::SynchronizeProperties()
 		RightControlPanel->ClearChildren();
 		for (int32 i = 0; i < 5; ++i)
 		{
-			AddButtonToLeft(FUIControlPanelButtons::Empty);
-			AddButtonToRight(FUIControlPanelButtons::Empty);
+			AddButtonToLeft(NativeUIGameplayTags.UI_ControlPanel_Button_Empty);
+			AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_Empty);
 		}
 	}
 #endif
@@ -177,12 +177,12 @@ void UAWStackWithControlPanels::OnWidgetAddedToList(UActivatableWidget& AddedWid
 
 void UAWStackWithControlPanels::OnControlPanelButtonClicked(FGameplayTag ButtonTag)
 {
-	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::Back))
+	if (ButtonTag.MatchesTagExact(NativeUIGameplayTags.UI_ControlPanel_Button_Back))
 	{
 		MoveToPrevWidgetInGroup();	
 	}
 
-	if (ButtonTag.MatchesTagExact(FUIControlPanelButtons::Forward))
+	if (ButtonTag.MatchesTagExact(NativeUIGameplayTags.UI_ControlPanel_Button_Forward))
 	{
 		MoveToNextWidgetInGroup();
 	}
@@ -287,12 +287,12 @@ void UAWStackWithControlPanels::BuildControlPanel()
 {
 	if (!PreviousWidgetInGroupButton)
 	{
-		PreviousWidgetInGroupButton = AddButtonToLeft(FUIControlPanelButtons::Back);
+		PreviousWidgetInGroupButton = AddButtonToLeft(NativeUIGameplayTags.UI_ControlPanel_Button_Back);
 		PreviousWidgetInGroupButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &UAWStackWithControlPanels::OnControlPanelButtonClicked));
 	}
 	if(!NextWidgetInGroupButton)
 	{
-		NextWidgetInGroupButton = AddButtonToLeft(FUIControlPanelButtons::Forward);
+		NextWidgetInGroupButton = AddButtonToLeft(NativeUIGameplayTags.UI_ControlPanel_Button_Forward);
 		NextWidgetInGroupButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &UAWStackWithControlPanels::OnControlPanelButtonClicked));
 	}
 }

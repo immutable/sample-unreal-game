@@ -112,7 +112,7 @@ UDialog* UDialogSubsystem::ShowDialog(const FGameplayTag& DialogType, UDialogDes
 		return nullptr;
 	}
 
-	auto Dialog = Cast<UDialog>(UGameUIManagerSubsystem::PushWidgetToLayer(GetLocalPlayer(), FUILayers::Modal,  DialogData->Dialog.LoadSynchronous()));
+	auto Dialog = Cast<UDialog>(UGameUIManagerSubsystem::PushWidgetToLayer(GetLocalPlayer(), NativeUIGameplayTags.UI_Layer_Modal,  DialogData->Dialog.LoadSynchronous()));
 
 	if (!Dialog)
 	{

@@ -2,43 +2,34 @@
 
 #include "GameplayTagContainer.h"
 
-
-struct SAMPLEGAME426_API FUILayers
+struct SAMPLEGAME426_API FNativeUIGameplayTags : public FGameplayTagNativeAdder
 {
-	static FGameplayTag MenuWithControls;
-	static FGameplayTag Menu;
-	static FGameplayTag Modal;
+	/** FGameplayTagNativeAdder: Interface Begin */
+	virtual void AddTags() override;
+	/** FGameplayTagNativeAdder: Interface End */
 
-	static void InitUIGameplayTags_Layers();
+	FGameplayTag UI_Layer_MenuWithControls;
+	FGameplayTag UI_Layer_Menu;
+	FGameplayTag UI_Layer_Modal;
+
+	FGameplayTag UI_Dialog_None;
+	FGameplayTag UI_Dialog_ErrorSimple;
+	FGameplayTag UI_Dialog_ErrorFull;
+	FGameplayTag UI_Dialog_Confirmation;
+	FGameplayTag UI_Dialog_Message;
+	FGameplayTag UI_Dialog_Sell;
+	FGameplayTag UI_Dialog_Process;
+
+	FGameplayTag UI_ControlPanel_Button_Empty;
+	FGameplayTag UI_ControlPanel_Button_NextPage;
+	FGameplayTag UI_ControlPanel_Button_PreviousPage;
+	FGameplayTag UI_ControlPanel_Button_Back;
+	FGameplayTag UI_ControlPanel_Button_Forward;
+	FGameplayTag UI_ControlPanel_Button_Buy;
+	FGameplayTag UI_ControlPanel_Button_Sell;
+	FGameplayTag UI_ControlPanel_Button_CancelSell;
+	FGameplayTag UI_ControlPanel_Button_NFTInfo;
+	FGameplayTag UI_ControlPanel_Button_Search;
 };
 
-struct SAMPLEGAME426_API FUIControlPanelButtons
-{
-	static FGameplayTag Empty;
-	static FGameplayTag NextPage;
-	static FGameplayTag PreviousPage;
-	static FGameplayTag Back;
-	static FGameplayTag Forward;
-	static FGameplayTag Buy;
-	static FGameplayTag Sell;
-	static FGameplayTag CancelSell;
-	static FGameplayTag NFTInfo;
-	static FGameplayTag Search;
-	
-	static void InitUIGameplayTags_ControlPanelButtons();
-};
-
-struct SAMPLEGAME426_API FUIDialogTypes
-{
-	static FGameplayTag None;
-	static FGameplayTag ErrorSimple;
-	static FGameplayTag ErrorFull;
-	static FGameplayTag Confirmation;
-	static FGameplayTag Message;
-	static FGameplayTag Sell;
-	static FGameplayTag Process;
-
-	static void InitUIGameplayTags_DialogTypes();
-};
-
-
+static FNativeUIGameplayTags NativeUIGameplayTags;

@@ -91,7 +91,7 @@ void UActivatableWidget::NativeOnActivated()
 		if (bSetVisibilityOnActivated)
 		{
 			SetVisibility(ActivatedVisibility);
-			UE_LOG(LogSampleGame, Verbose, TEXT("[%s] set visibility to [%s] on activation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(ActivatedVisibility).ToString());
+			UE_LOG(LogSampleGame, Display, TEXT("[%s] set visibility to [%s] on activation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(ActivatedVisibility).ToString());
 		}
 
 		BP_OnActivated();
@@ -106,7 +106,7 @@ void UActivatableWidget::NativeOnDeactivated()
 		if (bSetVisibilityOnDeactivated)
 		{
 			SetVisibility(DeactivatedVisibility);
-			UE_LOG(LogSampleGame, Verbose, TEXT("[%s] set visibility to [%s] on deactivation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(DeactivatedVisibility).ToString());
+			UE_LOG(LogSampleGame, Display, TEXT("[%s] set visibility to [%s] on deactivation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(DeactivatedVisibility).ToString());
 		}
 
 		BP_OnDeactivated();

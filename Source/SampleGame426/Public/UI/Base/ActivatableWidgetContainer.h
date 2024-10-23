@@ -38,7 +38,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ActivatableWidgetStack")
 	UActivatableWidget* GetActiveWidget() const;
 
-	FOnDisplayedWidgetChanged& OnDisplayedWidgetChanged() const;
+	FOnDisplayedWidgetChanged& OnDisplayedWidgetChanged();
+	FTransitioningChanged& OnTransitioningChanged();
 
 	/** 
 	 * Adds an activatable widget instance to the container. 
@@ -118,9 +119,6 @@ private:
 	 */
 	void ReleaseWidget(const TSharedRef<SWidget>& WidgetToRelease);
 
-public:
-	FTransitioningChanged OnTransitioningChanged;
-
 protected:
 	/** The type of transition to play between widgets */
 	UPROPERTY(EditAnywhere, Category = "Transition")
@@ -146,13 +144,13 @@ protected:
 	TSharedPtr<SOverlay> MyOverlay;
 	TSharedPtr<SAnimatedSwitcher> MySwitcher;
 
-private:
 	TArray<TSharedPtr<SWidget>> ReleasedWidgets;
 
 	//@todo DanH: This is pretty clunky - revisit for something smoother
 	bool bRemoveDisplayedWidgetPostTransition = false;
 
-	mutable FOnDisplayedWidgetChanged OnDisplayedWidgetChangedEvent;
+	FOnDisplayedWidgetChanged OnDisplayedWidgetChangedEvent;
+	FTransitioningChanged OnTransitioningChangedEvent;
 };
 
 template <typename ActivatableWidgetT>

@@ -54,9 +54,14 @@ UActivatableWidget* UActivatableWidgetContainer::GetActiveWidget() const
 	return MySwitcher ? ActivatableWidgetFromSlate(MySwitcher->GetActiveWidget()) : nullptr;
 }
 
-UActivatableWidgetContainer::FOnDisplayedWidgetChanged& UActivatableWidgetContainer::OnDisplayedWidgetChanged() const
+UActivatableWidgetContainer::FOnDisplayedWidgetChanged& UActivatableWidgetContainer::OnDisplayedWidgetChanged()
 {
 	return OnDisplayedWidgetChangedEvent;
+}
+
+UActivatableWidgetContainer::FTransitioningChanged& UActivatableWidgetContainer::OnTransitioningChanged()
+{
+	return OnTransitioningChangedEvent;
 }
 
 void UActivatableWidgetContainer::AddWidgetInstance(UActivatableWidget& ActivatableWidget)
@@ -211,7 +216,7 @@ void UActivatableWidgetContainer::RegisterInstanceInternal(UActivatableWidget& N
 
 void UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged(bool bIsTransitioning)
 {
-	OnTransitioningChanged.Broadcast(this, bIsTransitioning);
+	OnTransitioningChangedEvent.Broadcast(this, bIsTransitioning);
 }
 
 void UActivatableWidgetContainer::HandleActiveIndexChanged(int32 ActiveWidgetIndex)

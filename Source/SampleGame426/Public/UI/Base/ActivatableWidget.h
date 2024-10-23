@@ -47,6 +47,12 @@ protected:
 	 */
 	virtual UWidget* NativeGetDesiredFocusTarget() const;
 
+	virtual void NativeOnActivated();
+	virtual void NativeOnDeactivated();
+
+	virtual void InternalProcessActivation();
+	virtual void InternalProcessDeactivation();
+
 	/** 
 	 * Implement to provide the desired widget to focus if/when this activatable becomes the primary active widget.
 	 * Note: This is a fallback used only if the native class parentage does not provide a target.
@@ -56,14 +62,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ActivatableWidget", Meta = (DisplayName = "On Activated"))
 	void BP_OnActivated();
-	virtual void NativeOnActivated();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ActivatableWidget", Meta = (DisplayName = "On Deactivated"))
 	void BP_OnDeactivated();
-	virtual void NativeOnDeactivated();
-
-	virtual void InternalProcessActivation();
-	virtual void InternalProcessDeactivation();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Activation", Meta = (InlineEditConditionToggle = "ActivatedVisibility"))
@@ -79,6 +80,9 @@ protected:
 	ESlateVisibility DeactivatedVisibility = ESlateVisibility::Collapsed;
 
 private:
+	UPROPERTY(BlueprintReadOnly, Category = "ActivatableWidget", Meta = (AllowPrivateAccess = true))
+	bool bIsActive = false;
+
 	/** Fires when the widget is activated. */
 	UPROPERTY(BlueprintAssignable, Category = "Events", Meta = (AllowPrivateAccess = true, DisplayName = "On Widget Activated"))
 	FOnWidgetActivationChanged BP_OnWidgetActivated;
@@ -86,9 +90,6 @@ private:
 	/** Fires when the widget is deactivated. */
 	UPROPERTY(BlueprintAssignable, Category = "Events", Meta = (AllowPrivateAccess = true, DisplayName = "On Widget Deactivated"))
 	FOnWidgetActivationChanged BP_OnWidgetDeactivated;
-
-	UPROPERTY(BlueprintReadOnly, Category = "ActivatableWidget", Meta = (AllowPrivateAccess = true))
-	bool bIsActive = false;
 
 	/** Handle to default back action, if bound */
 	FSimpleMulticastDelegate OnActivatedEvent;

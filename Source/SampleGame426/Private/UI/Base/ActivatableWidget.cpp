@@ -1,12 +1,64 @@
-
 #include "Base/ActivatableWidget.h"
 
 #include "LogSampleGame.h"
 
+void UActivatableWidget::Reset()
+{
+	bIsActive = false;
+
+	BP_OnWidgetActivated.Clear();
+	BP_OnWidgetDeactivated.Clear();
+}
 
 bool UActivatableWidget::CanBeReleased() const
 {
 	return !bIsActive;
+}
+
+bool UActivatableWidget::IsActivated() const
+{
+	return bIsActive;
+}
+
+UWidget* UActivatableWidget::GetDesiredFocusTarget() const
+{
+	return NativeGetDesiredFocusTarget();
+}
+
+FSimpleMulticastDelegate& UActivatableWidget::OnActivated()
+{
+	return OnActivatedEvent;
+}
+
+FSimpleMulticastDelegate& UActivatableWidget::OnDeactivated()
+{
+	return OnDeactivatedEvent;
+}
+
+bool UActivatableWidget::SetsVisibilityOnActivated() const
+{
+	return bSetVisibilityOnActivated;
+}
+
+bool UActivatableWidget::SetsVisibilityOnDeactivated() const
+{
+	return bSetVisibilityOnDeactivated;
+}
+
+void UActivatableWidget::ActivateWidget()
+{
+	if (!bIsActive)
+	{
+		InternalProcessActivation();
+	}
+}
+
+void UActivatableWidget::DeactivateWidget()
+{
+	if (bIsActive)
+	{
+		InternalProcessDeactivation();
+	}
 }
 
 void UActivatableWidget::NativeConstruct()
@@ -27,59 +79,23 @@ void UActivatableWidget::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-UWidget* UActivatableWidget::GetDesiredFocusTarget() const
-{
-	return NativeGetDesiredFocusTarget();
-}
-
 UWidget* UActivatableWidget::NativeGetDesiredFocusTarget() const
 {
 	return BP_GetDesiredFocusTarget();
 }
 
-void UActivatableWidget::ActivateWidget()
-{
-	if (!bIsActive)
-	{
-		InternalProcessActivation();
-	}
-}
-
-void UActivatableWidget::InternalProcessActivation()
-{
-	UE_LOG(LogSampleGame, Verbose, TEXT("[%s] -> Activated"), *GetName());
-
-	bIsActive = true;
-	NativeOnActivated();
-}
-
-void UActivatableWidget::DeactivateWidget()
-{
-	if (bIsActive)
-	{
-		InternalProcessDeactivation();
-	}
-}
-
-void UActivatableWidget::InternalProcessDeactivation()
-{
-	UE_LOG(LogSampleGame, Verbose, TEXT("[%s] -> Deactivated"), *GetName());
-
-	bIsActive = false;
-	NativeOnDeactivated();
-}
-
 void UActivatableWidget::NativeOnActivated()
 {
-	if (ensureMsgf(bIsActive, TEXT("[%s] has called NativeOnActivated, but isn't actually activated! Never call this directly - call ActivateWidget()")))
+	if (ensureMsgf(bIsActive, TEXT("[%s] has called NativeOnActivated, but isn't actually activated! Never call this directly - call ActivateWidget()"), *GetName()))
 	{
 		if (bSetVisibilityOnActivated)
 		{
 			SetVisibility(ActivatedVisibility);
-			UE_LOG(LogSampleGame, Verbose, TEXT("[%s] set visibility to [%s] on activation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(ActivatedVisibility).ToString());
+			UE_LOG(LogSampleGame, Display, TEXT("[%s] set visibility to [%s] on activation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(ActivatedVisibility).ToString());
 		}
 
 		BP_OnActivated();
+		OnActivated().Broadcast();
 		BP_OnWidgetActivated.Broadcast();
 	}
 }
@@ -91,19 +107,27 @@ void UActivatableWidget::NativeOnDeactivated()
 		if (bSetVisibilityOnDeactivated)
 		{
 			SetVisibility(DeactivatedVisibility);
-			UE_LOG(LogSampleGame, Verbose, TEXT("[%s] set visibility to [%d] on deactivation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(DeactivatedVisibility).ToString());
+			UE_LOG(LogSampleGame, Display, TEXT("[%s] set visibility to [%s] on deactivation"), *GetName(), *StaticEnum<ESlateVisibility>()->GetDisplayValueAsText(DeactivatedVisibility).ToString());
 		}
 
 		BP_OnDeactivated();
+		OnDeactivated().Broadcast();
 		BP_OnWidgetDeactivated.Broadcast();
 	}
 }
 
-void UActivatableWidget::Reset()
+void UActivatableWidget::InternalProcessActivation()
 {
-	bIsActive = false;
+	UE_LOG(LogSampleGame, Verbose, TEXT("[%s] -> Activated"), *GetName());
 
-	BP_OnWidgetActivated.Clear();
-	BP_OnWidgetDeactivated.Clear();
+	bIsActive = true;
+	NativeOnActivated();
 }
 
+void UActivatableWidget::InternalProcessDeactivation()
+{
+	UE_LOG(LogSampleGame, Verbose, TEXT("[%s] -> Deactivated"), *GetName());
+
+	bIsActive = false;
+	NativeOnDeactivated();
+}

@@ -36,6 +36,23 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 		return;
 	}
 
+	/**
+	 * Step 1(Inventory NFTs): In order to display items in the list panel of player's Inventory, we need to send a search request to the Immutable OpenAPI.
+	 * Some request parameters are populated based on the current state of the UI Marketplace policy settings.
+	 * @see UMarketplacePolicy
+	 * 
+	 * @param SearchNFTsRequest The request object to be passed to SearchNFTs method of the Immutable OpenAPI.
+	 * Must-be parameters:
+	 * - AccountAddress: The wallet address of the owning custom local player.
+	 * - ContractAddress: The contract address of NFT we are searching for, retrieved from the policy.
+	 * - ChainName: The name of the blockchain chain .
+	 * - OnlyIncludeOwnerListings: A boolean flag to include only owner listings. Must be 'true' in order to list player's NFTs.
+	 * Optional parameters:
+	 * - PageSize: The number of items per page, calculated based on the number of columns and rows in the ListPanel.
+	 * - PageCursor: The cursor for pagination.
+	 * 
+	 * The search request is sent using the ImmutableOpenAPI::OpenAPIStacksApi, and the response is bound to the USearchNfTsWidget::OnSearchNFTsResponse method.
+	 */
 	ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsRequest SearchNFTsRequest;
 	
 	SearchNFTsRequest.ChainName = Policy->GetChainName();
@@ -126,6 +143,13 @@ void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStac
 		auto ItemWidget = Cast<USearchNFTsItemWidget>(Item);
 		auto ItemInterface = Cast<IInventoryOpenAPIProcessorInterface>(Item);
 
+		/**
+		* Step 2(Inventory NFTs): This function performs the second step in the process.
+		* The Result array inside the Content of ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsResponse contains NFT data for the specified contract addresses owned by the player or Passport wallet address.
+		* Register selection handler for the item widget to dynamically acquire data for performing Immutable OpenAPI Listing or Cancel Listing procedures.
+		* Also, if Result's Listings array is not empty, highlight the item widget to be listed for sell.
+		* @see Definition of USearchNFTsItemWidget::ProcessModel to understand how the data is processed and displayed in the Inventory panel.
+		*/
 		ItemInterface->ProcessModel(ItemData);
 		ItemWidget->RegisterOnSelectionChange(UItemWidget::FOnSelectionChange::CreateUObject(this, &USearchNfTsWidget::OnItemSelection));
 
@@ -221,7 +245,27 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 
 	DialogPtr->KillDialog();
 
+	ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Listing..."), TEXT("Started preparing listing..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
+	ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnProcessDialogAction);	
+
 	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
+
+	
+	/**
+	 * Step 1(Listing): Prepares a listing request for the Immutable Orderbook API.
+	 *
+	 * This function sets up the necessary data for a listing request, including the buy and sell details,
+	 * and then sends the request using PrepareListing method of Immutable Orderbook API.
+	 *
+	 * The buy data includes the amount (converted to Wei string), contract address, and type (ERC20).
+	 * The sell data includes the contract address, type (ERC721), and token ID obtained from the selected item widget.
+	 * The maker address is set to the local player's wallet address.
+	 *
+	 * @param RequestData The data for the prepare listing request.
+	 * @param Request The request object for the prepare listing.
+	 * @param BuyData The data for the buy side of the listing.
+	 * @param SellData The data for the sell side of the listing.
+	 */
 	ImmutableTsSdkApi::OpenAPIPrepareListingRequest RequestData;
 	ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingRequest Request;
 	ImmutableTsSdkApi::OpenAPIPrepareListingRequestBuy BuyData;
@@ -240,9 +284,7 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 	RequestData.Sell = SellData;
 
 	Request.OpenAPIPrepareListingRequest = RequestData;
-
-	ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Listing..."), TEXT("Started preparing listing..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
-	ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnProcessDialogAction);	
+	
 	Policy->GetTsSdkAPI()->PrepareListing(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FPrepareListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnPrepareListing));
 }
 
@@ -254,8 +296,24 @@ void USearchNfTsWidget::OnPlayerConfirmedCancelSell(UDialog* DialogPtr, EDialogR
 	}
 
 	DialogPtr->KillDialog();
+
+	ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Canceling listing..."), TEXT("Started..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
+	ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnProcessDialogAction);	
 	
 	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
+
+	/**
+	 * Step 1(Cancel Listing): Prepares a cancel listing request for the Immutable Orderbook API.
+	 *
+	 * This function sets up the necessary data for a cancel listing request, including the account address and order IDs,
+	 * and then sends the request using CancelOrdersOnChain method of Immutable Orderbook API.
+	 *
+	 * The account address is set to the local player's wallet address.
+	 * The order ID is obtained from the selected item widget.
+	 *
+	 * @param RequestData The data for the cancel listing request.
+	 * @param Request The request object for the cancel listing.
+	 */
 	ImmutableTsSdkApi::OpenAPIOrderbookApi::CancelOrdersOnChainRequest Request;
 	ImmutableTsSdkApi::OpenAPICancelOrdersOnChainRequest RequestData;
 
@@ -263,9 +321,7 @@ void USearchNfTsWidget::OnPlayerConfirmedCancelSell(UDialog* DialogPtr, EDialogR
 	RequestData.OrderIds.AddUnique(SelectedItemWidget->GetListingId());
 
 	Request.OpenAPICancelOrdersOnChainRequest = RequestData;
-	
-	ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Canceling listing..."), TEXT("Started..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
-	ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnProcessDialogAction);	
+
 	Policy->GetTsSdkAPI()->CancelOrdersOnChain(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FCancelOrdersOnChainDelegate::CreateUObject(this, &USearchNfTsWidget::OnCancelOrdersOnChain));
 }
 
@@ -279,9 +335,20 @@ void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbo
 		
 		return;
 	}
-	
-	const auto* TransactionAction = Response.Content.Actions.FindByPredicate([this](const ImmutableTsSdkApi::OpenAPIAction& Action){ return Action.Type == ImmutableTsSdkApi::OpenAPIAction::TypeEnum::Transaction; });
 
+	/**
+	 * Step 2(Listing): Processes the response from the PrepareListing Orderbook API call and handles the required actions.
+	 * 
+	 * This function searches for specific actions (Transaction and Signable) in the response content.
+	 * If the player has never conducted the PrepareListing operation before, the Transaction action must be present in the response.
+	 * Subsequently, only the Signable action is required to sign the data and create a listing.
+	 * 
+	 * If the Transaction action is present, the function signs and submits the transaction to the blockchain via Immutable SDK ZkEvmSendTransactionWithConfirmation.
+	 * @see https://docs.immutable.com/sdks/zkEVM/unreal#zkevm-send-transaction. It is implemented in UCustomLocalPlayer::SignSubmitApproval.
+	 * If the Signable action is present, the function signs the data using Immutable SDK ZkEvmSignTypedDataV4 and creates a listing via the Immutable Orderbook API's CreateListing method.
+	 */
+
+	const auto* TransactionAction = Response.Content.Actions.FindByPredicate([this](const ImmutableTsSdkApi::OpenAPIAction& Action){ return Action.Type == ImmutableTsSdkApi::OpenAPIAction::TypeEnum::Transaction; });
 	const auto* SignableAction = Response.Content.Actions.FindByPredicate([this](const ImmutableTsSdkApi::OpenAPIAction& Action){ return Action.Type == ImmutableTsSdkApi::OpenAPIAction::TypeEnum::Signable; });
 
 	if (!TransactionAction && !SignableAction)
@@ -291,6 +358,7 @@ void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbo
 		return;
 	}
 
+	// defining lambda to avoid duplicate code
 	auto SignDataLambda = [this, Content = Response.Content, Message = SignableAction->Message.GetValue()]()
 	{
 		FString JsonText;
@@ -309,6 +377,18 @@ void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbo
 			{
 				return;
 			}
+
+			/**
+			* Step 2 Continued(Listing): This function continues the process of handling the Listing operation.
+			* 
+			* After succeful callback from ZkEvmSignTypedDataV4, the function sends a request to create a listing using the Immutable Orderbook API's CreateListing method.
+			* The request includes the order components, order hash, and the signature obtained from the signed data.
+			* The CreateListing method will send a callback to the delegate method USearchNfTsWidget::OnCreateListing, which will inform us whether the listing was successfully created or not.
+			* @see USearchNfTsWidget::OnCreateListing
+			* 
+			* @param Request The request object for creating the listing.
+			* @param RequestData The data for the create listing request.
+			*/
 			ImmutableTsSdkApi::OpenAPIOrderbookApi::CreateListingRequest Request;
 			ImmutableTsSdkApi::OpenAPICreateListingRequest RequestData;
 
@@ -326,6 +406,7 @@ void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbo
 		FString PopulatedTransactionsTo = TransactionAction->PopulatedTransactions.GetValue().To.GetValue();
 		FString PopulatedTransactionsData = TransactionAction->PopulatedTransactions.GetValue().Data.GetValue();
 
+		// find explanation for this part in Step 2(Listing) comment
 		GetOwningCustomLocalPLayer()->SignSubmitApproval(PopulatedTransactionsTo, PopulatedTransactionsData, [this, SignDataLambda](FString TransactionHash, FString Status)
 		{
 			ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Listing..."), TEXT("Signed and submitted transaction for listing..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
@@ -402,6 +483,16 @@ void USearchNfTsWidget::OnCancelOrdersOnChain(const ImmutableTsSdkApi::OpenAPIOr
 		return;
 	}
 
+	/**
+	 * Step 2(Cancel Listing):If response from CancelOrdersOnChain of Orderbook API is successful, we have to approve this transaction by using ZkEvmSendTransactionWithConfirmation.
+	 *
+	 * This function retrieves the populated transaction details from the Action object,
+	 * then calls the SignSubmitApproval(ZkEvmSendTransactionWithConfirmation) method on the owning custom local player.
+	 * Upon completion, it can format and display a message with the transaction hash and status,
+	 * updates the processing dialog to indicate success, and sets the selected item widget's
+	 * list-for-sell status to false.
+	 * @see UCustomLocalPlayer::SignSubmitApproval
+	 */
 	FString PopulatedTransactionsTo = Action.PopulatedTransactions.GetValue().To.GetValue();
 	FString PopulatedTransactionsData = Action.PopulatedTransactions.GetValue().Data.GetValue();
 

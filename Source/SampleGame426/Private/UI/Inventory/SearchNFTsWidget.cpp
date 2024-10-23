@@ -37,7 +37,7 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 	}
 
 	/**
-	 * Step 1(Inventory NFTs): In order to display items in the list panel of player's Inventory, we need to send a search request to the Immutable OpenAPI.
+	 * Step 1(Inventory display): In order to display items in the list panel of player's Inventory, we need to send a search request to the Immutable OpenAPI.
 	 * Some request parameters are populated based on the current state of the UI Marketplace policy settings.
 	 * @see UMarketplacePolicy
 	 * 
@@ -144,7 +144,7 @@ void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStac
 		auto ItemInterface = Cast<IInventoryOpenAPIProcessorInterface>(Item);
 
 		/**
-		* Step 2(Inventory NFTs): This function performs the second step in the process.
+		* Step 2(Inventory display): This function performs the second step in the process.
 		* The Result array inside the Content of ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsResponse contains NFT data for the specified contract addresses owned by the player or Passport wallet address.
 		* Register selection handler for the item widget to dynamically acquire data for performing Immutable OpenAPI Listing or Cancel Listing procedures.
 		* Also, if Result's Listings array is not empty, highlight the item widget to be listed for sell.
@@ -249,7 +249,6 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 	ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnProcessDialogAction);	
 
 	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
-
 	
 	/**
 	 * Step 1(Listing): Prepares a listing request for the Immutable Orderbook API.

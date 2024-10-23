@@ -36,7 +36,32 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 		return;
 	}
 
-	// The request object containing the search parameters.
+	/**
+	 * Step 1(Marketplace display): Constructs and sends a search stack request to the Immutable OpenAPI in order to obtain listed NFTs in the marketplace.
+	 * In order to display items in the list panel of the marketplace, we need to send a search request to the Immutable OpenAPI.
+	 * Some request parameters are populated based on the current state of the UI Marketplace policy settings.
+	 * @see UMarketplacePolicy
+	 * @details This function initializes a SearchStacksRequest object with various parameters
+	 * such as page size, page cursor, account address, contract address, chain name,
+	 * and active listings filter. It also handles sorting and optional keyword and trait
+	 * filters. Finally, it sends the request to the Stacks API and binds the response
+	 * to the OnSearchStacksResponse handler.
+	 *
+	 * @param SearchStacksRequest The request object to be passed to SearchStacks method of the Immutable OpenAPI.
+	 * Must-be parameters:
+	 * - AccountAddress: The wallet address of the owning custom local player.
+	 * - ContractAddress: The contract address of NFT we are searching for, retrieved from the policy.
+	 * - ChainName: The name of the blockchain chain .
+	 * Optional parameters:
+	 * - PageSize: The number of items per page, calculated based on the number of columns and rows in the ListPanel.
+	 * - PageCursor: The cursor for pagination.
+	 * - OnlyIfHasActiveListings: A boolean flag indicating if only active listings should be included.
+	 * - SortBy: The sorting criteria, specified as an enumeration.
+	 * - Keyword: The keyword for the search, if cached in the policy.
+	 * - Trait: The traits or metadata criteria for the search, if cached in the policy.
+	 *
+	 * The search request is sent using the ImmutableOpenAPI::OpenAPIStacksApi, and the response is bound to the USearchStacksWidget::OnSearchStacksResponse method.
+	 */
 	ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest SearchStacksRequest;
 
 	SearchStacksRequest.PageSize = ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows();
@@ -56,9 +81,7 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	{
 		SearchStacksRequest.Trait = Policy->GetTraits();
 	}
-		
 	
-	// This function sends a search request to Immutable API and binds the response to OnSearchStacksResponse method
 	Policy->GetStacksAPI()->SearchStacks(SearchStacksRequest, ImmutableOpenAPI::OpenAPIStacksApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
 }
 
@@ -138,12 +161,19 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 		// Assign via processing a signle stack bundle data received from Immutable API
 		if (auto ItemWidget = Cast<IMarketplaceOpenAPIProcessorInterface>(ListPanel->GetItem(Column, Row)))
 		{
+			/**
+			 * Step 2(Marketplace display): This function performs the second step in the process.
+			 * The Result array inside the Content of ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksResponse contains NFT data for the specified contract addresses owned by the player or Passport wallet address.
+			 * @see Definition of UStackItemWidget::ProcessModel to understand how the data is processed and displayed in the list panel.
+			 */
 			ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
 		}
 
 		// click and selection handlers
 		if (auto ItemWidget = ListPanel->GetItem(Column, Row))
 		{
+			
+			// Register click and selection handlers for the item widget			
 			ItemWidget->RegisterOnSelectionChange(UItemWidget::FOnSelectionChange::CreateUObject(this, &USearchStacksWidget::OnItemSelectionChange));
 			ItemWidget->RegisterOnDoubleClick(UItemWidget::FOnDoubleClick::CreateUObject(this, &USearchStacksWidget::OnItemDoubleClick));
 		}

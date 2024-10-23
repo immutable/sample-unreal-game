@@ -169,15 +169,27 @@ void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)
 	
 	if(ListingItemWidget)
 	{
+		ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying..."), TEXT("Started fulfilling order..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
+		ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchStacksListingWidget::OnProcessDialogAction);	
+
+		/**
+		 * Step 1(Buying): Initiates the fulfillment of an order using the the Orderbook API.
+		 * This function creates a request to fulfill an order by setting the necessary
+		 * request data, including the listing ID and the taker address. It then sends
+		 * the request using the FulfillOrder method of the Orderbook API.
+		 * @see ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderRequest
+		 *
+		 * @param RequestData The data required to fulfill the order, including the listing ID and taker address.
+		 * @param Request The request object that will be sent to the Orderbook API.
+		 */
 		ImmutableTsSdkApi::OpenAPIFulfillOrderRequest RequestData;
 		ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderRequest Request;
 
 		RequestData.ListingId = ListingItemWidget->GetListingId();
 		RequestData.TakerAddress = LocalPlayer->GetPassportWalletAddress();
-		Request.OpenAPIFulfillOrderRequest = RequestData;
 
-		ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, FUIDialogTypes::Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying..."), TEXT("Started fulfilling order..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
-		ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchStacksListingWidget::OnProcessDialogAction);	
+		Request.OpenAPIFulfillOrderRequest = RequestData;
+		
 		Policy->GetTsSdkAPI()->FulfillOrder(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FFulfillOrderDelegate::CreateUObject(this, &USearchStacksListingWidget::OnFulfillOrder));
 	}
 }
@@ -202,6 +214,17 @@ void USearchStacksListingWidget::OnFulfillOrder(const ImmutableTsSdkApi::OpenAPI
 
 	if (Response.Content.Actions.IsSet())
 	{
+		/**
+		* Step 2(Buying): Processes the response from the FulfillOrder Orderbook API call and handles the required actions.
+		* 
+		* This function searches for specific actions (Approval and FulfillOrder) in the response content.
+		* If the player has never conducted the FulfillOrder operation before, the Approval action must be present in the response.
+		* Subsequently, only the FulfillOrder action is required to complete the purchase.
+		* 
+		* If the Approval action is present, the function signs and submits the transaction to the blockchain via Immutable SDK ZkEvmSendTransactionWithConfirmation.
+		* @see https://docs.immutable.com/sdks/zkEVM/unreal#zkevm-send-transaction. It is implemented in UCustomLocalPlayer::SignSubmitApproval.
+		* If the FulfillOrder action is present, the function signs and submits the transaction using Immutable SDK ZkEvmSendTransactionWithConfirmation and completes the purchase.
+		*/
 		auto Actions = Response.Content.Actions.GetValue();
 
 		const auto* ApprovalAction = Actions.FindByPredicate([this](const ImmutableTsSdkApi::OpenAPITransactionAction& Action){ return Action.Purpose.GetValue().Value == ImmutableTsSdkApi::OpenAPITransactionPurpose::Values::Approval; });

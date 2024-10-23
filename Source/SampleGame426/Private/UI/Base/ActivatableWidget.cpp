@@ -1,12 +1,64 @@
-
 #include "Base/ActivatableWidget.h"
 
 #include "LogSampleGame.h"
 
+void UActivatableWidget::Reset()
+{
+	bIsActive = false;
+
+	BP_OnWidgetActivated.Clear();
+	BP_OnWidgetDeactivated.Clear();
+}
 
 bool UActivatableWidget::CanBeReleased() const
 {
 	return !bIsActive;
+}
+
+bool UActivatableWidget::IsActivated() const
+{
+	return bIsActive;
+}
+
+UWidget* UActivatableWidget::GetDesiredFocusTarget() const
+{
+	return NativeGetDesiredFocusTarget();
+}
+
+FSimpleMulticastDelegate& UActivatableWidget::OnActivated() const
+{
+	return OnActivatedEvent;
+}
+
+FSimpleMulticastDelegate& UActivatableWidget::OnDeactivated() const
+{
+	return OnDeactivatedEvent;
+}
+
+bool UActivatableWidget::SetsVisibilityOnActivated() const
+{
+	return bSetVisibilityOnActivated;
+}
+
+bool UActivatableWidget::SetsVisibilityOnDeactivated() const
+{
+	return bSetVisibilityOnDeactivated;
+}
+
+void UActivatableWidget::ActivateWidget()
+{
+	if (!bIsActive)
+	{
+		InternalProcessActivation();
+	}
+}
+
+void UActivatableWidget::DeactivateWidget()
+{
+	if (bIsActive)
+	{
+		InternalProcessDeactivation();
+	}
 }
 
 void UActivatableWidget::NativeConstruct()
@@ -27,46 +79,9 @@ void UActivatableWidget::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-UWidget* UActivatableWidget::GetDesiredFocusTarget() const
-{
-	return NativeGetDesiredFocusTarget();
-}
-
 UWidget* UActivatableWidget::NativeGetDesiredFocusTarget() const
 {
 	return BP_GetDesiredFocusTarget();
-}
-
-void UActivatableWidget::ActivateWidget()
-{
-	if (!bIsActive)
-	{
-		InternalProcessActivation();
-	}
-}
-
-void UActivatableWidget::InternalProcessActivation()
-{
-	UE_LOG(LogSampleGame, Verbose, TEXT("[%s] -> Activated"), *GetName());
-
-	bIsActive = true;
-	NativeOnActivated();
-}
-
-void UActivatableWidget::DeactivateWidget()
-{
-	if (bIsActive)
-	{
-		InternalProcessDeactivation();
-	}
-}
-
-void UActivatableWidget::InternalProcessDeactivation()
-{
-	UE_LOG(LogSampleGame, Verbose, TEXT("[%s] -> Deactivated"), *GetName());
-
-	bIsActive = false;
-	NativeOnDeactivated();
 }
 
 void UActivatableWidget::NativeOnActivated()
@@ -99,11 +114,18 @@ void UActivatableWidget::NativeOnDeactivated()
 	}
 }
 
-void UActivatableWidget::Reset()
+void UActivatableWidget::InternalProcessActivation()
 {
-	bIsActive = false;
+	UE_LOG(LogSampleGame, Verbose, TEXT("[%s] -> Activated"), *GetName());
 
-	BP_OnWidgetActivated.Clear();
-	BP_OnWidgetDeactivated.Clear();
+	bIsActive = true;
+	NativeOnActivated();
 }
 
+void UActivatableWidget::InternalProcessDeactivation()
+{
+	UE_LOG(LogSampleGame, Verbose, TEXT("[%s] -> Deactivated"), *GetName());
+
+	bIsActive = false;
+	NativeOnDeactivated();
+}

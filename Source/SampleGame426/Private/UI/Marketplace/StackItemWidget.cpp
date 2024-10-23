@@ -57,11 +57,6 @@ void UStackItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
-void UStackItemWidget::SetOriginalState()
-{
-	Super::SetOriginalState();
-}
-
 TSharedPtr<ImmutableOpenAPI::OpenAPIStackBundle> UStackItemWidget::GetStackBundle() const
 {
 	return StackBundle;

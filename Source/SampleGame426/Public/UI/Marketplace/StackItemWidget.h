@@ -8,7 +8,10 @@
 
 
 /**
- * 
+ * @class UStackItemWidget
+ * @ingroup Marketplace
+ * @brief A widget class that represents an item in the search stack widget within the marketplace UI.
+ * @see Blueprint that inherits from USearchStacksWidget. /Game/UI/Parts/Marketplace/WBP_SearchStackResults_Main
  */
 UCLASS(Abstract, BlueprintType)
 class SAMPLEGAME426_API UStackItemWidget : public UItemWidget, public IMarketplaceOpenAPIProcessorInterface
@@ -16,16 +19,47 @@ class SAMPLEGAME426_API UStackItemWidget : public UItemWidget, public IMarketpla
 	GENERATED_BODY()
 
 public:
+	/* IMarketplaceOpenAPIProcessorInterface interface */
 	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
-	virtual void SetOriginalState() override;
+	/* IMarketplaceOpenAPIProcessorInterface interface */
 
+	/**
+	 * Retrieves the Immutable OpenAPI stack bundle associated with this NFT item.
+	 *
+	 * @return A shared pointer to an OpenAPIStackBundle object.
+	 */
 	TSharedPtr<ImmutableOpenAPI::OpenAPIStackBundle> GetStackBundle() const;
 
 protected:
+	/**
+	 * Sets the listing count for the stack item widget.
+	 *
+	 * @param Count The number of listings to set.
+	 */
 	void SetListingCount(int32 Count);
+	/**
+	 * Sets the thumbnail texture for the NFT.
+	 *
+	 * @param Texture A soft object pointer to the UTexture2D asset to be set as the texture for the NFT.
+	 */
 	void SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture);
+	/**
+	 * Sets the NFT name of the stack item widget.
+	 *
+	 * @param Name The new name to set for the stack item widget.
+	 */
 	void SetName(const FString& Name);
+	/**
+	 * Sets the NFT price for the stack item widget.
+	 *
+	 * @param PriceDetails An object containing the market price details.
+	 */
 	void SetPrice(const ImmutableOpenAPI::OpenAPIMarketPriceDetails& PriceDetails);
+	/**
+	 * Sets the name of the cryptocurrency token used for the NFT price.
+	 *
+	 * @param Name The name of the price token to be set.
+	 */
 	void SetPriceTokenName(const FString& Name);
 
 protected:

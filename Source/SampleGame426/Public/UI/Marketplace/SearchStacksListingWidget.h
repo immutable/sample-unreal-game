@@ -25,13 +25,16 @@ public:
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnDeactivated() override;
 	/* UActivatableWidget interface */
+	
+	/* IMarketplaceOpenAPIProcessorInterface interface */
+	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
+	/* IMarketplaceOpenAPIProcessorInterface interface */
 
 	/* UActivatableWidgetWithControlPanels interface */
-	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
-	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;	
 	virtual void Refresh() override;
 	/* UActivatableWidgetWithControlPanels interface */
-
+	
 protected:
 	/**
 	 * Adds a NFT general information such as description, dates etc.

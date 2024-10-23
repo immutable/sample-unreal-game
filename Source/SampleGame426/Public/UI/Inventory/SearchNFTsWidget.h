@@ -32,13 +32,13 @@ public:
 	virtual void RefreshItemList(TOptional<FString> PageCursor) override;
 
 protected:
-	/* UUserWidget */
+	/* UUserWidget interface  */
 	virtual void NativeOnInitialized() override;
-	/* UUserWidget */
-	/* UActivatableWidget */
+	/* UUserWidget interface */
+	/* UActivatableWidget interface */
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnDeactivated() override;
-	/* UActivatableWidget */
+	/* UActivatableWidget interface */
 	
 	/* UActivatableWidgetWithControlPanels interface */
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;

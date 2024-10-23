@@ -1,10 +1,11 @@
-
 #include "Base/ActivatableWidgetContainer.h"
-#include "Widgets/SOverlay.h"
-#include "Widgets/Layout/SSpacer.h"
+
+#include "Containers/Ticker.h"
 #include "Stats/Stats.h"
 #include "TimerManager.h"
-#include "Containers/Ticker.h"
+#include "Widgets/Layout/SSpacer.h"
+#include "Widgets/SOverlay.h"
+
 #include "Base/ActivatableWidget.h"
 
 #define LOCTEXT_NAMESPACE "ImmutableUI"
@@ -26,9 +27,9 @@ UActivatableWidget* ActivatableWidgetFromSlate(const TSharedPtr<SWidget>& SlateW
 // UActivatableWidgetContainer
 //////////////////////////////////////////////////////////////////////////
 
-UActivatableWidgetContainer::UActivatableWidgetContainer(const FObjectInitializer& Initializer)
-	: Super(Initializer)
-	, GeneratedWidgetsPool(*this)
+UActivatableWidgetContainer::UActivatableWidgetContainer(const FObjectInitializer& Initializer) :
+	Super(Initializer),
+	GeneratedWidgetsPool(*this)
 {
 	SetVisibility(ESlateVisibility::Collapsed);
 }
@@ -38,9 +39,14 @@ const FText UActivatableWidgetContainer::GetPaletteCategory()
 	return LOCTEXT("SAMPLEGAME426_UI", "Immutable");
 }
 
-void UActivatableWidgetContainer::AddWidgetInstance(UActivatableWidget& ActivatableWidget)
+int32 UActivatableWidgetContainer::GetNumWidgets() const
 {
-	RegisterInstanceInternal(ActivatableWidget);
+	return WidgetList.Num();
+}
+
+const TArray<UActivatableWidget*>& UActivatableWidgetContainer::GetWidgetList() const
+{
+	return WidgetList;
 }
 
 UActivatableWidget* UActivatableWidgetContainer::GetActiveWidget() const
@@ -48,9 +54,14 @@ UActivatableWidget* UActivatableWidgetContainer::GetActiveWidget() const
 	return MySwitcher ? ActivatableWidgetFromSlate(MySwitcher->GetActiveWidget()) : nullptr;
 }
 
-int32 UActivatableWidgetContainer::GetNumWidgets() const
+UActivatableWidgetContainer::FOnDisplayedWidgetChanged& UActivatableWidgetContainer::OnDisplayedWidgetChanged() const
 {
-	return WidgetList.Num();
+	return OnDisplayedWidgetChangedEvent;
+}
+
+void UActivatableWidgetContainer::AddWidgetInstance(UActivatableWidget& ActivatableWidget)
+{
+	RegisterInstanceInternal(ActivatableWidget);
 }
 
 void UActivatableWidgetContainer::RemoveWidget(UActivatableWidget* WidgetToRemove)
@@ -61,49 +72,9 @@ void UActivatableWidgetContainer::RemoveWidget(UActivatableWidget* WidgetToRemov
 	}
 }
 
-void UActivatableWidgetContainer::RemoveWidget(UActivatableWidget& WidgetToRemove)
-{
-	if (&WidgetToRemove == GetActiveWidget())
-	{
-		// To remove the active widget, just deactivate it (if it's already deactivated, then we're already in the process of ditching it)
-		if (WidgetToRemove.IsActivated())
-		{
-			WidgetToRemove.DeactivateWidget();
-		}
-	}
-	else
-	{
-		// Otherwise if the widget isn't actually being shown right now, yank it right on out
-		TSharedPtr<SWidget> CachedWidget = WidgetToRemove.GetCachedWidget();
-		if (CachedWidget && MySwitcher)
-		{
-			ReleaseWidget(CachedWidget.ToSharedRef());
-		}
-	}
-}
-
 void UActivatableWidgetContainer::ClearWidgets()
 {
 	SetSwitcherIndex(0);
-}
-
-TSharedRef<SWidget> UActivatableWidgetContainer::RebuildWidget()
-{
-	MyOverlay = SNew(SOverlay)
-		+ SOverlay::Slot()
-		[
-			SAssignNew(MySwitcher, SAnimatedSwitcher)
-			.TransitionCurveType(TransitionCurveType)
-			.TransitionDuration(TransitionDuration)
-			.TransitionType(TransitionType)
-			.OnActiveIndexChanged_UObject(this, &UActivatableWidgetContainer::HandleActiveIndexChanged)
-			.OnIsTransitioningChanged_UObject(this, &UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged)
-		];
-
-	// We always want a 0th slot to be able to animate the first real entry in and out
-	MySwitcher->AddSlot() [SNullWidget::NullWidget];
-
-	return MyOverlay.ToSharedRef();
 }
 
 void UActivatableWidgetContainer::ReleaseSlateResources(bool bReleaseChildren)
@@ -117,15 +88,39 @@ void UActivatableWidgetContainer::ReleaseSlateResources(bool bReleaseChildren)
 	GeneratedWidgetsPool.ReleaseAllSlateResources();
 }
 
+TSharedRef<SWidget> UActivatableWidgetContainer::RebuildWidget()
+{
+	MyOverlay = SNew(SOverlay)
+	+ SOverlay::Slot()
+	[
+		SAssignNew(MySwitcher, SAnimatedSwitcher)
+		.TransitionCurveType(TransitionCurveType)
+		.TransitionDuration(TransitionDuration)
+		.TransitionType(TransitionType)
+		.OnActiveIndexChanged_UObject(this, &UActivatableWidgetContainer::HandleActiveIndexChanged)
+		.OnIsTransitioningChanged_UObject(this, &UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged)
+	];
+
+	// We always want a 0th slot to be able to animate the first real entry in and out
+	MySwitcher->AddSlot()[SNullWidget::NullWidget];
+
+	return MyOverlay.ToSharedRef();
+}
+
 void UActivatableWidgetContainer::OnWidgetRebuilt()
 {
 	Super::OnWidgetRebuilt();
-	
+
 	if (!IsDesignTime())
 	{
 		// When initially created, fake that we just did an initial transition to index 0
 		HandleActiveIndexChanged(0);
 	}
+}
+
+void UActivatableWidgetContainer::OnWidgetAddedToList(UActivatableWidget& AddedWidget)
+{
+	unimplemented();
 }
 
 void UActivatableWidgetContainer::SetSwitcherActiveWidget(UActivatableWidget& AddedWidget, bool bInstantTransition)
@@ -168,7 +163,30 @@ void UActivatableWidgetContainer::SetSwitcherIndex(int32 TargetIndex, bool bInst
 
 UActivatableWidget* UActivatableWidgetContainer::BP_AddWidget(TSubclassOf<UActivatableWidget> ActivatableWidgetClass)
 {
-	return AddWidgetInternal(ActivatableWidgetClass, [](UActivatableWidget&) {});
+	return AddWidgetInternal(ActivatableWidgetClass, [](UActivatableWidget&)
+	{
+	});
+}
+
+void UActivatableWidgetContainer::RemoveWidget(UActivatableWidget& WidgetToRemove)
+{
+	if (&WidgetToRemove == GetActiveWidget())
+	{
+		// To remove the active widget, just deactivate it (if it's already deactivated, then we're already in the process of ditching it)
+		if (WidgetToRemove.IsActivated())
+		{
+			WidgetToRemove.DeactivateWidget();
+		}
+	}
+	else
+	{
+		// Otherwise if the widget isn't actually being shown right now, yank it right on out
+		TSharedPtr<SWidget> CachedWidget = WidgetToRemove.GetCachedWidget();
+		if (CachedWidget && MySwitcher)
+		{
+			ReleaseWidget(CachedWidget.ToSharedRef());
+		}
+	}
 }
 
 UActivatableWidget* UActivatableWidgetContainer::AddWidgetInternal(TSubclassOf<UActivatableWidget> ActivatableWidgetClass, TFunctionRef<void(UActivatableWidget&)> InitFunc)
@@ -194,51 +212,6 @@ void UActivatableWidgetContainer::RegisterInstanceInternal(UActivatableWidget& N
 void UActivatableWidgetContainer::HandleSwitcherIsTransitioningChanged(bool bIsTransitioning)
 {
 	OnTransitioningChanged.Broadcast(this, bIsTransitioning);
-}
-
-void UActivatableWidgetContainer::HandleActiveWidgetDeactivated(UActivatableWidget* DeactivatedWidget)
-{
-	// When the currently displayed widget deactivates, transition the switcher to the preceding slot (if it exists)
-	// We'll clean up this slot once the switcher index actually changes
-	if (ensure(DeactivatedWidget == DisplayedWidget) && MySwitcher && MySwitcher->GetActiveWidgetIndex() > 0)
-	{
-		DisplayedWidget->OnDeactivated().RemoveAll(this);
-		MySwitcher->TransitionToIndex(MySwitcher->GetActiveWidgetIndex() - 1);
-	}
-}
-
-void UActivatableWidgetContainer::ReleaseWidget(const TSharedRef<SWidget>& WidgetToRelease)
-{
-	UActivatableWidget* ActivatableWidget = ActivatableWidgetFromSlate(WidgetToRelease);
-
-	if (!ActivatableWidget)
-	{
-		UE_LOG(LogTemp, Error, TEXT("ActivatableWidget %s is null"), *WidgetToRelease->GetTag().ToString());
-		return;
-	}
-
-	if (!ActivatableWidget->CanBeReleased())
-	{
-		return;
-	}
-	
-	GeneratedWidgetsPool.Release(ActivatableWidget, true);
-	WidgetList.Remove(ActivatableWidget);
-
-	if (MySwitcher->RemoveSlot(WidgetToRelease) != INDEX_NONE)
-	{
-		ReleasedWidgets.Add(WidgetToRelease);
-		if (ReleasedWidgets.Num() == 1)
-		{
-			FTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateWeakLambda(this,
-				[this](float)
-				{
-					QUICK_SCOPE_CYCLE_COUNTER(STAT_UActivatableWidgetContainer_ReleaseWidget);
-					ReleasedWidgets.Reset();
-					return false;
-				}));
-		}
-	}
 }
 
 void UActivatableWidgetContainer::HandleActiveIndexChanged(int32 ActiveWidgetIndex)
@@ -294,6 +267,50 @@ void UActivatableWidgetContainer::HandleActiveIndexChanged(int32 ActiveWidgetInd
 	OnDisplayedWidgetChanged().Broadcast(DisplayedWidget);
 }
 
+void UActivatableWidgetContainer::HandleActiveWidgetDeactivated(UActivatableWidget* DeactivatedWidget)
+{
+	// When the currently displayed widget deactivates, transition the switcher to the preceding slot (if it exists)
+	// We'll clean up this slot once the switcher index actually changes
+	if (ensure(DeactivatedWidget == DisplayedWidget) && MySwitcher && MySwitcher->GetActiveWidgetIndex() > 0)
+	{
+		DisplayedWidget->OnDeactivated().RemoveAll(this);
+		MySwitcher->TransitionToIndex(MySwitcher->GetActiveWidgetIndex() - 1);
+	}
+}
+
+void UActivatableWidgetContainer::ReleaseWidget(const TSharedRef<SWidget>& WidgetToRelease)
+{
+	UActivatableWidget* ActivatableWidget = ActivatableWidgetFromSlate(WidgetToRelease);
+
+	if (!ActivatableWidget)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ActivatableWidget %s is null"), *WidgetToRelease->GetTag().ToString());
+		return;
+	}
+
+	if (!ActivatableWidget->CanBeReleased())
+	{
+		return;
+	}
+
+	GeneratedWidgetsPool.Release(ActivatableWidget, true);
+	WidgetList.Remove(ActivatableWidget);
+
+	if (MySwitcher->RemoveSlot(WidgetToRelease) != INDEX_NONE)
+	{
+		ReleasedWidgets.Add(WidgetToRelease);
+		if (ReleasedWidgets.Num() == 1)
+		{
+			FTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateWeakLambda(this, [this](float)
+			{
+				QUICK_SCOPE_CYCLE_COUNTER(STAT_UActivatableWidgetContainer_ReleaseWidget);
+				ReleasedWidgets.Reset();
+				return false;
+			}));
+		}
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 // UActivatableWidgetStack
 //////////////////////////////////////////////////////////////////////////
@@ -307,7 +324,7 @@ void UActivatableWidgetStack::OnWidgetAddedToList(UActivatableWidget& AddedWidge
 		//		Eh, but even in this case we only want to skip when we're going from an empty 0th entry. Every other transition should still do the full fade.
 
 		// Toss the widget onto the end of the switcher's children and transition to it immediately
-		MySwitcher->AddSlot() [AddedWidget.TakeWidget()];
+		MySwitcher->AddSlot()[AddedWidget.TakeWidget()];
 		SetSwitcherIndex(MySwitcher->GetNumWidgets() - 1);
 	}
 }

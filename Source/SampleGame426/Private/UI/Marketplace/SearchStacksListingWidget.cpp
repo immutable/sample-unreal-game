@@ -116,7 +116,7 @@ void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 
 void USearchStacksListingWidget::Refresh()
 {
-	auto Group = GetGroup();
+	auto Group = GetOwningGroup();
 	
 	if (!Group)
 	{

@@ -274,7 +274,7 @@ void UAWStackWithControlPanels::BuildTopPanel()
 					UE_LOG(LogSampleGame, Error, TEXT("Failed to cast group widget %s"), *Group.WidgetClassesGroup[WidgetClassIndex].ToString());
 				}
 
-				auto* SecondaryButton = TopPanelWidget->AddSecondaryButton(MainButton, WidgetCDO->GetTitle(), WidgetClassIndex);
+				auto* SecondaryButton = TopPanelWidget->AddSecondaryButton(MainButton, WidgetCDO->GetWidgetTitle(), WidgetClassIndex);
 
 				check(SecondaryButton);
 				SecondaryButton->OnClickDelegate = UTopPanelButton::FOnClick::CreateUObject(this, &UAWStackWithControlPanels::OnSecondaryPanelButtonClicked);
@@ -311,7 +311,7 @@ void UAWStackWithControlPanels::ShowWidgetFromGroup(struct FActivatableWidgetWit
 		Group->WidgetsInGroup[WidgetIndex] = AddWidget<UActivatableWidgetWithControlPanels>(Group->WidgetClassesGroup[WidgetIndex].LoadSynchronous());
 		Group->WidgetsInGroup[WidgetIndex]->Reset();
 		Group->WidgetsInGroup[WidgetIndex]->SetIndexInGroup(WidgetIndex);
-		Group->WidgetsInGroup[WidgetIndex]->SetGroup(Group);
+		Group->WidgetsInGroup[WidgetIndex]->SetOwningGroup(Group);
 		Group->WidgetsInGroup[WidgetIndex]->Refresh();
 	}
 	else

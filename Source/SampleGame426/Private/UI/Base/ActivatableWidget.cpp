@@ -95,6 +95,7 @@ void UActivatableWidget::NativeOnActivated()
 		}
 
 		BP_OnActivated();
+		OnActivated().Broadcast();
 		BP_OnWidgetActivated.Broadcast();
 	}
 }
@@ -110,6 +111,7 @@ void UActivatableWidget::NativeOnDeactivated()
 		}
 
 		BP_OnDeactivated();
+		OnDeactivated().Broadcast();
 		BP_OnWidgetDeactivated.Broadcast();
 	}
 }

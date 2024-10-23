@@ -25,12 +25,12 @@ UWidget* UActivatableWidget::GetDesiredFocusTarget() const
 	return NativeGetDesiredFocusTarget();
 }
 
-FSimpleMulticastDelegate& UActivatableWidget::OnActivated() const
+FSimpleMulticastDelegate& UActivatableWidget::OnActivated()
 {
 	return OnActivatedEvent;
 }
 
-FSimpleMulticastDelegate& UActivatableWidget::OnDeactivated() const
+FSimpleMulticastDelegate& UActivatableWidget::OnDeactivated()
 {
 	return OnDeactivatedEvent;
 }

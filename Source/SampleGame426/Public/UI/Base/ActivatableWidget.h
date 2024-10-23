@@ -22,8 +22,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ActivatableWidget")
 	UWidget* GetDesiredFocusTarget() const;
 
-	FSimpleMulticastDelegate& OnActivated() const;
-	FSimpleMulticastDelegate& OnDeactivated() const;
+	FSimpleMulticastDelegate& OnActivated();
+	FSimpleMulticastDelegate& OnDeactivated();
 
 	bool SetsVisibilityOnActivated() const;
 	bool SetsVisibilityOnDeactivated() const;
@@ -91,6 +91,6 @@ private:
 	bool bIsActive = false;
 
 	/** Handle to default back action, if bound */
-	mutable FSimpleMulticastDelegate OnActivatedEvent;
-	mutable FSimpleMulticastDelegate OnDeactivatedEvent;
+	FSimpleMulticastDelegate OnActivatedEvent;
+	FSimpleMulticastDelegate OnDeactivatedEvent;
 };

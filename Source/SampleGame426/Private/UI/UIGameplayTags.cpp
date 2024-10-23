@@ -1,69 +1,31 @@
 ﻿#include "UIGameplayTags.h"
 
+#include "GameplayTagsManager.h"
 
-FGameplayTag FUILayers::MenuWithControls;
-FGameplayTag FUILayers::Menu;
-FGameplayTag FUILayers::Modal;
-
-FGameplayTag FUIControlPanelButtons::Empty;
-FGameplayTag FUIControlPanelButtons::NextPage;
-FGameplayTag FUIControlPanelButtons::PreviousPage;
-FGameplayTag FUIControlPanelButtons::Forward;
-FGameplayTag FUIControlPanelButtons::Back;
-FGameplayTag FUIControlPanelButtons::Buy;
-FGameplayTag FUIControlPanelButtons::Sell;
-FGameplayTag FUIControlPanelButtons::CancelSell;
-FGameplayTag FUIControlPanelButtons::NFTInfo;
-FGameplayTag FUIControlPanelButtons::Search;
-
-FGameplayTag FUIDialogTypes::None;
-FGameplayTag FUIDialogTypes::ErrorSimple;
-FGameplayTag FUIDialogTypes::ErrorFull;
-FGameplayTag FUIDialogTypes::Confirmation;
-FGameplayTag FUIDialogTypes::Message;
-FGameplayTag FUIDialogTypes::Sell;
-FGameplayTag FUIDialogTypes::Process;
-
-
-inline FGameplayTag RequestGameplayTag(const FString& Prefix, const FString& Name)
+void FNativeUIGameplayTags::AddTags()
 {
-	return FGameplayTag::RequestGameplayTag(*(Prefix + Name));
-}
+	UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
 
-void FUILayers::InitUIGameplayTags_Layers()
-{
-	FString Prefix = TEXT("UI.Layer.");
+	UI_Layer_MenuWithControls				= Manager.AddNativeGameplayTag(TEXT("UI.Layer.MenuWithControls"));
+	UI_Layer_Menu							= Manager.AddNativeGameplayTag(TEXT("UI.Layer.Menu"));
+	UI_Layer_Modal							= Manager.AddNativeGameplayTag(TEXT("UI.Layer.Modal"));
 
-	FUILayers::MenuWithControls	= RequestGameplayTag(Prefix, TEXT("MenuWithControls"));
-	FUILayers::Menu				= RequestGameplayTag(Prefix, TEXT("Menu"));
-	FUILayers::Modal			= RequestGameplayTag(Prefix, TEXT("Modal"));
-}
+	UI_Dialog_None							= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.None"));
+	UI_Dialog_ErrorSimple					= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.ErrorSimple"));
+	UI_Dialog_ErrorFull						= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.ErrorFull"));
+	UI_Dialog_Confirmation					= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.Confirmation"));
+	UI_Dialog_Message						= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.Message"));
+	UI_Dialog_Sell							= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.Sell"));
+	UI_Dialog_Process						= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.Process"));
 
-void FUIControlPanelButtons::InitUIGameplayTags_ControlPanelButtons()
-{
-	FString Prefix = TEXT("UI.ControlPanel.Button.");
-
-	FUIControlPanelButtons::Empty			= RequestGameplayTag(Prefix, TEXT("Empty"));
-	FUIControlPanelButtons::NextPage		= RequestGameplayTag(Prefix, TEXT("NextPage"));
-	FUIControlPanelButtons::PreviousPage	= RequestGameplayTag(Prefix, TEXT("PreviousPage"));
-	FUIControlPanelButtons::Forward			= RequestGameplayTag(Prefix, TEXT("Forward"));
-	FUIControlPanelButtons::Back			= RequestGameplayTag(Prefix, TEXT("Back"));
-	FUIControlPanelButtons::Buy				= RequestGameplayTag(Prefix, TEXT("Buy"));
-	FUIControlPanelButtons::Sell			= RequestGameplayTag(Prefix, TEXT("Sell"));
-	FUIControlPanelButtons::CancelSell		= RequestGameplayTag(Prefix, TEXT("CancelSell"));
-	FUIControlPanelButtons::NFTInfo			= RequestGameplayTag(Prefix, TEXT("NFTInfo"));
-	FUIControlPanelButtons::Search			= RequestGameplayTag(Prefix, TEXT("Search"));
-}
-
-void FUIDialogTypes::InitUIGameplayTags_DialogTypes()
-{
-	FString Prefix = TEXT("UI.Dialog.");
-
-	FUIDialogTypes::None		    = RequestGameplayTag(Prefix, TEXT("None"));
-	FUIDialogTypes::ErrorSimple		= RequestGameplayTag(Prefix, TEXT("ErrorSimple"));
-	FUIDialogTypes::ErrorFull		= RequestGameplayTag(Prefix, TEXT("ErrorFull"));
-	FUIDialogTypes::Confirmation	= RequestGameplayTag(Prefix, TEXT("Confirmation"));
-	FUIDialogTypes::Message			= RequestGameplayTag(Prefix, TEXT("Message"));
-	FUIDialogTypes::Sell			= RequestGameplayTag(Prefix, TEXT("Sell"));
-	FUIDialogTypes::Process			= RequestGameplayTag(Prefix, TEXT("Process"));
+	UI_ControlPanel_Button_Empty			= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.Empty"));
+	UI_ControlPanel_Button_NextPage			= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.NextPage"));
+	UI_ControlPanel_Button_PreviousPage		= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.PreviousPage"));
+	UI_ControlPanel_Button_Forward			= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.Forward"));
+	UI_ControlPanel_Button_Back				= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.Back"));
+	UI_ControlPanel_Button_Buy				= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.Buy"));
+	UI_ControlPanel_Button_Sell				= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.Sell"));
+	UI_ControlPanel_Button_CancelSell		= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.CancelSell"));
+	UI_ControlPanel_Button_NFTInfo			= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.NFTInfo"));
+	UI_ControlPanel_Button_Search			= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.Search"));
 }

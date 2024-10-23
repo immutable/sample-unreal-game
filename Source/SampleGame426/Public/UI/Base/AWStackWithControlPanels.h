@@ -7,6 +7,7 @@
 #include "AWStackWithControlPanels.generated.h"
 
 
+class UCustomUserWidget;
 class UTopPanelButton;
 /**
  *

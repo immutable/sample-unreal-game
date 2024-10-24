@@ -4,10 +4,6 @@
 
 #include "IMarketplaceMetadataAttributeValue.generated.h"
 
-
-/**
- * 
- */
 UINTERFACE(BlueprintType)
 class SAMPLEGAME426_API UMarketplaceMetadataAttributeValue : public UInterface
 {

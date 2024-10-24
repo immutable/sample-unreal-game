@@ -4,10 +4,6 @@
 
 #include "IMarketplaceMetadataAttribute.generated.h"
 
-
-/**
- * 
- */
 UINTERFACE(BlueprintType)
 class SAMPLEGAME426_API UMarketplaceMetadataAttribute : public UInterface
 {
@@ -21,6 +17,7 @@ class SAMPLEGAME426_API IMarketplaceMetadataAttribute
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Immutable")
 	void SetTraitName(const FString& TraitName);
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Immutable")
 	void AddValue(const FString& ValueName);
 };

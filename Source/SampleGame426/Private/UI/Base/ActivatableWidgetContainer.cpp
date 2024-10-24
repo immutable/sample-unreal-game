@@ -34,10 +34,12 @@ UActivatableWidgetContainer::UActivatableWidgetContainer(const FObjectInitialize
 	SetVisibility(ESlateVisibility::Collapsed);
 }
 
+#if WITH_EDITOR
 const FText UActivatableWidgetContainer::GetPaletteCategory()
 {
 	return LOCTEXT("SAMPLEGAME426_UI", "Immutable");
 }
+#endif
 
 int32 UActivatableWidgetContainer::GetNumWidgets() const
 {

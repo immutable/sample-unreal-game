@@ -2,7 +2,6 @@
 
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
-#include "IContentBrowserSingleton.h"
 #include "OpenAPIFee.h"
 #include "OpenAPIListing.h"
 #include "Components/ScrollBox.h"

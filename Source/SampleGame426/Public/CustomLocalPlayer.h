@@ -1,8 +1,9 @@
 ﻿#pragma once
 
+#include "APIOrderbookApi.h"
 #include "Engine/LocalPlayer.h"
 
-#include "OpenAPIOrderbookApi.h"
+#include "APIOrderbookApi.h"
 
 #include "Immutable/ImmutableDataTypes.h"
 
@@ -73,7 +74,7 @@ private:
 	void OnPassportInitialized(FImmutablePassportResult Result);
 	void OnPassportLoggedIn(FImmutablePassportResult Result);
 	void OnPassportLoggedOut(FImmutablePassportResult Result);
-	void OnBalanceUpdateResponse(const ImmutableTsSdkApi::OpenAPIOrderbookApi::TokenBalanceResponse& Response);
+	void OnBalanceUpdateResponse(const ImmutableOrderbook::APIOrderbookApi::TokenBalanceResponse& Response);
 
 	void CollectPassportData();
 	bool CheckAllPassportDataObtained();

@@ -3,7 +3,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "OpenAPIOrderbookApiOperations.h"
+#include "APIOrderbookApiOperations.h"
 
 #include "Immutable/ImmutableSubsystem.h"
 
@@ -136,12 +136,12 @@ void UCustomLocalPlayer::UpdateBalance()
 		return;
 	}
 
-	ImmutableTsSdkApi::OpenAPIOrderbookApi::TokenBalanceRequest Request;
+	ImmutableOrderbook::APIOrderbookApi::TokenBalanceRequest Request;
 
 	Request.WalletAddress = PassportWalletAddress;
 	Request.ContractAddress = MarketplacePolicy->GetBalanceContractAddress();
 
-	MarketplacePolicy->GetTsSdkAPI()->TokenBalance(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FTokenBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
+	MarketplacePolicy->GetTsSdkAPI()->TokenBalance(Request, ImmutableOrderbook::APIOrderbookApi::FTokenBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
 }
 
 void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Data, TFunction<void(FString TransactionHash, FString Status)> Callback)
@@ -274,7 +274,7 @@ void UCustomLocalPlayer::OnPassportLoggedOut(FImmutablePassportResult Result)
 	}
 }
 
-void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableTsSdkApi::OpenAPIOrderbookApi::TokenBalanceResponse& Response)
+void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableOrderbook::APIOrderbookApi::TokenBalanceResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{

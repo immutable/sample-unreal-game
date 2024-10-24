@@ -31,8 +31,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Immutable")
 	virtual void KillDialog();
 
+	UFUNCTION(BlueprintPure, Category = "Immutable")
 	FGameplayTag GetDialogTag() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Immutable")
 	void SetDialogTag(FGameplayTag Tag);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Immutable")

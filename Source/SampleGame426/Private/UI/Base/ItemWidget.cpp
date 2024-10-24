@@ -1,15 +1,5 @@
 ﻿#include "Base/ItemWidget.h"
 
-void UItemWidget::Show()
-{
-	SetVisibility(ESlateVisibility::Visible);
-}
-
-void UItemWidget::Hide()
-{
-	SetVisibility(ESlateVisibility::Hidden);
-}
-
 void UItemWidget::SetOriginalState()
 {
 	Hide();
@@ -28,6 +18,16 @@ void UItemWidget::SetSelection(bool IsSelected)
 	bIsSelected = IsSelected;
 	BP_OnSelectionChange(bIsSelected);
 	OnSelectionChangeDelegate.Execute(bIsSelected, this);
+}
+
+void UItemWidget::Show()
+{
+	SetVisibility(ESlateVisibility::Visible);
+}
+
+void UItemWidget::Hide()
+{
+	SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UItemWidget::RegisterOnSelectionChange(const FOnSelectionChange& InOnSelectionChangeDelegate)
@@ -71,4 +71,12 @@ FReply UItemWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, 
 	OnDoubleClickDelegate.ExecuteIfBound(this);
 
 	return Reply;
+}
+
+void UItemWidget::OnClick()
+{
+}
+
+void UItemWidget::OnDoubleClick()
+{
 }

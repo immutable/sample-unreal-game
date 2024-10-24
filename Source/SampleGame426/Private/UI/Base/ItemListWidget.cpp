@@ -1,11 +1,35 @@
 #include "Base/ItemListWidget.h"
 
-#include "Base/ItemWidget.h"
 #include "Components/GridPanel.h"
 #include "Components/GridSlot.h"
 #include "Components/UniformGridPanel.h"
-#include "Components/UniformGridSlot.h"
 
+#include "UI/Base/ItemWidget.h"
+
+int32 UItemListWidget::GetNumberOfColumns() const
+{
+	return NumberOfColumns;
+}
+
+int32 UItemListWidget::GetNumberOfRows() const
+{
+	return NumberOfRows;
+}
+
+class UItemWidget* UItemListWidget::GetItem(int32 Id)
+{
+	return CachedItems[Id];
+}
+
+UItemWidget* UItemListWidget::GetItem(int32 Column, int32 Row)
+{
+	return CachedItems[Row * NumberOfColumns + Column];
+}
+
+UItemWidget* UItemListWidget::GetSelectedItem() const
+{
+	return nullptr;
+}
 
 void UItemListWidget::ResetPanelItems()
 {
@@ -20,31 +44,6 @@ void UItemListWidget::ResetPanelItems()
 	}
 }
 
-int32 UItemListWidget::GetNumberOfColumns() const
-{
-	return NumberOfColumns;
-}
-
-int32 UItemListWidget::GetNumberOfRows() const
-{
-	return NumberOfRows;
-}
-
-class UItemWidget* UItemListWidget::GetItem(int32 id)
-{
-	return CachedItems[id];
-}
-
-UItemWidget* UItemListWidget::GetItem(int32 Column, int32 Row)
-{
-	return CachedItems[Row * NumberOfColumns + Column];
-}
-
-UItemWidget* UItemListWidget::GetSelectedItem()
-{
-	return nullptr;
-}
-
 TSharedRef<SWidget> UItemListWidget::RebuildWidget()
 {
 	CachedItems.Reset(NumberOfColumns * NumberOfRows);
@@ -57,7 +56,7 @@ TSharedRef<SWidget> UItemListWidget::RebuildWidget()
 	{
 		for (int32 Row = 0; Row < NumberOfRows; ++Row)
 		{
-			for (int32 Column = 0; Column < NumberOfColumns; ++Column)	
+			for (int32 Column = 0; Column < NumberOfColumns; ++Column)
 			{
 				FName ItemWidgetName = *FString::Format(TEXT("ItemWidget_c{0}_r{1}"), {Column, Row});
 				UItemWidget* NewItemWidgetObject = CreateWidget<UItemWidget>(this, ItemWidgetClass, ItemWidgetName);
@@ -75,9 +74,4 @@ TSharedRef<SWidget> UItemListWidget::RebuildWidget()
 	}
 
 	return OriginalWidget;
-}
-
-void UItemListWidget::NativeConstruct()
-{
-	Super::NativeConstruct();
 }

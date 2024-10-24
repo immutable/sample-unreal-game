@@ -30,15 +30,21 @@ public:
 	/** UWidget: Interface End */
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
+	UControlPanelButton* GetButton(FGameplayTag ButtonTag);
+
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
+	UControlPanelButton* AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side);
+
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	UControlPanelButton* AddButtonToLeft(FGameplayTag ButtonTag);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	UControlPanelButton* AddButtonToRight(FGameplayTag ButtonTag);
 
-	UControlPanelButton* GetButton(FGameplayTag ButtonTag);
-	UControlPanelButton* AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side);
-
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	void MoveToNextWidgetInGroup();
+
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	void MoveToPrevWidgetInGroup();
 
 protected:

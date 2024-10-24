@@ -50,16 +50,6 @@ void UAWStackWithControlPanels::ReleaseSlateResources(bool bReleaseChildren)
 	}
 }
 
-UControlPanelButton* UAWStackWithControlPanels::AddButtonToLeft(FGameplayTag ButtonTag)
-{
-	return AddButton(ButtonTag, EAWStackControlPanelSide::Left);
-}
-
-UControlPanelButton* UAWStackWithControlPanels::AddButtonToRight(FGameplayTag ButtonTag)
-{
-	return AddButton(ButtonTag, EAWStackControlPanelSide::Right);
-}
-
 UControlPanelButton* UAWStackWithControlPanels::GetButton(FGameplayTag ButtonTag)
 {
 	if (ControlPanelButtons.Contains(ButtonTag))
@@ -109,16 +99,27 @@ UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag
 
 	TSharedPtr<SVerticalBox> Panel = Side == EAWStackControlPanelSide::Left ? LeftControlPanel : RightControlPanel;
 
-	Panel->AddSlot()
-	     .HAlign(HAlign_Fill)
-	     .VAlign(VAlign_Top)
-	     .AutoHeight()
-	     .Padding(ButtonPadding)
+	Panel
+		->AddSlot()
+		.HAlign(HAlign_Fill)
+		.VAlign(VAlign_Top)
+		.AutoHeight()
+		.Padding(ButtonPadding)
 	[
 		Button->TakeWidget()
 	];
 
 	return Button;
+}
+
+UControlPanelButton* UAWStackWithControlPanels::AddButtonToLeft(FGameplayTag ButtonTag)
+{
+	return AddButton(ButtonTag, EAWStackControlPanelSide::Left);
+}
+
+UControlPanelButton* UAWStackWithControlPanels::AddButtonToRight(FGameplayTag ButtonTag)
+{
+	return AddButton(ButtonTag, EAWStackControlPanelSide::Right);
 }
 
 void UAWStackWithControlPanels::MoveToNextWidgetInGroup()

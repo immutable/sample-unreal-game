@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 #include "CustomUserWidget.h"
-#include "DialogDescriptors.h"
+#include "UI/Dialog/DialogDescriptors.h"
 
 #include "DialogButton.generated.h"
 
-
 /**
- * 
+ * @class UDialogButton
+ * @breif A user widget button for dialogs
  */
 UCLASS(Abstract)
 class SAMPLEGAME426_API UDialogButton : public UCustomUserWidget
@@ -16,10 +16,10 @@ class SAMPLEGAME426_API UDialogButton : public UCustomUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = Dialog)
-	void SetButtonAction(const FDialogAction& Action);
+	const FDialogAction& GetButtonAction() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = Dialog)
-	const FDialogAction& GetButtonAction() const;
+	void SetButtonAction(const FDialogAction& Action);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = Dialog)
 	void BP_SetActionText(const FText& Text);

@@ -19,8 +19,9 @@ public class SampleGame426 : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore",
-			"ImmutableOpenAPI", 
-			"ImmutableTsSdkApi",
+			"Immutable",
+			"ImmutableOrderbook", 
+			"ImmutablezkEVMAPI",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 
@@ -30,7 +31,6 @@ public class SampleGame426 : ModuleRules
 			"UMG",
 			"GameplayTags",
 			"DeveloperSettings",
-			"Immutable",
 			"Json",
 			"JsonUtilities",
 			"HTTP",

@@ -2,7 +2,6 @@
 
 #include "DialogDescriptors.generated.h"
 
-
 UENUM(BlueprintType)
 enum class EDialogResult : uint8
 {
@@ -12,10 +11,17 @@ enum class EDialogResult : uint8
 	Unknown UMETA(Hidden)
 };
 
+/**
+ * @struct FDialogAction
+ * @breif A structure to encapsulate the details of a dialog's action
+ */
 USTRUCT(BlueprintType)
 struct FDialogAction
 {
 	GENERATED_BODY()
+
+public:
+	FString GetActionName() const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -23,18 +29,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText ActionText;
-	
-	FString GetActionName() const
-	{
-		switch (Result)
-		{
-		case EDialogResult::Confirmed: return TEXT("Confirmed");
-		case EDialogResult::Cancelled: return TEXT("Cancelled");
-		default: return TEXT("Unknown");
-		}
-	}
 };
 
+/**
+ * @class UDialogDescriptor
+ * @brief A class to encapsulate the details of a dialog's content
+ */
 UCLASS(BlueprintType, MinimalAPI, Transient)
 class UDialogDescriptor : public UObject
 {
@@ -43,11 +43,15 @@ class UDialogDescriptor : public UObject
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Header;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Body;
 };
 
+/**
+ * @class UDialogDescriptor_OneAction
+ * @brief A class to represent a dialog with a single action
+ */
 UCLASS()
 class UDialogDescriptor_OneAction : public UDialogDescriptor
 {
@@ -58,6 +62,10 @@ public:
 	FDialogAction Action;
 };
 
+/**
+ * @class UDialogDescriptor_TwoActions
+ * @brief A class to represent a dialog with a two actions
+ */
 UCLASS()
 class UDialogDescriptor_TwoActions : public UDialogDescriptor
 {
@@ -71,6 +79,10 @@ public:
 	FDialogAction TwoAction;
 };
 
+/**
+ * @class UErrorDialogDescriptorWithErrorText 
+ * @brief A class to represent a dialog with error text
+ */
 UCLASS()
 class UErrorDialogDescriptorWithErrorText : public UDialogDescriptor_OneAction
 {
@@ -79,9 +91,12 @@ class UErrorDialogDescriptorWithErrorText : public UDialogDescriptor_OneAction
 public:
 	UPROPERTY(BlueprintReadWrite)
 	FText ErrorText;
-	
 };
 
+/**
+ * @class UErrorDialogDescriptorWithErrorText 
+ * @brief A class to represent a dialog with selling functionality
+ */
 UCLASS()
 class USellDialogDescriptor : public UDialogDescriptor_TwoActions
 {
@@ -90,9 +105,12 @@ class USellDialogDescriptor : public UDialogDescriptor_TwoActions
 public:
 	UPROPERTY(BlueprintReadWrite)
 	FText Price;
-	
 };
 
+/**
+ * @class UErrorDialogDescriptorWithErrorText 
+ * @brief A class to represent a dialog with processing functionality
+ */
 UCLASS()
 class UProcessDialogDescriptor : public UDialogDescriptor_OneAction
 {
@@ -101,5 +119,4 @@ class UProcessDialogDescriptor : public UDialogDescriptor_OneAction
 public:
 	UPROPERTY(BlueprintReadWrite)
 	bool IsInProgress = true;
-	
 };

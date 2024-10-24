@@ -1,14 +1,11 @@
 ﻿#pragma once
 
-#include "Data/NFTMetadataAttributeDataAsset.h"
-#include "Dialog/Dialog.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+
+#include "Data/NFTMetadataAttributeDataAsset.h"
 
 #include "UIBlueprintFunctionLibrary.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class SAMPLEGAME426_API UUIBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
 {

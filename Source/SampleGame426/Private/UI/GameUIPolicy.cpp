@@ -1,14 +1,14 @@
 #include "GameUIPolicy.h"
 
-#include "CustomLocalPlayer.h"
-#include "GameUIManagerSubsystem.h"
-#include "LogSampleGame.h"
-#include "UIGameplayTags.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
-#include "Interfaces/IPassportListnerInterface.h"
 
+#include "CustomLocalPlayer.h"
+#include "LogSampleGame.h"
+#include "UI/GameUIManagerSubsystem.h"
+#include "UI/Interfaces/IPassportListnerInterface.h"
+#include "UI/UIGameplayTags.h"
 
-/* Static */ UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)
+UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)
 {
 	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
@@ -24,14 +24,14 @@
 	return nullptr;
 }
 
-UGameUIManagerSubsystem* UGameUIPolicy::GetOwningUIManager() const
-{
-	return CastChecked<UGameUIManagerSubsystem>(GetOuter());
-}
-
 UWorld* UGameUIPolicy::GetWorld() const
 {
 	return GetOwningUIManager()->GetGameInstance()->GetWorld();
+}
+
+UGameUIManagerSubsystem* UGameUIPolicy::GetOwningUIManager() const
+{
+	return CastChecked<UGameUIManagerSubsystem>(GetOuter());
 }
 
 UPrimaryGameLayout* UGameUIPolicy::GetRootLayout() const
@@ -47,7 +47,7 @@ UMarketplacePolicy* UGameUIPolicy::GetMarketplacePolicy() const
 const FDialogType* UGameUIPolicy::GetDialogType(FGameplayTag DialogTag) const
 {
 	UDialogTypeDataAsset* Data = DialogTypeDataAsset.LoadSynchronous();
-	
+
 	if (!Data)
 	{
 		return nullptr;
@@ -74,7 +74,7 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 	LocalPlayer->CallAndRegister_OnPlayerControllerSet(UCustomLocalPlayer::FPlayerControllerSetDelegate::FDelegate::CreateWeakLambda(this, [this](UCustomLocalPlayer* LocalPlayer, APlayerController* PlayerController)
 	{
 		TSubclassOf<UPrimaryGameLayout> LayoutWidgetClass = LayoutClass.LoadSynchronous();
-	
+
 		if (ensure(LayoutWidgetClass && !LayoutWidgetClass->HasAnyClassFlags(CLASS_Abstract)))
 		{
 			RootLayout = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass, TEXT("PrimaryGameLayout"));
@@ -83,20 +83,19 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 
 			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController);
 			PlayerController->SetShowMouseCursor(true);
-			
-			
+
 			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
 
 			// add login screen widget as an initial screen
 			LoginScreenWidget = Cast<ULoginScreenWidget>(PushWidget(LoginScreenWidgetClass, NativeUIGameplayTags.UI_Layer_Menu));
 
-	#if WITH_EDITOR
+#if WITH_EDITOR
 			if (GIsEditor)
 			{
 				// So our controller will work in PIE without needing to click in the viewport
 				FSlateApplication::Get().SetUserFocusToGameViewport(0);
 			}
-	#endif
+#endif
 		}
 	}));
 
@@ -104,7 +103,7 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 	{
 		if (LoginScreenWidget && LoginScreenWidget->GetClass()->ImplementsInterface(UPassportListenerInterface::StaticClass()))
 		{
-			IPassportListenerInterface::Execute_OnPassportInitialized(LoginScreenWidget, IsInitialized);	
+			IPassportListenerInterface::Execute_OnPassportInitialized(LoginScreenWidget, IsInitialized);
 		}
 	}));
 
@@ -112,7 +111,7 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 	{
 		if (LoginScreenWidget && LoginScreenWidget->GetClass()->ImplementsInterface(UPassportListenerInterface::StaticClass()))
 		{
-			IPassportListenerInterface::Execute_OnPassportLoggedIn(LoginScreenWidget, IsLoggedIn);	
+			IPassportListenerInterface::Execute_OnPassportLoggedIn(LoginScreenWidget, IsLoggedIn);
 		}
 	}));
 
@@ -120,13 +119,12 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 	{
 		if (LoginScreenWidget && LoginScreenWidget->GetClass()->ImplementsInterface(UPassportListenerInterface::StaticClass()))
 		{
-			IPassportListenerInterface::Execute_OnPassportDataObtained(LoginScreenWidget);	
+			IPassportListenerInterface::Execute_OnPassportDataObtained(LoginScreenWidget);
 		}
 
 		// create marketplace policy
 		MarketplacePolicy = NewObject<UMarketplacePolicy>(this, MarketplacePolicyClass.LoadSynchronous());
 	}));
-	
 }
 
 void UGameUIPolicy::NotifyPlayerDestroyed(UCustomLocalPlayer* LocalPlayer)
@@ -135,7 +133,7 @@ void UGameUIPolicy::NotifyPlayerDestroyed(UCustomLocalPlayer* LocalPlayer)
 	{
 		return;
 	}
-	
+
 	RootLayout->RemoveFromParent();
 	UE_LOG(LogSampleGame, Log, TEXT("Removing root layout from the viewport"));
 }
@@ -143,10 +141,10 @@ void UGameUIPolicy::NotifyPlayerDestroyed(UCustomLocalPlayer* LocalPlayer)
 UActivatableWidget* UGameUIPolicy::PushWidget(TSoftClassPtr<UActivatableWidget> WidgetClassPtr, FGameplayTag LayerTag)
 {
 	TSubclassOf<UActivatableWidget> LoadedClass = WidgetClassPtr.LoadSynchronous();
-	
+
 	if (ensure(LoadedClass && !LoadedClass->HasAnyClassFlags(CLASS_Abstract)))
 	{
-		return RootLayout->PushWidgetToLayerStack(LayerTag, LoadedClass);	
+		return RootLayout->PushWidgetToLayerStack(LayerTag, LoadedClass);
 	}
 	else
 	{

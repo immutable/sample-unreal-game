@@ -1,13 +1,11 @@
 ﻿#pragma once
 
-#include "Components/TextBlock.h"
 #include "Subsystems/LocalPlayerSubsystem.h"
 
 #include "InformationSubsystem.generated.h"
 
-/**
- * 
- */
+class UTextBlock;
+
 UCLASS()
 class SAMPLEGAME426_API UInformationSubsystem : public ULocalPlayerSubsystem
 {
@@ -19,9 +17,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetDisplayMessageBlock(UTextBlock* TextBlock);
-	
+
 protected:
 	UPROPERTY(Transient)
 	TWeakObjectPtr<UTextBlock> MessageBlock;
-	
 };

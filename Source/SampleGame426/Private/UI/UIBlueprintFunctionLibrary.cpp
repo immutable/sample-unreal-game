@@ -1,13 +1,12 @@
 ﻿#include "UIBlueprintFunctionLibrary.h"
 
-#include "GameUIManagerSubsystem.h"
 #include "LogSampleGame.h"
-#include "Data/NFTMetadataAttributeDataAsset.h"
-
+#include "UI/Data/NFTMetadataAttributeDataAsset.h"
+#include "UI/GameUIManagerSubsystem.h"
 
 FNFTMetadataAttribute_TraitType UUIBlueprintFunctionLibrary::MakeNFTMetadataAttribute_TraitType(FString TraitType, TArray<FString> Values)
 {
-	return FNFTMetadataAttribute_TraitType({ TraitType, Values } );
+	return FNFTMetadataAttribute_TraitType({TraitType, Values});
 }
 
 void UUIBlueprintFunctionLibrary::LogError(const FString& ErrorMessage)

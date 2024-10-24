@@ -2,7 +2,6 @@
 
 #include "Components/TextBlock.h"
 
-
 void UInformationSubsystem::ShowDisplayMessage(const FString& Message)
 {
 	if (!MessageBlock.IsValid() || Message.IsEmpty())

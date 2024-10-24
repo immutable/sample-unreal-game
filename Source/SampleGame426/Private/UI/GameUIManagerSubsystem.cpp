@@ -1,50 +1,7 @@
 #include "GameUIManagerSubsystem.h"
 
 #include "CustomLocalPlayer.h"
-#include "UIGameplayTags.h"
-
-
-void UGameUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
-{
-	Super::Initialize(Collection);
-
-	if (!CurrentPolicy && !DefaultUIPolicyClass.IsNull())
-	{
-		TSubclassOf<UGameUIPolicy> PolicyClass = DefaultUIPolicyClass.LoadSynchronous();
-		SwitchToPolicy(NewObject<UGameUIPolicy>(this, PolicyClass));
-	}
-}
-
-void UGameUIManagerSubsystem::Deinitialize()
-{
-	Super::Deinitialize();
-
-	SwitchToPolicy(nullptr);
-}
-
-void UGameUIManagerSubsystem::NotifyPlayerAdded(ULocalPlayer* LocalPlayer)
-{
-	if (ensure(LocalPlayer) && CurrentPolicy)
-	{
-		CurrentPolicy->NotifyPlayerAdded(Cast<UCustomLocalPlayer>(LocalPlayer));
-	}
-}
-
-void UGameUIManagerSubsystem::NotifyPlayerDestroyed(ULocalPlayer* LocalPlayer)
-{
-	if (LocalPlayer && CurrentPolicy)
-	{
-		CurrentPolicy->NotifyPlayerDestroyed(Cast<UCustomLocalPlayer>(LocalPlayer));
-	}
-}
-
-void UGameUIManagerSubsystem::SwitchToPolicy(UGameUIPolicy* InPolicy)
-{
-	if (CurrentPolicy != InPolicy)
-	{
-		CurrentPolicy = InPolicy;
-	}
-}
+#include "UI/UIGameplayTags.h"
 
 UActivatableWidget* UGameUIManagerSubsystem::PushWidgetToLayer(const ULocalPlayer* LocalPlayer, FGameplayTag LayerName, TSubclassOf<UActivatableWidget> WidgetClass)
 {
@@ -88,5 +45,57 @@ void UGameUIManagerSubsystem::PopWidgetFromLayer(UActivatableWidget* Activatable
 				}
 			}
 		}
+	}
+}
+
+void UGameUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	if (!CurrentPolicy && !DefaultUIPolicyClass.IsNull())
+	{
+		TSubclassOf<UGameUIPolicy> PolicyClass = DefaultUIPolicyClass.LoadSynchronous();
+		SwitchToPolicy(NewObject<UGameUIPolicy>(this, PolicyClass));
+	}
+}
+
+void UGameUIManagerSubsystem::Deinitialize()
+{
+	Super::Deinitialize();
+
+	SwitchToPolicy(nullptr);
+}
+
+const UGameUIPolicy* UGameUIManagerSubsystem::GetCurrentUIPolicy() const
+{
+	return CurrentPolicy;
+}
+
+UGameUIPolicy* UGameUIManagerSubsystem::GetCurrentUIPolicy()
+{
+	return CurrentPolicy;
+}
+
+void UGameUIManagerSubsystem::NotifyPlayerAdded(ULocalPlayer* LocalPlayer)
+{
+	if (ensure(LocalPlayer) && CurrentPolicy)
+	{
+		CurrentPolicy->NotifyPlayerAdded(Cast<UCustomLocalPlayer>(LocalPlayer));
+	}
+}
+
+void UGameUIManagerSubsystem::NotifyPlayerDestroyed(ULocalPlayer* LocalPlayer)
+{
+	if (LocalPlayer && CurrentPolicy)
+	{
+		CurrentPolicy->NotifyPlayerDestroyed(Cast<UCustomLocalPlayer>(LocalPlayer));
+	}
+}
+
+void UGameUIManagerSubsystem::SwitchToPolicy(UGameUIPolicy* InPolicy)
+{
+	if (CurrentPolicy != InPolicy)
+	{
+		CurrentPolicy = InPolicy;
 	}
 }

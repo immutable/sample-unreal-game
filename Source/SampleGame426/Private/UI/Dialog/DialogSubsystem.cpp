@@ -1,12 +1,12 @@
 #include "Dialog/DialogSubsystem.h"
 
-#include "GameUIManagerSubsystem.h"
-#include "GameUIPolicy.h"
-#include "UIGameplayTags.h"
 #include "Engine/GameInstance.h"
 
-#define LOCTEXT_NAMESPACE "ImmutableUI"
+#include "UI/GameUIManagerSubsystem.h"
+#include "UI/GameUIPolicy.h"
+#include "UI/UIGameplayTags.h"
 
+#define LOCTEXT_NAMESPACE "ImmutableUI"
 
 UDialogDescriptor_OneAction* UDialogSubsystem::CreateErrorSimpleDescriptor(const FString& Header, const FString& Body)
 {
@@ -86,6 +86,34 @@ UProcessDialogDescriptor* UDialogSubsystem::CreateProcessDescriptor(const FStrin
 	return Descriptor;
 }
 
+UDialog* UDialogSubsystem::ShowDialog(const FGameplayTag& DialogType, UDialogDescriptor* Descriptor)
+{
+	auto DialogData = GetDialogType(DialogType);
+
+	if (DialogData == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Error dialog data is not assigned"));
+
+		return nullptr;
+	}
+
+	auto Dialog = Cast<UDialog>(UGameUIManagerSubsystem::PushWidgetToLayer(GetLocalPlayer(), NativeUIGameplayTags.UI_Layer_Modal, DialogData->Dialog.LoadSynchronous()));
+
+	if (!Dialog)
+	{
+		return nullptr;
+	}
+
+	if (Descriptor->Header.IsEmpty())
+	{
+		Descriptor->Header = DialogData->DefaultHeader;
+	}
+
+	Dialog->SetupDialog(Descriptor);
+
+	return Dialog;
+}
+
 const FDialogType* UDialogSubsystem::GetDialogType(FGameplayTag DialogType) const
 {
 	const UGameInstance* GameInstance = GetLocalPlayer()->GetGameInstance();
@@ -97,36 +125,8 @@ const FDialogType* UDialogSubsystem::GetDialogType(FGameplayTag DialogType) cons
 			return Policy->GetDialogType(DialogType);
 		}
 	}
-	
+
 	return nullptr;
-}
-
-UDialog* UDialogSubsystem::ShowDialog(const FGameplayTag& DialogType, UDialogDescriptor* Descriptor)
-{
-	auto DialogData = GetDialogType(DialogType);
-
-	if (DialogData == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Error dialog data is not assigned"));
-		
-		return nullptr;
-	}
-
-	auto Dialog = Cast<UDialog>(UGameUIManagerSubsystem::PushWidgetToLayer(GetLocalPlayer(), NativeUIGameplayTags.UI_Layer_Modal,  DialogData->Dialog.LoadSynchronous()));
-
-	if (!Dialog)
-	{
-		return nullptr;
-	}
-
-	if (Descriptor->Header.IsEmpty())
-	{
-		Descriptor->Header = DialogData->DefaultHeader;
-	}
-	
-	Dialog->SetupDialog(Descriptor);
-
-	return Dialog;
 }
 
 #undef LOCTEXT_NAMESPACE

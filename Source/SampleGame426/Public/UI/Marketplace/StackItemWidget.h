@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "OpenAPIStackBundle.h"
+#include "APIStackBundle.h"
 #include "Base/ItemWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 
@@ -20,15 +20,15 @@ class SAMPLEGAME426_API UStackItemWidget : public UItemWidget, public IMarketpla
 
 public:
 	/* IMarketplaceOpenAPIProcessorInterface interface */
-	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
+	virtual void ProcessModel(const ImmutablezkEVMAPI::Model& Data) override;
 	/* IMarketplaceOpenAPIProcessorInterface interface */
 
 	/**
-	 * Retrieves the Immutable OpenAPI stack bundle associated with this NFT item.
+	 * Retrieves the Immutable zkEVM API stack bundle associated with this NFT item.
 	 *
 	 * @return A shared pointer to an OpenAPIStackBundle object.
 	 */
-	TSharedPtr<ImmutableOpenAPI::OpenAPIStackBundle> GetStackBundle() const;
+	TSharedPtr<ImmutablezkEVMAPI::APIStackBundle> GetStackBundle() const;
 
 protected:
 	/**
@@ -54,7 +54,7 @@ protected:
 	 *
 	 * @param PriceDetails An object containing the market price details.
 	 */
-	void SetPrice(const ImmutableOpenAPI::OpenAPIMarketPriceDetails& PriceDetails);
+	void SetPrice(const ImmutablezkEVMAPI::APIMarketPriceDetails& PriceDetails);
 	/**
 	 * Sets the name of the cryptocurrency token used for the NFT price.
 	 *
@@ -75,6 +75,6 @@ protected:
 	class UTextBlock* NFTPriceTokenName  = nullptr;
 
 private:
-	TSharedPtr<ImmutableOpenAPI::OpenAPIStackBundle> StackBundle;
+	TSharedPtr<ImmutablezkEVMAPI::APIStackBundle> StackBundle;
 	
 };

@@ -2,13 +2,13 @@
 
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
-#include "OpenAPIFee.h"
-#include "OpenAPIListing.h"
+#include "APIFee.h"
 #include "Components/ScrollBox.h"
+#include "ImmutablezkEVMAPI/Public/APIFee.h"
 #include "UI/Utility/MathUtility.h"
 
 
-void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing, bool IsIdEven, const UItemWidget::FOnSelectionChange& InOnSelectionChangeDelegate)
+void USearchStacksListing_ListingsWidget::AddItem(const ImmutablezkEVMAPI::APIListing& Listing, bool IsIdEven, const UItemWidget::FOnSelectionChange& InOnSelectionChangeDelegate)
 {
 	if (ScrollBoxListings)
 	{
@@ -21,17 +21,17 @@ void USearchStacksListing_ListingsWidget::AddItem(const ImmutableOpenAPI::OpenAP
 			
 			if (Decimals.IsSet())
 			{
-				FString Price = FMathUtility::ConvertWeiStringToFloatValueString(Decimals.GetValue(), Listing.PriceDetails.Amount.Value);
+				FString Price = FMathUtility::ConvertWeiStringToFloatValueString(Decimals.GetValue(), Listing.PriceDetails.Amount);
 				FString FeeProtocol, FeeRoyalty;
 
 				for (const auto& Fee : Listing.PriceDetails.Fees)
 				{
 					switch(Fee.Type)
 					{
-					case ImmutableOpenAPI::OpenAPIFee::TypeEnum::Protocol:
+					case ImmutablezkEVMAPI::APIFee::TypeEnum::Protocol:
 						FeeProtocol = FMathUtility::ConvertWeiStringToFloatValueString(Decimals.GetValue(), Fee.Amount);	
 					break;
-					case ImmutableOpenAPI::OpenAPIFee::TypeEnum::Royalty:
+					case ImmutablezkEVMAPI::APIFee::TypeEnum::Royalty:
 						FeeRoyalty = FMathUtility::ConvertWeiStringToFloatValueString(Decimals.GetValue(), Fee.Amount);
 					break;
 					default:;

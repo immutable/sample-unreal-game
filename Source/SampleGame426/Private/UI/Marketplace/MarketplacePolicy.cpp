@@ -1,8 +1,8 @@
 ﻿#include "UI/Marketplace/MarketplacePolicy.h"
 
 #include "CustomLocalPlayer.h"
-#include "OpenAPIHelpers.h"
-#include "OpenAPIStacksApiOperations.h"
+#include "APIHelpers.h"
+#include "APIStacksApiOperations.h"
 #include "Dialog/DialogSubsystem.h"
 #include "Engine/DataTable.h"
 
@@ -11,19 +11,19 @@ void UMarketplacePolicy::PostInitProperties()
 {
 	UObject::PostInitProperties();
 
-	HttpRetryManager = MakeUnique<ImmutableOpenAPI::HttpRetryManager>(RetryLimitCount, RetryTimeoutRelativeSeconds);
+	HttpRetryManager = MakeUnique<ImmutablezkEVMAPI::HttpRetryManager>(RetryLimitCount, RetryTimeoutRelativeSeconds);
 
-	StacksAPI = MakeUnique<ImmutableOpenAPI::OpenAPIStacksApi>();
+	StacksAPI = MakeUnique<ImmutablezkEVMAPI::APIStacksApi>();
 	StacksAPI->SetURL(ImmutableAPIURL);
 	StacksAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
 	StacksAPI->SetHttpRetryManager(*HttpRetryManager);
 
-	OrdersAPI = MakeUnique<ImmutableOpenAPI::OpenAPIOrdersApi>();
+	OrdersAPI = MakeUnique<ImmutablezkEVMAPI::APIOrdersApi>();
 	OrdersAPI->SetURL(ImmutableAPIURL);
 	OrdersAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
 	OrdersAPI->SetHttpRetryManager(*HttpRetryManager);
 	
-	TsSdkAPI = MakeUnique<ImmutableTsSdkApi::OpenAPIOrderbookApi>();
+	TsSdkAPI = MakeUnique<ImmutableOrderbook::APIOrderbookApi>();
 	TsSdkAPI->SetURL(TsSdkAPIURL);
 }
 
@@ -32,7 +32,7 @@ UDataTable* UMarketplacePolicy::GetNFTDatatable()
 	return NFT_Datatable;
 }
 
-ImmutableTsSdkApi::OpenAPIOrderbookApi* UMarketplacePolicy::GetTsSdkAPI()
+ImmutableOrderbook::APIOrderbookApi* UMarketplacePolicy::GetTsSdkAPI()
 {
 	return TsSdkAPI.Get();
 }

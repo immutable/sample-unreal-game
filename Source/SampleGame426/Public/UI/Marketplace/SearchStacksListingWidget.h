@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "OpenAPIOrderbookApi.h"
+#include "APIOrderbookApi.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Base/ItemWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
@@ -27,7 +27,7 @@ public:
 	/* UActivatableWidget interface */
 	
 	/* IMarketplaceOpenAPIProcessorInterface interface */
-	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
+	virtual void ProcessModel(const ImmutablezkEVMAPI::Model& Data) override;
 	/* IMarketplaceOpenAPIProcessorInterface interface */
 
 	/* UActivatableWidgetWithControlPanels interface */
@@ -101,7 +101,7 @@ private:
 	 *
 	 * @param Response The response received from the Orderbook API FulfillOrder call.
 	 */
-	void OnFulfillOrder(const ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderResponse& Response);
+	void OnFulfillOrder(const ImmutableOrderbook::APIOrderbookApi::FulfillOrderResponse& Response);
 
 	/**
 	 * Handles the event when the buy button of the control panel is clicked.

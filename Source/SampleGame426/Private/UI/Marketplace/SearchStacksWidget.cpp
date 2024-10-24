@@ -3,7 +3,7 @@
 #include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
-#include "OpenAPIStacksApiOperations.h"
+#include "APIStacksApiOperations.h"
 #include "UIGameplayTags.h"
 #include "Base/AWStackWithControlPanels.h"
 #include "UI/Marketplace/MarketplacePolicy.h"
@@ -37,8 +37,8 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	}
 
 	/**
-	 * Step 1(Marketplace display): Constructs and sends a search stack request to the Immutable OpenAPI in order to obtain listed NFTs in the marketplace.
-	 * In order to display items in the list panel of the marketplace, we need to send a search request to the Immutable OpenAPI.
+	 * Step 1(Marketplace display): Constructs and sends a search stack request to the Immutable zkEVM API in order to obtain listed NFTs in the marketplace.
+	 * In order to display items in the list panel of the marketplace, we need to send a search request to the Immutable zkEVM API.
 	 * Some request parameters are populated based on the current state of the UI Marketplace policy settings.
 	 * @see UMarketplacePolicy
 	 * @details This function initializes a SearchStacksRequest object with various parameters
@@ -47,7 +47,7 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	 * filters. Finally, it sends the request to the Stacks API and binds the response
 	 * to the OnSearchStacksResponse handler.
 	 *
-	 * @param SearchStacksRequest The request object to be passed to SearchStacks method of the Immutable OpenAPI.
+	 * @param SearchStacksRequest The request object to be passed to SearchStacks method of the Immutable zkEVM API.
 	 * Must-be parameters:
 	 * - AccountAddress: The wallet address of the owning custom local player.
 	 * - ContractAddress: The contract address of NFT we are searching for, retrieved from the policy.
@@ -60,9 +60,9 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	 * - Keyword: The keyword for the search, if cached in the policy.
 	 * - Trait: The traits or metadata criteria for the search, if cached in the policy.
 	 *
-	 * The search request is sent using the ImmutableOpenAPI::OpenAPIStacksApi, and the response is bound to the USearchStacksWidget::OnSearchStacksResponse method.
+	 * The search request is sent using the ImmutablezkEVMAPI::APIStacksApi, and the response is bound to the USearchStacksWidget::OnSearchStacksResponse method.
 	 */
-	ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest SearchStacksRequest;
+	ImmutablezkEVMAPI::APIStacksApi::SearchStacksRequest SearchStacksRequest;
 
 	SearchStacksRequest.PageSize = ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows();
 	SearchStacksRequest.PageCursor = PageCursor;
@@ -82,7 +82,7 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 		SearchStacksRequest.Trait = Policy->GetTraits();
 	}
 	
-	Policy->GetStacksAPI()->SearchStacks(SearchStacksRequest, ImmutableOpenAPI::OpenAPIStacksApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
+	Policy->GetStacksAPI()->SearchStacks(SearchStacksRequest, ImmutablezkEVMAPI::APIStacksApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
 }
 
 void USearchStacksWidget::Refresh()
@@ -139,7 +139,7 @@ void USearchStacksWidget::OnWidgetRebuilt()
 	Super::OnWidgetRebuilt();
 }
 
-void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksResponse& Response)
+void USearchStacksWidget::OnSearchStacksResponse(const ImmutablezkEVMAPI::APIStacksApi::SearchStacksResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -163,7 +163,7 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 		{
 			/**
 			 * Step 2(Marketplace display): This function performs the second step in the process.
-			 * The Result array inside the Content of ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksResponse contains NFT data for the specified contract addresses owned by the player or Passport wallet address.
+			 * The Result array inside the Content of ImmutablezkEVMAPI::APIStacksApi::SearchStacksResponse contains NFT data for the specified contract addresses owned by the player or Passport wallet address.
 			 * @see Definition of UStackItemWidget::ProcessModel to understand how the data is processed and displayed in the list panel.
 			 */
 			ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
@@ -205,7 +205,7 @@ void USearchStacksWidget::SetupControlButtons(UAWStackWithControlPanels* HostLay
 	}
 }
 
-void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData)
+void USearchStacksWidget::HandlePageData(const ImmutablezkEVMAPI::APIPage& PageData)
 {
 	PageCursors = PageData;
 
@@ -219,14 +219,14 @@ void USearchStacksWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& Pa
 	}
 }
 
-void USearchStacksWidget::HandleSorting(TOptional<ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest::SortByEnum>& Sorting)
+void USearchStacksWidget::HandleSorting(TOptional<ImmutablezkEVMAPI::APIStacksApi::SearchStacksRequest::SortByEnum>& Sorting)
 {
 	switch (GetSortCategory())
 	{
 	case ESearchStacks_SortCategories::Price:
 		if (GetSortOrder())
 		{
-			Sorting = ImmutableOpenAPI::OpenAPIStacksApi::SearchStacksRequest::SortByEnum::CheapestFirst;	
+			Sorting = ImmutablezkEVMAPI::APIStacksApi::SearchStacksRequest::SortByEnum::CheapestFirst;	
 		}
 		else
 		{

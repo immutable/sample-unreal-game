@@ -5,10 +5,10 @@
 #include "Marketplace/MarketplacePolicy.h"
 #include "Base/ItemListWidget.h"
 #include "Inventory/SearchNFTsItemWidget.h"
-#include "OpenAPIStacksApi.h"
-#include "OpenAPIOrderbookApi.h"
-#include "OpenAPIOrdersApi.h"
-#include "OpenAPIPage.h"
+#include "APIStacksApi.h"
+#include "APIOrderbookApi.h"
+#include "APIOrdersApi.h"
+#include "APIPage.h"
 
 #include "SearchNFTsWidget.generated.h"
 
@@ -45,12 +45,12 @@ protected:
 	/* UActivatableWidgetWithControlPanels interface */
 
 	/**
-	 * Handles the response from the SearchNFTs Immutable OpenAPI call.
-	 * @see ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTs
+	 * Handles the response from the SearchNFTs Immutable zkEVM API call.
+	 * @see ImmutablezkEVMAPI::APIStacksApi::SearchNFTs
 	 *
 	 * @param Response The response object containing the results of the NFT search.
 	 */
-	void OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsResponse& Response);
+	void OnSearchNFTsResponse(const ImmutablezkEVMAPI::APIStacksApi::SearchNFTsResponse& Response);
 	/**
 	 * Handles the selection state of an item in the inventory.
 	 *
@@ -63,9 +63,9 @@ private:
 	/**
 	 * Handles the pagination of inventory API query results.
 	 *
-	 * @param PageData The pagination data, represented by an ImmutableOpenAPI::OpenAPIPage object.
+	 * @param PageData The pagination data, represented by an ImmutablezkEVMAPI::APIPage object.
 	 */
-	void HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData);
+	void HandlePageData(const ImmutablezkEVMAPI::APIPage& PageData);
 	/**
 	 * Handles the event when the control panel button is clicked. For example Buy, Sell, etc.
 	 *
@@ -94,21 +94,21 @@ private:
 	 *
 	 * @param Response The response received from the PrepareListing API call.
 	 */
-	void OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingResponse& Response);
+	void OnPrepareListing(const ImmutableOrderbook::APIOrderbookApi::PrepareListingResponse& Response);
 	/**
 	 * Handles the creation of the marketplace NFT listing.
 	 * @see https://docs.immutable.com/products/zkEVM/orderbook/create-listing#create-the-listing
 	 *
 	 * @param Response The response received from the CreateListing API call.
 	 */
-	void OnCreateListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::CreateListingResponse& Response);
+	void OnCreateListing(const ImmutableOrderbook::APIOrderbookApi::CreateListingResponse& Response);
 	/**
 	 * Handles the response for canceling the marketplace NFT listing.
 	 * @see https://docs.immutable.com/products/zkEVM/orderbook/cancel
 	 *
 	 * @param Response The response object containing details about the canceled orders.
 	 */
-	void OnCancelOrdersOnChain(const ImmutableTsSdkApi::OpenAPIOrderbookApi::CancelOrdersOnChainResponse& Response);
+	void OnCancelOrdersOnChain(const ImmutableOrderbook::APIOrderbookApi::CancelOrdersOnChainResponse& Response);
 
 	/**
 	 * Handles the dialog callback action such as close, cancel, or confirm.
@@ -120,7 +120,7 @@ private:
 	void OnProcessDialogAction(UDialog* DialogPtr, EDialogResult Result);
 	
 	void ConfirmListing(const FString& ListingId);
-	void OnGetListing(const ImmutableOpenAPI::OpenAPIOrdersApi::GetListingResponse& Response);
+	void OnGetListing(const ImmutablezkEVMAPI::APIOrdersApi::GetListingResponse& Response);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
@@ -133,7 +133,7 @@ protected:
 private:
 	TWeakObjectPtr<UMarketplacePolicy> Policy;
 	USearchNFTsItemWidget* SelectedItemWidget = nullptr;
-	ImmutableOpenAPI::OpenAPIPage PageCursors;
+	ImmutablezkEVMAPI::APIPage PageCursors;
 	UControlPanelButton* SellButton = nullptr;
 	UControlPanelButton* CancelSellButton = nullptr;
 	UDialog* ProcessingDialog = nullptr;

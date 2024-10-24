@@ -2,7 +2,7 @@
 
 #include "UObject/Interface.h"
 
-#include "ImmutableOpenAPI/Public/OpenAPIBaseModel.h"
+#include "ImmutablezkEVMAPI/Public/APIBaseModel.h"
 
 #include "IOpenAPIProcessorInterface.generated.h"
 
@@ -17,7 +17,7 @@ class SAMPLEGAME426_API IMarketplaceOpenAPIProcessorInterface
 	GENERATED_BODY()
 
 public:
-	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) = 0;
+	virtual void ProcessModel(const ImmutablezkEVMAPI::Model& Data) = 0;
 };
 
 UINTERFACE()
@@ -31,5 +31,5 @@ class SAMPLEGAME426_API IInventoryOpenAPIProcessorInterface
 	GENERATED_BODY()
 
 public:
-	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) = 0;
+	virtual void ProcessModel(const ImmutablezkEVMAPI::Model& Data) = 0;
 };

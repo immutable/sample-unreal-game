@@ -4,13 +4,13 @@
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "LogSampleGame.h"
-#include "OpenAPIListing.h"
-#include "OpenAPIStackBundle.h"
+#include "APIListing.h"
+#include "APIStackBundle.h"
 #include "UIGameplayTags.h"
 #include "Marketplace/MarketplacePolicy.h"
 #include "Marketplace/SearchStacksListing_ListingsWidget.h"
-#include "OpenAPIFulfillOrderRequest.h"
-#include "OpenAPIOrderbookApiOperations.h"
+#include "APIFulfillOrderRequest.h"
+#include "APIOrderbookApiOperations.h"
 #include "Base/AWStackWithControlPanels.h"
 #include "Marketplace/SearchStacksWidget.h"
 #include "Marketplace/StackItemWidget.h"
@@ -54,7 +54,7 @@ void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPa
 	}
 }
 
-void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
+void USearchStacksListingWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Data)
 {
 	if (!Listings)
 	{
@@ -64,7 +64,7 @@ void USearchStacksListingWidget::ProcessModel(const ImmutableOpenAPI::Model& Dat
 	Listings->Reset();
 	BP_Reset();
 	
-	auto StackBundle = static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data);
+	auto StackBundle = static_cast<const ImmutablezkEVMAPI::APIStackBundle&>(Data);
 
 	FString StackName = StackBundle.Stack.Name.GetValue();
 
@@ -177,20 +177,20 @@ void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)
 		 * This function creates a request to fulfill an order by setting the necessary
 		 * request data, including the listing ID and the taker address. It then sends
 		 * the request using the FulfillOrder method of the Orderbook API.
-		 * @see ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderRequest
+		 * @see ImmutableOrderbook::APIOrderbookApi::FulfillOrderRequest
 		 *
 		 * @param RequestData The data required to fulfill the order, including the listing ID and taker address.
 		 * @param Request The request object that will be sent to the Orderbook API.
 		 */
-		ImmutableTsSdkApi::OpenAPIFulfillOrderRequest RequestData;
-		ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderRequest Request;
+		ImmutableOrderbook::APIFulfillOrderRequest RequestData;
+		ImmutableOrderbook::APIOrderbookApi::FulfillOrderRequest Request;
 
 		RequestData.ListingId = ListingItemWidget->GetListingId();
 		RequestData.TakerAddress = LocalPlayer->GetPassportWalletAddress();
 
-		Request.OpenAPIFulfillOrderRequest = RequestData;
+		Request.APIFulfillOrderRequest = RequestData;
 		
-		Policy->GetTsSdkAPI()->FulfillOrder(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FFulfillOrderDelegate::CreateUObject(this, &USearchStacksListingWidget::OnFulfillOrder));
+		Policy->GetTsSdkAPI()->FulfillOrder(Request, ImmutableOrderbook::APIOrderbookApi::FFulfillOrderDelegate::CreateUObject(this, &USearchStacksListingWidget::OnFulfillOrder));
 	}
 }
 
@@ -202,7 +202,7 @@ void USearchStacksListingWidget::OnProcessDialogAction(UDialog* DialogPtr, EDial
 	}
 }
 
-void USearchStacksListingWidget::OnFulfillOrder(const ImmutableTsSdkApi::OpenAPIOrderbookApi::FulfillOrderResponse& Response)
+void USearchStacksListingWidget::OnFulfillOrder(const ImmutableOrderbook::APIOrderbookApi::FulfillOrderResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -227,8 +227,8 @@ void USearchStacksListingWidget::OnFulfillOrder(const ImmutableTsSdkApi::OpenAPI
 		*/
 		auto Actions = Response.Content.Actions.GetValue();
 
-		const auto* ApprovalAction = Actions.FindByPredicate([this](const ImmutableTsSdkApi::OpenAPITransactionAction& Action){ return Action.Purpose.GetValue().Value == ImmutableTsSdkApi::OpenAPITransactionPurpose::Values::Approval; });
-		const auto* FulfillOrderAction = Actions.FindByPredicate([this](const ImmutableTsSdkApi::OpenAPITransactionAction& Action){ return Action.Purpose.GetValue().Value == ImmutableTsSdkApi::OpenAPITransactionPurpose::Values::FulfillOrder; });
+		const auto* ApprovalAction = Actions.FindByPredicate([this](const ImmutableOrderbook::APITransactionAction& Action){ return Action.Purpose.GetValue().Value == ImmutableOrderbook::APITransactionPurpose::Values::Approval; });
+		const auto* FulfillOrderAction = Actions.FindByPredicate([this](const ImmutableOrderbook::APITransactionAction& Action){ return Action.Purpose.GetValue().Value == ImmutableOrderbook::APITransactionPurpose::Values::FulfillOrder; });
 
 		if (!FulfillOrderAction)
 		{

@@ -1,16 +1,13 @@
 ﻿#pragma once
 
+#include "APIAPIError400.h"
+#include "APIListing.h"
 #include "CustomUserWidget.h"
-#include "Blueprint/UserWidget.h"
 #include "SearchStacksListing_ListingItemWidget.h"
 
 #include "SearchStacksListing_ListingsWidget.generated.h"
 
 
-namespace ImmutableOpenAPI
-{
-	class OpenAPIListing;
-}
 
 /**
  * @class USearchStacksListing_ListingsWidget 
@@ -32,7 +29,7 @@ public:
 	 * @param IsIdEven A boolean indicating if the ID of the listing is even or odd, used for record color highlight/separation.
 	 * @param InOnSelectionChangeDelegate The delegate to be called when the selection changes.
 	 */
-	void AddItem(const ImmutableOpenAPI::OpenAPIListing& Listing, bool IsIdEven, const UItemWidget::FOnSelectionChange& InOnSelectionChangeDelegate);
+	void AddItem(const ImmutablezkEVMAPI::APIListing& Listing, bool IsIdEven, const UItemWidget::FOnSelectionChange& InOnSelectionChangeDelegate);
 	/**
 	 * Resets the state of this widget.
 	 */

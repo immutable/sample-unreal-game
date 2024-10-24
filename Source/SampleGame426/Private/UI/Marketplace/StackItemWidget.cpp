@@ -3,7 +3,7 @@
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "LogSampleGame.h"
-#include "OpenAPIStackBundle.h"
+#include "APIStackBundle.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Marketplace/MarketplacePolicy.h"
@@ -13,9 +13,9 @@
 #include "NFT/NFT_TableRowBase.h"
 
 
-void UStackItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
+void UStackItemWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Data)
 {
-	StackBundle = MakeShareable(new ImmutableOpenAPI::OpenAPIStackBundle(static_cast<const ImmutableOpenAPI::OpenAPIStackBundle&>(Data)));
+	StackBundle = MakeShareable(new ImmutablezkEVMAPI::APIStackBundle(static_cast<const ImmutablezkEVMAPI::APIStackBundle&>(Data)));
 	
 	if (!StackBundle.IsValid())
 	{
@@ -57,7 +57,7 @@ void UStackItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
-TSharedPtr<ImmutableOpenAPI::OpenAPIStackBundle> UStackItemWidget::GetStackBundle() const
+TSharedPtr<ImmutablezkEVMAPI::APIStackBundle> UStackItemWidget::GetStackBundle() const
 {
 	return StackBundle;
 }
@@ -83,11 +83,11 @@ void UStackItemWidget::SetName(const FString& Name)
 	}
 }
 
-void UStackItemWidget::SetPrice(const ImmutableOpenAPI::OpenAPIMarketPriceDetails& PriceDetails)
+void UStackItemWidget::SetPrice(const ImmutablezkEVMAPI::APIMarketPriceDetails& PriceDetails)
 {
 	if (NFTLowestPrice && PriceDetails.Token.Decimals.IsSet())
 	{
-		FString Price = FMathUtility::ConvertWeiStringToFloatValueString(PriceDetails.Token.Decimals.GetValue(), PriceDetails.Amount.Value);  
+		FString Price = FMathUtility::ConvertWeiStringToFloatValueString(PriceDetails.Token.Decimals.GetValue(), PriceDetails.Amount);  
 
 		NFTLowestPrice->SetText(FText::FromString(Price));
 

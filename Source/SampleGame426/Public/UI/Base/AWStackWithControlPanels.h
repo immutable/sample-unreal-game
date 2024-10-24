@@ -4,6 +4,7 @@
 
 #include "UI/Base/ActivatableWidgetContainer.h"
 #include "UI/Data/ControlPanelButtonDataAsset.h"
+#include "UI/Base/ControlPanelButton.h"
 
 #include "AWStackWithControlPanels.generated.h"
 

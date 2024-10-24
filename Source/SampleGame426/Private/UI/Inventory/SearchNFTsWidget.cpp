@@ -4,9 +4,9 @@
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "LogSampleGame.h"
-#include "OpenAPIOrderbookApiOperations.h"
-#include "OpenAPIOrdersApiOperations.h"
-#include "OpenAPIStacksApiOperations.h"
+#include "APIOrderbookApiOperations.h"
+#include "APIOrdersApiOperations.h"
+#include "APIStacksApiOperations.h"
 #include "UIGameplayTags.h"
 #include "Base/AWStackWithControlPanels.h"
 #include "Base/ItemWidget.h"
@@ -37,11 +37,11 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 	}
 
 	/**
-	 * Step 1(Inventory display): In order to display items in the list panel of player's Inventory, we need to send a search request to the Immutable OpenAPI.
+	 * Step 1(Inventory display): In order to display items in the list panel of player's Inventory, we need to send a search request to the Immutable zkEVM API.
 	 * Some request parameters are populated based on the current state of the UI Marketplace policy settings.
 	 * @see UMarketplacePolicy
 	 * 
-	 * @param SearchNFTsRequest The request object to be passed to SearchNFTs method of the Immutable OpenAPI.
+	 * @param SearchNFTsRequest The request object to be passed to SearchNFTs method of the Immutable zkEVM API.
 	 * Must-be parameters:
 	 * - AccountAddress: The wallet address of the owning custom local player.
 	 * - ContractAddress: The contract address of NFT we are searching for, retrieved from the policy.
@@ -51,9 +51,9 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 	 * - PageSize: The number of items per page, calculated based on the number of columns and rows in the ListPanel.
 	 * - PageCursor: The cursor for pagination.
 	 * 
-	 * The search request is sent using the ImmutableOpenAPI::OpenAPIStacksApi, and the response is bound to the USearchNfTsWidget::OnSearchNFTsResponse method.
+	 * The search request is sent using the ImmutablezkEVMAPI::APIStacksApi, and the response is bound to the USearchNfTsWidget::OnSearchNFTsResponse method.
 	 */
-	ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsRequest SearchNFTsRequest;
+	ImmutablezkEVMAPI::APIStacksApi::SearchNFTsRequest SearchNFTsRequest;
 	
 	SearchNFTsRequest.ChainName = Policy->GetChainName();
 	SearchNFTsRequest.PageSize = (ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows());
@@ -62,7 +62,7 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 	SearchNFTsRequest.ContractAddress = Policy->GetContracts();
 	SearchNFTsRequest.OnlyIncludeOwnerListings = true;
 	
-	Policy->GetStacksAPI()->SearchNFTs(SearchNFTsRequest, ImmutableOpenAPI::OpenAPIStacksApi::FSearchNFTsDelegate::CreateUObject(this, &USearchNfTsWidget::OnSearchNFTsResponse));
+	Policy->GetStacksAPI()->SearchNFTs(SearchNFTsRequest, ImmutablezkEVMAPI::APIStacksApi::FSearchNFTsDelegate::CreateUObject(this, &USearchNfTsWidget::OnSearchNFTsResponse));
 }
 
 void USearchNfTsWidget::NativeOnInitialized()
@@ -119,7 +119,7 @@ void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostLayer
 	}
 }
 
-void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsResponse& Response)
+void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutablezkEVMAPI::APIStacksApi::SearchNFTsResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -145,8 +145,8 @@ void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStac
 
 		/**
 		* Step 2(Inventory display): This function performs the second step in the process.
-		* The Result array inside the Content of ImmutableOpenAPI::OpenAPIStacksApi::SearchNFTsResponse contains NFT data for the specified contract addresses owned by the player or Passport wallet address.
-		* Register selection handler for the item widget to dynamically acquire data for performing Immutable OpenAPI Listing or Cancel Listing procedures.
+		* The Result array inside the Content of ImmutablezkEVMAPI::APIStacksApi::SearchNFTsResponse contains NFT data for the specified contract addresses owned by the player or Passport wallet address.
+		* Register selection handler for the item widget to dynamically acquire data for performing Immutable zkEVM API Listing or Cancel Listing procedures.
 		* Also, if Result's Listings array is not empty, highlight the item widget to be listed for sell.
 		* @see Definition of USearchNFTsItemWidget::ProcessModel to understand how the data is processed and displayed in the Inventory panel.
 		*/
@@ -197,7 +197,7 @@ void USearchNfTsWidget::OnItemSelection(bool IsSelected, UItemWidget* ItemWidget
 	}
 }
 
-void USearchNfTsWidget::HandlePageData(const ImmutableOpenAPI::OpenAPIPage& PageData)
+void USearchNfTsWidget::HandlePageData(const ImmutablezkEVMAPI::APIPage& PageData)
 {
 	PageCursors = PageData;
 
@@ -265,25 +265,25 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 	 * @param BuyData The data for the buy side of the listing.
 	 * @param SellData The data for the sell side of the listing.
 	 */
-	ImmutableTsSdkApi::OpenAPIPrepareListingRequest RequestData;
-	ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingRequest Request;
-	ImmutableTsSdkApi::OpenAPIPrepareListingRequestBuy BuyData;
-	ImmutableTsSdkApi::OpenAPIPrepareListingRequestSell SellData;
+	ImmutableOrderbook::APIPrepareListingRequest RequestData;
+	ImmutableOrderbook::APIOrderbookApi::PrepareListingRequest Request;
+	ImmutableOrderbook::APIPrepareListingRequestBuy BuyData;
+	ImmutableOrderbook::APIPrepareListingRequestSell SellData;
 
 	BuyData.Amount = FMathUtility::ConvertFloatValueStringToWeiString(18, Dialog->GetPrice());
 	BuyData.ContractAddress = Policy->GetBalanceContractAddress();
-	BuyData.Type = ImmutableTsSdkApi::OpenAPIPrepareListingRequestBuy::TypeEnum::ERC20;
+	BuyData.Type = ImmutableOrderbook::APIPrepareListingRequestBuy::TypeEnum::ERC20;
 
 	SellData.ContractAddress = SelectedItemWidget->GetContractAddress();
-	SellData.Type = ImmutableTsSdkApi::OpenAPIPrepareListingRequestSell::TypeEnum::ERC721;
+	SellData.Type = ImmutableOrderbook::APIPrepareListingRequestSell::TypeEnum::ERC721;
 	SellData.TokenId = SelectedItemWidget->GetTokenId();
 
 	RequestData.MakerAddress = LocalPlayer->GetPassportWalletAddress();
 	RequestData.Buy = BuyData;
 	RequestData.Sell = SellData;
 
-	Request.OpenAPIPrepareListingRequest = RequestData;
-	Policy->GetTsSdkAPI()->PrepareListing(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FPrepareListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnPrepareListing));
+	Request.APIPrepareListingRequest = RequestData;
+	Policy->GetTsSdkAPI()->PrepareListing(Request, ImmutableOrderbook::APIOrderbookApi::FPrepareListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnPrepareListing));
 }
 
 void USearchNfTsWidget::OnPlayerConfirmedCancelSell(UDialog* DialogPtr, EDialogResult Result)
@@ -312,17 +312,17 @@ void USearchNfTsWidget::OnPlayerConfirmedCancelSell(UDialog* DialogPtr, EDialogR
 	 * @param RequestData The data for the cancel listing request.
 	 * @param Request The request object for the cancel listing.
 	 */
-	ImmutableTsSdkApi::OpenAPIOrderbookApi::CancelOrdersOnChainRequest Request;
-	ImmutableTsSdkApi::OpenAPICancelOrdersOnChainRequest RequestData;
+	ImmutableOrderbook::APIOrderbookApi::CancelOrdersOnChainRequest Request;
+	ImmutableOrderbook::APICancelOrdersOnChainRequest RequestData;
 
 	RequestData.AccountAddress = LocalPlayer->GetPassportWalletAddress();
 	RequestData.OrderIds.AddUnique(SelectedItemWidget->GetListingId());
 
-	Request.OpenAPICancelOrdersOnChainRequest = RequestData;
-	Policy->GetTsSdkAPI()->CancelOrdersOnChain(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FCancelOrdersOnChainDelegate::CreateUObject(this, &USearchNfTsWidget::OnCancelOrdersOnChain));
+	Request.APICancelOrdersOnChainRequest = RequestData;
+	Policy->GetTsSdkAPI()->CancelOrdersOnChain(Request, ImmutableOrderbook::APIOrderbookApi::FCancelOrdersOnChainDelegate::CreateUObject(this, &USearchNfTsWidget::OnCancelOrdersOnChain));
 }
 
-void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::PrepareListingResponse& Response)
+void USearchNfTsWidget::OnPrepareListing(const ImmutableOrderbook::APIOrderbookApi::PrepareListingResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -345,8 +345,8 @@ void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbo
 	 * If the Signable action is present, the function signs the data using Immutable SDK ZkEvmSignTypedDataV4 and creates a listing via the Immutable Orderbook API's CreateListing method.
 	 */
 
-	const auto* TransactionAction = Response.Content.Actions.FindByPredicate([this](const ImmutableTsSdkApi::OpenAPIAction& Action){ return Action.Type == ImmutableTsSdkApi::OpenAPIAction::TypeEnum::Transaction; });
-	const auto* SignableAction = Response.Content.Actions.FindByPredicate([this](const ImmutableTsSdkApi::OpenAPIAction& Action){ return Action.Type == ImmutableTsSdkApi::OpenAPIAction::TypeEnum::Signable; });
+	const auto* TransactionAction = Response.Content.Actions.FindByPredicate([this](const ImmutableOrderbook::APIAction& Action){ return Action.Type == ImmutableOrderbook::APIAction::TypeEnum::Transaction; });
+	const auto* SignableAction = Response.Content.Actions.FindByPredicate([this](const ImmutableOrderbook::APIAction& Action){ return Action.Type == ImmutableOrderbook::APIAction::TypeEnum::Signable; });
 
 	if (!TransactionAction && !SignableAction)
 	{
@@ -386,15 +386,15 @@ void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbo
 			* @param Request The request object for creating the listing.
 			* @param RequestData The data for the create listing request.
 			*/
-			ImmutableTsSdkApi::OpenAPIOrderbookApi::CreateListingRequest Request;
-			ImmutableTsSdkApi::OpenAPICreateListingRequest RequestData;
+			ImmutableOrderbook::APIOrderbookApi::CreateListingRequest Request;
+			ImmutableOrderbook::APICreateListingRequest RequestData;
 
 			RequestData.OrderComponents = Content.OrderComponents;
 			RequestData.OrderHash = Content.OrderHash;
 			RequestData.OrderSignature = Signature;
-			Request.OpenAPICreateListingRequest = RequestData;
+			Request.APICreateListingRequest = RequestData;
 			
-			Policy->GetTsSdkAPI()->CreateListing(Request, ImmutableTsSdkApi::OpenAPIOrderbookApi::FCreateListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnCreateListing));
+			Policy->GetTsSdkAPI()->CreateListing(Request, ImmutableOrderbook::APIOrderbookApi::FCreateListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnCreateListing));
 		});
 	};
 
@@ -417,7 +417,7 @@ void USearchNfTsWidget::OnPrepareListing(const ImmutableTsSdkApi::OpenAPIOrderbo
 	}
 }
 
-void USearchNfTsWidget::OnCreateListing(const ImmutableTsSdkApi::OpenAPIOrderbookApi::CreateListingResponse& Response)
+void USearchNfTsWidget::OnCreateListing(const ImmutableOrderbook::APIOrderbookApi::CreateListingResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -429,7 +429,7 @@ void USearchNfTsWidget::OnCreateListing(const ImmutableTsSdkApi::OpenAPIOrderboo
 
 	if (Response.GetHttpResponseCode() == EHttpResponseCodes::Type::Ok)
 	{
-		ImmutableTsSdkApi::OpenAPICreateListing200Response OkResponse;
+		ImmutableOrderbook::APICreateListing200Response OkResponse;
 
 		TSharedPtr<FJsonValue> JsonValue;
 		auto Reader = TJsonReaderFactory<>::Create(Response.GetHttpResponse()->GetContentAsString());
@@ -450,7 +450,7 @@ void USearchNfTsWidget::OnCreateListing(const ImmutableTsSdkApi::OpenAPIOrderboo
 	}
 }
 
-void USearchNfTsWidget::OnCancelOrdersOnChain(const ImmutableTsSdkApi::OpenAPIOrderbookApi::CancelOrdersOnChainResponse& Response)
+void USearchNfTsWidget::OnCancelOrdersOnChain(const ImmutableOrderbook::APIOrderbookApi::CancelOrdersOnChainResponse& Response)
 {
 	if (!Response.IsSuccessful() || Response.GetHttpResponseCode() != EHttpResponseCodes::Type::Ok)
 	{
@@ -459,7 +459,7 @@ void USearchNfTsWidget::OnCancelOrdersOnChain(const ImmutableTsSdkApi::OpenAPIOr
 		return;
 	}
 
-	ImmutableTsSdkApi::OpenAPICancelOrdersOnChain200Response OkResponse;
+	ImmutableOrderbook::APICancelOrdersOnChain200Response OkResponse;
 	TSharedPtr<FJsonValue> JsonValue;
 
 	FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Response.GetHttpResponse()->GetContentAsString()), JsonValue);
@@ -473,7 +473,7 @@ void USearchNfTsWidget::OnCancelOrdersOnChain(const ImmutableTsSdkApi::OpenAPIOr
 
 	auto Action = OkResponse.CancellationAction.GetValue();
 	
-	if (Action.Purpose.GetValue().Value != ImmutableTsSdkApi::OpenAPITransactionPurpose::Values::Cancel)
+	if (Action.Purpose.GetValue().Value != ImmutableOrderbook::APITransactionPurpose::Values::Cancel)
 	{
 		ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Canceling listing error!"), TEXT("Failed to cancel order due to wrong transaction purpose"), { EDialogResult::Closed, LOCTEXT("Close", "Close") }, false));
 		
@@ -519,15 +519,15 @@ void USearchNfTsWidget::OnProcessDialogAction(UDialog* DialogPtr, EDialogResult 
 
 void USearchNfTsWidget::ConfirmListing(const FString& ListingId)
 {
-	ImmutableOpenAPI::OpenAPIOrdersApi::GetListingRequest ListingRequest;
+	ImmutablezkEVMAPI::APIOrdersApi::GetListingRequest ListingRequest;
 
 	ListingRequest.ChainName = Policy->GetChainName();
 	ListingRequest.ChainName = ListingId;
 
-	Policy->GetOrdersAPI()->GetListing(ListingRequest, ImmutableOpenAPI::OpenAPIOrdersApi::FGetListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnGetListing));
+	Policy->GetOrdersAPI()->GetListing(ListingRequest, ImmutablezkEVMAPI::APIOrdersApi::FGetListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnGetListing));
 }
 
-void USearchNfTsWidget::OnGetListing(const ImmutableOpenAPI::OpenAPIOrdersApi::GetListingResponse& Response)
+void USearchNfTsWidget::OnGetListing(const ImmutablezkEVMAPI::APIOrdersApi::GetListingResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{

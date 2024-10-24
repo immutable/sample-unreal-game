@@ -1,15 +1,11 @@
 ﻿#pragma once
 
+#include "APINFTBundle.h"
 #include "Base/ItemWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 
 #include "SearchNFTsItemWidget.generated.h"
 
-
-namespace ImmutableOpenAPI
-{
-	class OpenAPINFTBundle;
-}
 
 /**
  * @class USearchNFTsItemWidget
@@ -23,7 +19,7 @@ class SAMPLEGAME426_API USearchNFTsItemWidget : public UItemWidget, public IInve
 
 public:
 	/* IInventoryOpenAPIProcessorInterface interface */
-	virtual void ProcessModel(const ImmutableOpenAPI::Model& Data) override;
+	virtual void ProcessModel(const ImmutablezkEVMAPI::Model& Data) override;
 	/* IInventoryOpenAPIProcessorInterface interface */
 
 	/**
@@ -40,21 +36,21 @@ public:
 	bool IsListedForSell() const;
 	/**
 	 * @brief Retrieves the token ID associated with the displayed NFT in the inventory.
-	 * @see ImmutableOpenAPI::OpenAPINFTWithStack in ImmutableOpenAPI plugin.
+	 * @see ImmutablezkEVMAPI::OpenAPINFTWithStack in ImmutableOpenAPI plugin.
 	 *
 	 * @return A string representing the token ID.
 	 */
 	FString GetTokenId() const;
 	/**
 	 * @brief Retrieves the NFT contract address associated with the displayed NFT in the inventory.
-	 * @see ImmutableOpenAPI::OpenAPINFTWithStack in ImmutableOpenAPI plugin.
+	 * @see ImmutablezkEVMAPI::OpenAPINFTWithStack in ImmutableOpenAPI plugin.
 	 *
 	 * @return A string representing the contract address.
 	 */
 	FString GetContractAddress() const;
 	/**
 	 * @brief Retrieves the listing ID from the ImmutableOpenAPI, which is used to cancel the marketplace NFT listing.
-	 * @see ImmutableOpenAPI::OpenAPIListing in ImmutableOpenAPI plugin.
+	 * @see ImmutablezkEVMAPI::OpenAPIListing in ImmutableOpenAPI plugin.
 	 *
 	 * @param Id The unique identifier for the listing parsed from Immutable API OpenAPIListing.
 	 */
@@ -98,7 +94,7 @@ protected:
 	class UTextBlock* NFTBalance  = nullptr;
 	
 private:
-	TSharedPtr<ImmutableOpenAPI::OpenAPINFTBundle> NFTBundle;
+	TSharedPtr<ImmutablezkEVMAPI::APINFTBundle> NFTBundle;
 	bool bIsListed = false;
 	
 };

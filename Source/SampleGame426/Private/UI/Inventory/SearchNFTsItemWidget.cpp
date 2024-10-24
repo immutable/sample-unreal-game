@@ -3,16 +3,16 @@
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "LogSampleGame.h"
-#include "OpenAPINFTBundle.h"
+#include "APINFTBundle.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Marketplace/MarketplacePolicy.h"
 
 
-void USearchNFTsItemWidget::ProcessModel(const ImmutableOpenAPI::Model& Data)
+void USearchNFTsItemWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Data)
 {
-	NFTBundle = MakeShareable(new ImmutableOpenAPI::OpenAPINFTBundle(static_cast<const ImmutableOpenAPI::OpenAPINFTBundle&>(Data)));
+	NFTBundle = MakeShareable(new ImmutablezkEVMAPI::APINFTBundle(static_cast<const ImmutablezkEVMAPI::APINFTBundle&>(Data)));
 	
 	if (!NFTBundle.IsValid())
 	{

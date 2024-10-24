@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "OpenAPIOrderbookApi.h"
-#include "OpenAPIStacksApi.h"
-#include "OpenAPIOrdersApi.h"
+#include "APIOrderbookApi.h"
+#include "APIStacksApi.h"
+#include "APIOrdersApi.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
 #include "NFT/NFT_TableRowBase.h"
 
@@ -14,9 +14,9 @@ class UCustomLocalPlayer;
 /**
  * @class UMarketplacePolicy
  * @brief Manages the policies and rules for the game's marketplace.
- * @details This class centralizes the management of marketplace functionality, including caching data for search stack queries and accessing various APIs such as Immutable OpenAPI and Orderbook API. It provides methods to:
+ * @details This class centralizes the management of marketplace functionality, including caching data for search stack queries and accessing various APIs such as Immutable zkEVM API and Orderbook API. It provides methods to:
  * - Retrieve NFT data table and specific NFT texture rows.
- * - Access instances of Immutable OpenAPI and Orderbook API for marketplace and inventory queries.
+ * - Access instances of Immutable zkEVM API and Orderbook API for marketplace and inventory queries.
  * - Get API-related data such as contract addresses for NFTs and cryptocurrencies, API endpoints, and associated chains.
  * @note This class serves as a centralized storage for marketplace/inventory search query data and related configurations.
  */
@@ -46,29 +46,29 @@ public:
 	FNFT_TableRowBase* FindNFTTextureRow(FName RowName);
 
 	/**
-	 * Retrieves the search stacks instance of Immutable OpenAPI. Primarily used for the marketplace NFT search queries. 
-	 * @see ImmutableOpenAPI::OpenAPIStacksApi in ImmutableOpenAPI plugin.
+	 * Retrieves the search stacks instance of Immutable zkEVM API. Primarily used for the marketplace NFT search queries. 
+	 * @see ImmutablezkEVMAPI::APIStacksApi in ImmutableOpenAPI plugin.
 	 *
-	 * @return A pointer to an ImmutableOpenAPI::OpenAPIStacksApi instance.
+	 * @return A pointer to an ImmutablezkEVMAPI::APIStacksApi instance.
 	 */
-	ImmutableOpenAPI::OpenAPIStacksApi* GetStacksAPI()
+	ImmutablezkEVMAPI::APIStacksApi* GetStacksAPI()
 	{
 		return StacksAPI.Get();
 	}
 	
 	/**
-	 * Retrieves the orders instance of Immutable OpenAPI. Primarily used for the player's Inventory NFT queries. 
-	 * @see ImmutableOpenAPI::OpenAPIOrdersApi in ImmutableOpenAPI plugin.
+	 * Retrieves the orders instance of Immutable zkEVM API. Primarily used for the player's Inventory NFT queries. 
+	 * @see ImmutablezkEVMAPI::APIOrdersApi in ImmutableOpenAPI plugin.
 	 *
-	 * @return A pointer to an instance of ImmutableOpenAPI::OpenAPIOrdersApi.
+	 * @return A pointer to an instance of ImmutablezkEVMAPI::APIOrdersApi.
 	 */
-	ImmutableOpenAPI::OpenAPIOrdersApi* GetOrdersAPI()
+	ImmutablezkEVMAPI::APIOrdersApi* GetOrdersAPI()
 	{
 		return OrdersAPI.Get();
 	}
 
 	/**
-	 * Retrieves the name of the chain used to pass to the Immutable OpenAPI and Orderbook API.
+	 * Retrieves the name of the chain used to pass to the Immutable zkEVM API and Orderbook API.
 	 *
 	 * @return A constant reference to an FString containing the name of the chain.
 	 */
@@ -89,11 +89,11 @@ public:
 	
 	/**
 	 * @brief Retrieves the instance of Orderbook API.
-	 * @see ImmutableTsSdkApi::OpenAPIOrderbookApi in ImmutableTsSdkApi plugin.
+	 * @see ImmutableOrderbook::APIOrderbookApi in ImmutableTsSdkApi plugin.
 	 *
-	 * @return A pointer to the ImmutableTsSdkApi::OpenAPIOrderbookApi instance.
+	 * @return A pointer to the ImmutableOrderbook::APIOrderbookApi instance.
 	 */
-	ImmutableTsSdkApi::OpenAPIOrderbookApi* GetTsSdkAPI();
+	ImmutableOrderbook::APIOrderbookApi* GetTsSdkAPI();
 	
 	/**
 	 * @brief Retrieves the cryptocurrency contract address associated with the user's wallet balance.
@@ -133,7 +133,7 @@ protected:
 	
 	// Online values:
 
-	/// The URL for the Immutable OpenAPI.
+	/// The URL for the Immutable zkEVM API.
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	FString ImmutableAPIURL;
 
@@ -141,7 +141,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	FString TsSdkAPIURL;
 
-	/// The name of the API chain used by Immutable OpenAPI and Orderbook API.
+	/// The name of the API chain used by Immutable zkEVM API and Orderbook API.
 	UPROPERTY(EditDefaultsOnly, Category = "Marketplace|Online")
 	FString SearchAPIChainName;
 	
@@ -170,12 +170,12 @@ protected:
 	int32 NumberFractionalDigits = 4;
 
 private:
-	TUniquePtr<ImmutableOpenAPI::HttpRetryManager> HttpRetryManager;
+	TUniquePtr<ImmutablezkEVMAPI::HttpRetryManager> HttpRetryManager;
 
-	TUniquePtr<ImmutableOpenAPI::OpenAPIStacksApi> StacksAPI;
-	TUniquePtr<ImmutableOpenAPI::OpenAPIOrdersApi> OrdersAPI;
+	TUniquePtr<ImmutablezkEVMAPI::APIStacksApi> StacksAPI;
+	TUniquePtr<ImmutablezkEVMAPI::APIOrdersApi> OrdersAPI;
 
-	TUniquePtr<ImmutableTsSdkApi::OpenAPIOrderbookApi> TsSdkAPI;
+	TUniquePtr<ImmutableOrderbook::APIOrderbookApi> TsSdkAPI;
 
 	FString SearchStacksKeyword;
 	FString SearchStacksTraits;

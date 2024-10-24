@@ -1,12 +1,12 @@
 #include "CustomGameInstance.h"
 
-#include "CustomLocalPlayer.h"
-#include "GameUIManagerSubsystem.h"
-#include "InformationSubsystem.h"
-#include "LogSampleGame.h"
-#include "UIGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "CustomLocalPlayer.h"
+#include "LogSampleGame.h"
+#include "UI/GameUIManagerSubsystem.h"
+#include "UI/InformationSubsystem.h"
+#include "UI/UIGameplayTags.h"
 
 UDialog* UCustomGameInstance::SendDialogMessage(const UObject* WorldContextObject, FGameplayTag DialogType, UDialogDescriptor* Descriptor)
 {
@@ -17,7 +17,7 @@ UDialog* UCustomGameInstance::SendDialogMessage(const UObject* WorldContextObjec
 		UE_LOG(LogSampleGame, Error, TEXT("Failed to SendSystemMessage for %s"), *WorldContextObject->GetName());
 		return nullptr;
 	}
-	
+
 	if (UDialogSubsystem* DialogSubsystem = GameInstance->GetFirstGamePlayer()->GetSubsystem<UDialogSubsystem>())
 	{
 		return DialogSubsystem->ShowDialog(DialogType, Descriptor);
@@ -35,7 +35,7 @@ void UCustomGameInstance::SendDisplayMessage(const UObject* WorldContextObject, 
 		UE_LOG(LogSampleGame, Error, TEXT("Failed to SendDisplayMessage for %s"), *WorldContextObject->GetName());
 		return;
 	}
-	
+
 	if (UInformationSubsystem* InformationSubsystem = GameInstance->GetFirstGamePlayer()->GetSubsystem<UInformationSubsystem>())
 	{
 		InformationSubsystem->ShowDisplayMessage(Message);
@@ -76,10 +76,10 @@ int32 UCustomGameInstance::AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUser
 			UE_LOG(LogSampleGame, Log, TEXT("AddLocalPlayer: Set %s to Player"), *NewPlayer->GetName());
 			PrimaryPlayer = NewPlayer;
 		}
-		
+
 		GetSubsystem<UGameUIManagerSubsystem>()->NotifyPlayerAdded(Cast<UCustomLocalPlayer>(NewPlayer));
 	}
-	
+
 	return ReturnVal;
 }
 

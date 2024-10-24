@@ -21,8 +21,10 @@ public:
 	virtual void NativeOnInitialized() override;
 	/** UUserWidget: Interface End */
 
+	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Immutable")
 	int32 GetIndex() const;
 
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable")
 	void SetIndex(int32 NewIndex);
 
 	void Show();

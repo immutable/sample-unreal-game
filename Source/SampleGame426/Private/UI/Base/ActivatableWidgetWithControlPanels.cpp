@@ -1,13 +1,11 @@
 ﻿#include "Base/ActivatableWidgetWithControlPanels.h"
 
-#include "UIGameplayTags.h"
 #include "Base/AWStackWithControlPanels.h"
 #include "Marketplace/SearchStacksWidget.h"
 
-
-FString UActivatableWidgetWithControlPanels::GetTitle() const
+bool UActivatableWidgetWithControlPanels::CanBeReleased() const
 {
-	return WidgetTitle;
+	return bCanBeReleased;
 }
 
 void UActivatableWidgetWithControlPanels::Reset()
@@ -16,23 +14,46 @@ void UActivatableWidgetWithControlPanels::Reset()
 
 	bCanBeReleased = false;
 	IndexInGroup = -1;
-	PartOfGroup = nullptr;
+	OwningGroup = nullptr;
 	ControlPanelButtons.Reset();
 }
 
-TSharedRef<SWidget> UActivatableWidgetWithControlPanels::RebuildWidget()
+FString UActivatableWidgetWithControlPanels::GetWidgetTitle() const
 {
-	return Super::RebuildWidget();
+	return WidgetTitle;
 }
 
-void UActivatableWidgetWithControlPanels::SynchronizeProperties()
+int32 UActivatableWidgetWithControlPanels::GetIndexInGroup() const
 {
-	Super::SynchronizeProperties();
+	return IndexInGroup;
 }
 
-void UActivatableWidgetWithControlPanels::OnWidgetRebuilt()
+const FActivatableWidgetWithControlPanelsGroup* UActivatableWidgetWithControlPanels::GetOwningGroup() const
 {
-	Super::OnWidgetRebuilt();
+	return OwningGroup;
+}
+
+void UActivatableWidgetWithControlPanels::SetIndexInGroup(int32 NewIndexInGroup)
+{
+	IndexInGroup = NewIndexInGroup;
+}
+
+void UActivatableWidgetWithControlPanels::SetCanBeReleased()
+{
+	bCanBeReleased = true;
+}
+
+void UActivatableWidgetWithControlPanels::SetOwningGroup(FActivatableWidgetWithControlPanelsGroup* NewOwningGroup)
+{
+	OwningGroup = NewOwningGroup;
+}
+
+void UActivatableWidgetWithControlPanels::Refresh()
+{
+}
+
+void UActivatableWidgetWithControlPanels::SetupControlButtons(UAWStackWithControlPanels* HostLayer)
+{
 }
 
 void UActivatableWidgetWithControlPanels::NativeDestruct()
@@ -55,7 +76,7 @@ void UActivatableWidgetWithControlPanels::NativeOnActivated()
 void UActivatableWidgetWithControlPanels::NativeOnDeactivated()
 {
 	Super::NativeOnDeactivated();
-	
+
 	for (auto Button : ControlPanelButtons)
 	{
 		Button.Value->Hide();

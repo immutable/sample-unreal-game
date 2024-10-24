@@ -40,8 +40,7 @@ void UAWStackWithControlPanels::ReleaseSlateResources(bool bReleaseChildren)
 	}
 
 	MyVerticalBox.Reset();
-	LeftControlPanel.Reset();
-	RightControlPanel.Reset();
+	ButtonPanel.Reset();
 	ControlPanelButtons.Empty();
 
 	for (auto WidgetGroup : WidgetGroups)
@@ -60,7 +59,7 @@ UControlPanelButton* UAWStackWithControlPanels::GetButton(FGameplayTag ButtonTag
 	return nullptr;
 }
 
-UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side)
+UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag)
 {
 	UControlPanelButton* Button = GetButton(ButtonTag);
 
@@ -91,15 +90,12 @@ UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag
 
 	if (Info)
 	{
-		Button->SetIcon(Info->Icon);
 		Button->SetName(Info->Name);
 		Button->SetColor(Info->ColorAndOpacity);
 		Button->SetButtonTag(ButtonTag);
 	}
 
-	TSharedPtr<SVerticalBox> Panel = Side == EAWStackControlPanelSide::Left ? LeftControlPanel : RightControlPanel;
-
-	Panel
+	ButtonPanel
 		->AddSlot()
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Top)
@@ -110,16 +106,6 @@ UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag
 	];
 
 	return Button;
-}
-
-UControlPanelButton* UAWStackWithControlPanels::AddButtonToLeft(FGameplayTag ButtonTag)
-{
-	return AddButton(ButtonTag, EAWStackControlPanelSide::Left);
-}
-
-UControlPanelButton* UAWStackWithControlPanels::AddButtonToRight(FGameplayTag ButtonTag)
-{
-	return AddButton(ButtonTag, EAWStackControlPanelSide::Right);
 }
 
 void UAWStackWithControlPanels::MoveToNextWidgetInGroup()
@@ -189,16 +175,15 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 	+ SVerticalBox::Slot()
 	.HAlign(HAlign_Fill)
 	.VAlign(VAlign_Fill)
-	.FillHeight(CenterPanelVerticalHeightFill)
+	.FillHeight(WindowPanelVerticalHeightFill)
 	[
 		SNew(SHorizontalBox)
 
 		+ SHorizontalBox::Slot()
-
-		.FillWidth(LeftPanelHorizontalWidthFill)
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
-		.Padding(PanelsPadding)
+		.FillWidth(WindowPanelHorizontalWidthFill)
+		.Padding(WindowPanelPadding)
 		[
 			SNew(SOverlay)
 
@@ -207,31 +192,7 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 			.VAlign(VAlign_Fill)
 			[
 				SNew(SImage)
-				.Image(&PanelsBrush)
-			]
-
-			+ SOverlay::Slot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
-			[
-				SAssignNew(LeftControlPanel, SVerticalBox)
-			]
-		]
-
-		+ SHorizontalBox::Slot()
-		.HAlign(HAlign_Fill)
-		.VAlign(VAlign_Fill)
-		.FillWidth(CenterPanelHorizontalWidthFill)
-		.Padding(ActivatableWidgetPadding)
-		[
-			SNew(SOverlay)
-
-			+ SOverlay::Slot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
-			[
-				SNew(SImage)
-				.Image(&ActivatableWidgetBackgroundBrush)
+				.Image(&WindowPanelBackgroundBrush)
 			]
 
 			+ SOverlay::Slot()
@@ -243,10 +204,10 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 		]
 
 		+ SHorizontalBox::Slot()
-		.FillWidth(RightPanelHorizontalWidthFill)
+		.FillWidth(ButtonPanelHorizontalWidthFill)
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
-		.Padding(PanelsPadding)
+		.Padding(ButtonPanelPadding)
 		[
 			SNew(SOverlay)
 
@@ -255,14 +216,14 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 			.VAlign(VAlign_Fill)
 			[
 				SNew(SImage)
-				.Image(&PanelsBrush)
+				.Image(&ButtonPanelBackgroundBrush)
 			]
 
 			+ SOverlay::Slot()
 			.HAlign(HAlign_Fill)
 			.VAlign(VAlign_Fill)
 			[
-				SAssignNew(RightControlPanel, SVerticalBox)
+				SAssignNew(ButtonPanel, SVerticalBox)
 			]
 		]
 	]
@@ -298,12 +259,10 @@ void UAWStackWithControlPanels::SynchronizeProperties()
 	if (IsDesignTime())
 	{
 		ControlPanelButtons.Empty();
-		LeftControlPanel->ClearChildren();
-		RightControlPanel->ClearChildren();
+		ButtonPanel->ClearChildren();
 		for (int32 i = 0; i < 5; ++i)
 		{
-			AddButtonToLeft(NativeUIGameplayTags.UI_ControlPanel_Button_Empty);
-			AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_Empty);
+			AddButton(NativeUIGameplayTags.UI_ControlPanel_Button_Empty);
 		}
 	}
 #endif
@@ -431,12 +390,12 @@ void UAWStackWithControlPanels::BuildControlPanel()
 {
 	if (!PreviousWidgetInGroupButton)
 	{
-		PreviousWidgetInGroupButton = AddButtonToLeft(NativeUIGameplayTags.UI_ControlPanel_Button_Back);
+		PreviousWidgetInGroupButton = AddButton(NativeUIGameplayTags.UI_ControlPanel_Button_Back);
 		PreviousWidgetInGroupButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &UAWStackWithControlPanels::OnControlPanelButtonClicked));
 	}
 	if (!NextWidgetInGroupButton)
 	{
-		NextWidgetInGroupButton = AddButtonToLeft(NativeUIGameplayTags.UI_ControlPanel_Button_Forward);
+		NextWidgetInGroupButton = AddButton(NativeUIGameplayTags.UI_ControlPanel_Button_Forward);
 		NextWidgetInGroupButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &UAWStackWithControlPanels::OnControlPanelButtonClicked));
 	}
 }

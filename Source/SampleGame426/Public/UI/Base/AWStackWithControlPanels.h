@@ -34,13 +34,7 @@ public:
 	UControlPanelButton* GetButton(FGameplayTag ButtonTag);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
-	UControlPanelButton* AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side);
-
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
-	UControlPanelButton* AddButtonToLeft(FGameplayTag ButtonTag);
-
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
-	UControlPanelButton* AddButtonToRight(FGameplayTag ButtonTag);
+	UControlPanelButton* AddButton(FGameplayTag ButtonTag);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	void MoveToNextWidgetInGroup();
@@ -80,16 +74,16 @@ protected:
 	TSubclassOf<UCustomUserWidget> BottomPanelWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
-	FSlateBrush PanelsBrush;
+	FSlateBrush ButtonPanelBackgroundBrush;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
-	FSlateBrush ActivatableWidgetBackgroundBrush;
+	FSlateBrush WindowPanelBackgroundBrush;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
-	FMargin ActivatableWidgetPadding;
+	FMargin WindowPanelPadding;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
-	FMargin PanelsPadding;
+	FMargin ButtonPanelPadding;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
 	FMargin ButtonPadding;
@@ -98,19 +92,16 @@ protected:
 	float TopPanelVerticalHeightFill = 0.05f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
-	float CenterPanelVerticalHeightFill = 0.9f;
+	float WindowPanelVerticalHeightFill = 0.9f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float BottomPanelVerticalHeightFill = 0.05f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
-	float LeftPanelHorizontalWidthFill = 0.05f;
+	float ButtonPanelHorizontalWidthFill = 0.05f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
-	float RightPanelHorizontalWidthFill = 0.05f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
-	float CenterPanelHorizontalWidthFill = 0.9f;
+	float WindowPanelHorizontalWidthFill = 0.9f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget Groups")
 	TArray<FActivatableWidgetWithControlPanelsGroup> WidgetGroups;
@@ -138,8 +129,7 @@ private:
 	UTopPanelButton* ActiveSecondaryButton = nullptr;
 
 	TSharedPtr<SVerticalBox> MyVerticalBox;
-	TSharedPtr<SVerticalBox> LeftControlPanel;
-	TSharedPtr<SVerticalBox> RightControlPanel;
+	TSharedPtr<SVerticalBox> ButtonPanel;
 
 	TMap<UTopPanelButton*, FActivatableWidgetWithControlPanelsGroup*> MapMainButtonToWidgetGroup;
 	TPair<FActivatableWidgetWithControlPanelsGroup* /* Group */, int32 /* Widget Index */> DisplayedWidgetGroupPair;

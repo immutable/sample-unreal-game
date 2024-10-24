@@ -84,6 +84,12 @@ protected:
 	 * @param Balance The new balance to be set.
 	 */
 	void SetBalance(int32 Balance);
+	/**
+	 * Sets the balance of the NFT item owned by the current user.
+	 *
+	 * @param Balance The new balance to be set.
+	 */
+	void SetID(const FString& ID);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory", meta=(BindWidget))
@@ -92,6 +98,8 @@ protected:
 	class UImage* NFTThumbnail  = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory", meta=(BindWidget))
 	class UTextBlock* NFTBalance  = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Inventory", meta=(BindWidget))
+	class UTextBlock* NFTID  = nullptr;
 	
 private:
 	TSharedPtr<ImmutablezkEVMAPI::APINFTBundle> NFTBundle;

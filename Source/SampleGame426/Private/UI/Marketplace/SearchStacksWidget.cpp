@@ -184,9 +184,9 @@ void USearchStacksWidget::SetupControlButtons(UAWStackWithControlPanels* HostLay
 {
 	Super::SetupControlButtons(HostLayer);
 
-	PreviousPageButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_PreviousPage);
-	NextPageButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_NextPage);
-	NFTInfoButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_NFTInfo);
+	PreviousPageButton = HostLayer->AddButton(NativeUIGameplayTags.UI_ControlPanel_Button_PreviousPage);
+	NextPageButton = HostLayer->AddButton(NativeUIGameplayTags.UI_ControlPanel_Button_NextPage);
+	NFTInfoButton = HostLayer->AddButton(NativeUIGameplayTags.UI_ControlPanel_Button_NFTInfo);
 
 	if (PreviousPageButton)
 	{

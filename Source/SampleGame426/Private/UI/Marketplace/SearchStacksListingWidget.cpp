@@ -46,7 +46,7 @@ void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPa
 {
 	Super::SetupControlButtons(HostLayer);
 
-	BuyButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_Buy);
+	BuyButton = HostLayer->AddButton(NativeUIGameplayTags.UI_ControlPanel_Button_Buy);
 
 	if (BuyButton)
 	{

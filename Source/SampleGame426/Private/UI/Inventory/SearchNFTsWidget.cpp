@@ -106,8 +106,8 @@ void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostLayer
 {
 	Super::SetupControlButtons(HostLayer);
 
-	SellButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_Sell);
-	CancelSellButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_CancelSell);
+	SellButton = HostLayer->AddButton(NativeUIGameplayTags.UI_ControlPanel_Button_Sell);
+	CancelSellButton = HostLayer->AddButton(NativeUIGameplayTags.UI_ControlPanel_Button_CancelSell);
 
 	if (SellButton)
 	{

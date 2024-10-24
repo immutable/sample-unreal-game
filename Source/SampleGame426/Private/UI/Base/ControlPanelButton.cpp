@@ -35,14 +35,6 @@ void UControlPanelButton::SetEnable(bool bNewIsEnabled)
 	BP_OnActivationStatusChanged(bNewIsEnabled);
 }
 
-void UControlPanelButton::SetIcon(const FSlateBrush& NewIcon)
-{
-	if (Icon)
-	{
-		Icon->SetBrush(NewIcon);
-	}
-}
-
 void UControlPanelButton::SetButtonTag(FGameplayTag& NewButtonTag)
 {
 	ButtonTag = NewButtonTag;

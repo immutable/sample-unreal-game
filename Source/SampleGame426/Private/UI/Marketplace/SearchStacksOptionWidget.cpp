@@ -54,7 +54,7 @@ void USearchStacksOptionWidget::SetupControlButtons(UAWStackWithControlPanels* H
 {
 	Super::SetupControlButtons(HostLayer);
 
-	SearchButton = HostLayer->AddButtonToRight(NativeUIGameplayTags.UI_ControlPanel_Button_Search);
+	SearchButton = HostLayer->AddButton(NativeUIGameplayTags.UI_ControlPanel_Button_Search);
 
 	if (SearchButton)
 	{

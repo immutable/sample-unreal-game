@@ -8,13 +8,6 @@
 class UImage;
 class UTextBlock;
 
-UENUM(BlueprintType)
-enum class EAWStackControlPanelSide : uint8
-{
-	Left,
-	Right,
-};
-
 /**
  * @class UControlPanelButton 
  * @brief A user widget button tailored for control panels
@@ -37,9 +30,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	void SetEnable(bool bNewIsEnabled = true);
-
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
-	void SetIcon(const FSlateBrush& NewIcon);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	void SetButtonTag(FGameplayTag& NewButtonTag);
@@ -75,9 +65,6 @@ protected:
 	void BP_OnUnhovered();
 
 protected:
-	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget))
-	UImage* Icon = nullptr;
-
 	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget))
 	UTextBlock* ButtonName = nullptr;
 

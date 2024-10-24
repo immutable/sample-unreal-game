@@ -49,7 +49,8 @@ void USearchNFTsItemWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Data)
 	{
 		Balance = NFTBundle->NftWithStack.Balance.GetValue();
 	}
-	
+
+	SetID(NFTBundle->NftWithStack.TokenId);
 	SetBalance(Balance);
 
 	Show();
@@ -127,5 +128,13 @@ void USearchNFTsItemWidget::SetBalance(int32 Balance)
 	if (NFTBalance)
 	{
 		NFTBalance->SetText(FText::AsNumber(Balance));
+	}
+}
+
+void USearchNFTsItemWidget::SetID(const FString& ID)
+{
+	if (NFTID)
+	{
+		NFTID->SetText(FText::FromString(ID));
 	}
 }

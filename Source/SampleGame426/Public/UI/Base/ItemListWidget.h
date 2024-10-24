@@ -16,10 +16,19 @@ class SAMPLEGAME426_API UItemListWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Immutable")
 	int32 GetNumberOfColumns() const;
+
+	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Immutable")
 	int32 GetNumberOfRows() const;
-	UItemWidget* GetItem(int32 Id);
-	UItemWidget* GetItem(int32 Column, int32 Row);
+
+	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Immutable")
+	UItemWidget* GetItemById(int32 Id);
+
+	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Immutable")
+	UItemWidget* GetItemByRowColumn(int32 Row, int32 Column);
+
+	UFUNCTION(BlueprintPure, BlueprintCosmetic, Category = "Immutable")
 	UItemWidget* GetSelectedItem() const;
 
 	void ResetPanelItems();

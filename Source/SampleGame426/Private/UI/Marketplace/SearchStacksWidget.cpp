@@ -159,7 +159,7 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 		int32 Column = ResultId - Row * NumberOfColumns;
 		
 		// Assign via processing a signle stack bundle data received from Immutable API
-		if (auto ItemWidget = Cast<IMarketplaceOpenAPIProcessorInterface>(ListPanel->GetItem(Column, Row)))
+		if (auto ItemWidget = Cast<IMarketplaceOpenAPIProcessorInterface>(ListPanel->GetItemByRowColumn(Row, Column)))
 		{
 			/**
 			 * Step 2(Marketplace display): This function performs the second step in the process.
@@ -170,7 +170,7 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutableOpenAPI::OpenAPI
 		}
 
 		// click and selection handlers
-		if (auto ItemWidget = ListPanel->GetItem(Column, Row))
+		if (auto ItemWidget = ListPanel->GetItemByRowColumn(Row, Column))
 		{
 			
 			// Register click and selection handlers for the item widget			

@@ -16,12 +16,12 @@ int32 UItemListWidget::GetNumberOfRows() const
 	return NumberOfRows;
 }
 
-class UItemWidget* UItemListWidget::GetItem(int32 Id)
+class UItemWidget* UItemListWidget::GetItemById(int32 Id)
 {
 	return CachedItems[Id];
 }
 
-UItemWidget* UItemListWidget::GetItem(int32 Column, int32 Row)
+UItemWidget* UItemListWidget::GetItemByRowColumn(int32 Row, int32 Column)
 {
 	return CachedItems[Row * NumberOfColumns + Column];
 }

@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CustomButtonBase.h"
@@ -7,9 +5,10 @@
 #include "CustomButtonWithText.generated.h"
 
 /**
- *	
+ * @class UCustomButtonWithText
+ * @brief A custom button with text
  */
-UCLASS(meta=(DisableNativeTick))
+UCLASS(Meta = (DisableNativeTick))
 class SAMPLEGAME426_API UCustomButtonWithText : public UCustomButtonBase
 {
 	GENERATED_BODY()
@@ -18,9 +17,9 @@ protected:
 	virtual void NativePreConstruct() override;
 
 protected:
-	UPROPERTY(EditAnywhere, Category="Custom", meta=(MultiLine="false"))
+	UPROPERTY(EditAnywhere, Category = "Button", Meta = (MultiLine = "false"))
 	FText TitleText;
-	
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+
+	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget))
 	class UTextBlock* Title;
 };

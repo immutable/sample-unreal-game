@@ -2,7 +2,6 @@
 
 #include "NFTMetadataAttributeDataAsset.generated.h"
 
-
 // enum class DisplayTypeEnum
 // {
 // 	Number,
@@ -21,11 +20,15 @@ enum ENFTMetadataAttribute_DisplayType
 	Custom				UMETA(DisplayName="Custom"),
 };
 
+/**
+ * @struct FNFTMetadataAttribute_TraitType
+ * @brief A structure to encapsulate NFT Metadata Attribute Trait Type
+ */
 USTRUCT(BlueprintType, meta=(HasNativeMake="/Script/SampleGame426.UI.UIBlueprintFunctionLibrary.MakeNFTMetadataAttribute_TraitType"))
 struct SAMPLEGAME426_API FNFTMetadataAttribute_TraitType
 {
 	GENERATED_BODY()
-		
+
 	UPROPERTY(EditAnywhere)
 	FString Name;
 
@@ -33,6 +36,10 @@ struct SAMPLEGAME426_API FNFTMetadataAttribute_TraitType
 	TArray<FString> Values;
 };
 
+/**
+ * @class UNFTMetadataAttributeDataAsset
+ * @brief Data asset for NFT Metadata Attributes
+ */
 UCLASS(BlueprintType, Const)
 class SAMPLEGAME426_API UNFTMetadataAttributeDataAsset : public UDataAsset
 {
@@ -41,7 +48,7 @@ class SAMPLEGAME426_API UNFTMetadataAttributeDataAsset : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Immutable Marketplace")
 	TArray<FNFTMetadataAttribute_TraitType> TraitType;
-	 
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Immutable Marketplace")
-	TEnumAsByte<ENFTMetadataAttribute_DisplayType> DisplayType; 
+	TEnumAsByte<ENFTMetadataAttribute_DisplayType> DisplayType;
 };

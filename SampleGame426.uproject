@@ -14,14 +14,6 @@
 		{
 			"Name": "Immutable",
 			"Enabled": true
-		},
-		{
-			"Name": "ImmutableOpenAPI",
-			"Enabled": true
-		},
-		{
-			"Name": "ImmutableTsSdkApi",
-			"Enabled": true
 		}
 	]
 }

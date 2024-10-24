@@ -40,5 +40,7 @@ protected:
 private:
 	TMap<UTopPanelButton* /* Main Button */, TArray<UTopPanelButton*> /* Secondary Buttons */> MapMainToSecondaryButtons;
 	TMap<UTopPanelButton* /* Secondary Button */, UTopPanelButton* /* Main Button */> MapSecondaryToMainButtons;
+
+	UPROPERTY(Transient)
 	UTopPanelButton* ShownMainButton = nullptr;
 };

@@ -1,19 +1,28 @@
 ﻿#include "CustomLocalPlayer.h"
 
-#include "CustomGameInstance.h"
-#include "GameUIManagerSubsystem.h"
-#include "OpenAPIOrderbookApiOperations.h"
-#include "UIGameplayTags.h"
-#include "Dialog/DialogSubsystem.h"
 #include "GameFramework/GameModeBase.h"
-#include "Immutable/ImmutableSubsystem.h"
 #include "Kismet/GameplayStatics.h"
+
+#include "OpenAPIOrderbookApiOperations.h"
+
+#include "Immutable/ImmutableSubsystem.h"
+
 #include "Settings/SampleGameSettings.h"
+#include "UI/CustomGameInstance.h"
+#include "UI/Dialog/DialogSubsystem.h"
+#include "UI/GameUIManagerSubsystem.h"
+#include "UI/UIGameplayTags.h"
 
-
-UCustomLocalPlayer::UCustomLocalPlayer()
-	: Super(FObjectInitializer::Get())
+UCustomLocalPlayer::UCustomLocalPlayer() :
+	Super(FObjectInitializer::Get())
 {
+}
+
+void UCustomLocalPlayer::PlayerAdded(class UGameViewportClient* InViewportClient, int32 InControllerID)
+{
+	Super::PlayerAdded(InViewportClient, InControllerID);
+
+	InitializePassport();
 }
 
 FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate)
@@ -32,7 +41,7 @@ FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPassportInitialized(FPlaye
 {
 	if (IsPassportInitialized)
 	{
-		Delegate.ExecuteIfBound(IsPassportInitialized);	
+		Delegate.ExecuteIfBound(IsPassportInitialized);
 	}
 
 	return OnPlayerPassportInitialized.Add(Delegate);
@@ -53,36 +62,24 @@ FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerPassportDataObtained
 	return OnPlayerPassportDataObtained.Add(Delegate);
 }
 
-void UCustomLocalPlayer::PlayerAdded(class UGameViewportClient* InViewportClient, int32 InControllerID)
+UPrimaryGameLayout* UCustomLocalPlayer::GetRootUILayout() const
 {
-	Super::PlayerAdded(InViewportClient, InControllerID);
-
-	InitializePassport();
-}
-
-void UCustomLocalPlayer::LoginPassport()
-{
-	 if (Passport.IsValid())
-	 {
-	 	Passport->HasStoredCredentials(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
-	 	{
-	 		Passport->Connect(true, Result.Success, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));	
-	 	}));
-	 }
-}
-
-void UCustomLocalPlayer::LogoutPassport()
-{
-	if (Passport.IsValid())
+	if (UGameUIPolicy* Policy = GetGameUIPolicy())
 	{
-		Passport->Logout(true, UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
-		{
-			if (auto GameMode = UGameplayStatics::GetGameMode(this))
-			{
-				GameMode->ResetLevel();
-			}
-		}));
+		return Policy->GetRootLayout();
 	}
+
+	return nullptr;
+}
+
+UGameUIPolicy* UCustomLocalPlayer::GetGameUIPolicy() const
+{
+	if (UGameUIManagerSubsystem* UIManager = GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
+	{
+		return UIManager->GetCurrentUIPolicy();
+	}
+
+	return nullptr;
 }
 
 bool UCustomLocalPlayer::IsPassportLoggedIn()
@@ -98,6 +95,31 @@ FString UCustomLocalPlayer::GetPassportWalletAddress()
 float UCustomLocalPlayer::GetBalance()
 {
 	return PassportWalletBalance;
+}
+
+void UCustomLocalPlayer::LoginPassport()
+{
+	if (Passport.IsValid())
+	{
+		Passport->HasStoredCredentials(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
+		{
+			Passport->Connect(true, Result.Success, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));
+		}));
+	}
+}
+
+void UCustomLocalPlayer::LogoutPassport()
+{
+	if (Passport.IsValid())
+	{
+		Passport->Logout(true, UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
+		{
+			if (auto GameMode = UGameplayStatics::GetGameMode(this))
+			{
+				GameMode->ResetLevel();
+			}
+		}));
+	}
 }
 
 void UCustomLocalPlayer::UpdateBalance()
@@ -129,7 +151,7 @@ void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Da
 	Request.to = To;
 	Request.data = Data;
 	Request.value = "0";
-	
+
 	Passport->ZkEvmSendTransactionWithConfirmation(Request, UImmutablePassport::FImtblPassportResponseDelegate::CreateWeakLambda(this, [this, Callback](FImmutablePassportResult Result)
 	{
 		if (!Result.Success)
@@ -146,7 +168,7 @@ void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Da
 			TransactionHash = Receipt.GetValue().transactionHash;
 			Status = Receipt.GetValue().status;
 		}
-		
+
 		Callback(TransactionHash, Status);
 	}));
 }
@@ -158,7 +180,7 @@ void UCustomLocalPlayer::SignData(const FString& SingableMessageJson, TFunction<
 		UCustomGameInstance::SendDisplayMessage(this, TEXT("CreateListing: Input json string is empty!"));
 		return;
 	}
-	
+
 	// FZkEvmSignTypedDataV4Request Request;
 	//
 	// if (!FJsonObjectConverter::JsonObjectStringToUStruct(SingableMessageJson, &Request, 0, 0))
@@ -166,7 +188,7 @@ void UCustomLocalPlayer::SignData(const FString& SingableMessageJson, TFunction<
 	// 	UCustomGameInstance::SendRunningLineMessage(this, TEXT("CreateListing: Failed to convert json string to sign type data structure!"));
 	// 	return;
 	// }
-	
+
 	Passport->ZkEvmSignTypedDataV4(SingableMessageJson, UImmutablePassport::FImtblPassportResponseDelegate::CreateWeakLambda(this, [this, Callback](FImmutablePassportResult Result)
 	{
 		if (!Result.Success)
@@ -176,39 +198,6 @@ void UCustomLocalPlayer::SignData(const FString& SingableMessageJson, TFunction<
 		}
 		Callback(UImmutablePassport::GetResponseResultAsString(Result.Response));
 	}));
-}
-
-void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableTsSdkApi::OpenAPIOrderbookApi::TokenBalanceResponse& Response)
-{
-	if (!Response.IsSuccessful())
-	{
-		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update balance"), Response.GetResponseString()));
-		
-		return;
-	}
-
-	PassportWalletBalance = FCString::Atof(*Response.Content.Quantity);
-	OnBalanceUpdated.Broadcast(PassportWalletBalance);
-}
-
-UPrimaryGameLayout* UCustomLocalPlayer::GetRootUILayout() const
-{
-	if (UGameUIPolicy* Policy = GetGameUIPolicy())
-	{
-		return Policy->GetRootLayout();
-	}
-
-	return nullptr;
-}
-
-UGameUIPolicy* UCustomLocalPlayer::GetGameUIPolicy() const
-{
-	if (UGameUIManagerSubsystem* UIManager = GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
-	{
-		return UIManager->GetCurrentUIPolicy();
-	}
-
-	return nullptr;
 }
 
 void UCustomLocalPlayer::InitializePassport()
@@ -230,10 +219,10 @@ void UCustomLocalPlayer::OnPassportIsRunning(TWeakObjectPtr<class UImtblJSConnec
 		// TODO Handle system error
 		return;
 	}
-	
+
 	auto ImmutableSubsystem = GetGameInstance()->GetSubsystem<UImmutableSubsystem>();
 	Passport = ImmutableSubsystem->GetPassport();
-		
+
 	if (Passport.IsValid())
 	{
 		FImmutablePassportInitData Data;
@@ -242,9 +231,9 @@ void UCustomLocalPlayer::OnPassportIsRunning(TWeakObjectPtr<class UImtblJSConnec
 		Data.logoutRedirectUri = Settings->RedirectURI;
 		Data.logoutRedirectUri = Settings->LogoutURI;
 		Data.environment = Settings->Environment;
-			
+
 		Passport->Initialize(Data, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportInitialized));
-	}	
+	}
 }
 
 void UCustomLocalPlayer::OnPassportInitialized(FImmutablePassportResult Result)
@@ -252,7 +241,7 @@ void UCustomLocalPlayer::OnPassportInitialized(FImmutablePassportResult Result)
 	IsPassportInitialized = Result.Success;
 	if (OnPlayerPassportInitialized.IsBound())
 	{
-		OnPlayerPassportInitialized.Broadcast(IsPassportInitialized);	
+		OnPlayerPassportInitialized.Broadcast(IsPassportInitialized);
 	}
 	if (!IsPassportInitialized)
 	{
@@ -283,6 +272,19 @@ void UCustomLocalPlayer::OnPassportLoggedOut(FImmutablePassportResult Result)
 	else
 	{
 	}
+}
+
+void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableTsSdkApi::OpenAPIOrderbookApi::TokenBalanceResponse& Response)
+{
+	if (!Response.IsSuccessful())
+	{
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update balance"), Response.GetResponseString()));
+
+		return;
+	}
+
+	PassportWalletBalance = FCString::Atof(*Response.Content.Quantity);
+	OnBalanceUpdated.Broadcast(PassportWalletBalance);
 }
 
 void UCustomLocalPlayer::CollectPassportData()
@@ -327,7 +329,7 @@ void UCustomLocalPlayer::NotifyIfAllPassportDataObtained()
 	if (!CheckAllPassportDataObtained())
 	{
 		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorSimple, UDialogSubsystem::CreateErrorSimpleDescriptor(TEXT("Error"), TEXT("Some Immutable Passport data is missing")));
-		
+
 		return;
 	}
 

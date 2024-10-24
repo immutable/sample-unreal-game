@@ -52,6 +52,10 @@ static FORCEINLINE ECurveEaseFunction TransitionCurveToCurveEaseFunction(ETransi
 	}
 }
 
+/**
+ * @class SAnimatedSwitcher 
+ * @brief A widget switcher that activates / deactivates widgets, allowing for associated animations to trigger.
+ */
 class  SAnimatedSwitcher : public SWidgetSwitcher
 {
 public:

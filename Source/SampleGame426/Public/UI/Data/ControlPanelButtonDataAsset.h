@@ -1,10 +1,15 @@
 #pragma once
 
 #include "GameplayTagContainer.h"
-#include "Base/ControlPanelButton.h"
 
 #include "ControlPanelButtonDataAsset.generated.h"
 
+class UControlPanelButton;
+
+/**
+ * @struct FControlPanelButtonDisplayInfo
+ * @brief A structure to encapsulate the display info for a control panel
+ */
 USTRUCT(BlueprintType)
 struct FControlPanelButtonDisplayInfo
 {
@@ -13,16 +18,17 @@ struct FControlPanelButtonDisplayInfo
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
 	FText Name;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
-    FSlateBrush Icon;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Display Info", meta=( sRGB="true") )
+	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
+	FSlateBrush Icon;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Display Info", Meta = (sRGB = "true"))
 	FLinearColor ColorAndOpacity;
 };
 
-/*
- * 
+/**
+ * @class UControlPanelButtonDataAsset
+ * @brief Data asset for control panel buttons
  */
 UCLASS(BlueprintType, Const)
 class SAMPLEGAME426_API UControlPanelButtonDataAsset : public UDataAsset
@@ -30,11 +36,9 @@ class SAMPLEGAME426_API UControlPanelButtonDataAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category = Entry, meta = (AllowAbstract))
+	UPROPERTY(EditDefaultsOnly, Category = "Entry", Meta = (AllowAbstract))
 	TSoftClassPtr<UControlPanelButton> ControlButtonClass;
-	
-	UPROPERTY(EditDefaultsOnly, Category = ListEntries, meta = (AllowAbstract))
+
+	UPROPERTY(EditDefaultsOnly, Category = "ListEntries", Meta = (AllowAbstract))
 	TMap<FGameplayTag, FControlPanelButtonDisplayInfo> DisplayInfo;
-
 };
-

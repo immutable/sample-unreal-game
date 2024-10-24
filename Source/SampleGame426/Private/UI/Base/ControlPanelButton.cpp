@@ -1,56 +1,10 @@
 ﻿#include "Base/ControlPanelButton.h"
 
-#include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
-
-void UControlPanelButton::SetIcon(const FSlateBrush& InBrush)
-{
-	if (Icon)
-	{
-		Icon->SetBrush(InBrush);
-	}
-}
-
-void UControlPanelButton::SetButtonTag(FGameplayTag& InTag)
-{
-	ButtonTag = InTag;
-}
-
-void UControlPanelButton::SetName(const FText& InName)
-{
-	if (ButtonName)
-	{
-		ButtonName->SetText(InName);
-	}
-}
-
-void UControlPanelButton::SetEnable(bool IsEnabled)
-{
-	if (bIsEnabled == IsEnabled)
-	{
-		return;
-	}
-	bIsEnabled = IsEnabled;
-	BP_OnActivationStatusChanged(IsEnabled);
-}
-
-bool UControlPanelButton::IsEnabled()
-{
-	return bIsEnabled;
-}
-
-void UControlPanelButton::Hide()
-{
-	SetVisibility(ESlateVisibility::Collapsed);
-}
-
-void UControlPanelButton::Show()
-{
-	SetVisibility(ESlateVisibility::Visible);
-}
+#include "Base/ActivatableWidgetWithControlPanels.h"
 
 bool UControlPanelButton::Initialize()
 {
@@ -62,8 +16,54 @@ bool UControlPanelButton::Initialize()
 		Show();
 		SetEnable(false);
 	}
-	
+
 	return IsInitialized;
+}
+
+bool UControlPanelButton::IsEnabled() const
+{
+	return bIsEnabled;
+}
+
+void UControlPanelButton::SetEnable(bool bNewIsEnabled)
+{
+	if (bIsEnabled == bNewIsEnabled)
+	{
+		return;
+	}
+	bIsEnabled = bNewIsEnabled;
+	BP_OnActivationStatusChanged(bNewIsEnabled);
+}
+
+void UControlPanelButton::SetIcon(const FSlateBrush& NewIcon)
+{
+	if (Icon)
+	{
+		Icon->SetBrush(NewIcon);
+	}
+}
+
+void UControlPanelButton::SetButtonTag(FGameplayTag& NewButtonTag)
+{
+	ButtonTag = NewButtonTag;
+}
+
+void UControlPanelButton::SetName(const FText& NewName)
+{
+	if (ButtonName)
+	{
+		ButtonName->SetText(NewName);
+	}
+}
+
+void UControlPanelButton::Show()
+{
+	SetVisibility(ESlateVisibility::Visible);
+}
+
+void UControlPanelButton::Hide()
+{
+	SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UControlPanelButton::RegisterOnClick(const FOnControlPanelButtonClick& InOnControlPanelButtonClick)
@@ -71,9 +71,16 @@ void UControlPanelButton::RegisterOnClick(const FOnControlPanelButtonClick& InOn
 	OnControlPanelButtonClickDelegate = InOnControlPanelButtonClick;
 }
 
-void UControlPanelButton::NativeDestruct()
+FReply UControlPanelButton::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	Super::NativeDestruct();
+	auto Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	if (bIsEnabled)
+	{
+		OnControlPanelButtonClickDelegate.ExecuteIfBound(ButtonTag);
+	}
+
+	return Reply;
 }
 
 void UControlPanelButton::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -82,7 +89,7 @@ void UControlPanelButton::NativeOnMouseEnter(const FGeometry& InGeometry, const 
 
 	if (bIsEnabled)
 	{
-		BP_OnHovered();	
+		BP_OnHovered();
 	}
 }
 
@@ -94,26 +101,4 @@ void UControlPanelButton::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 	{
 		BP_OnUnhovered();
 	}
-}
-
-FReply UControlPanelButton::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	auto Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-
-	if (bIsEnabled)
-	{
-		OnControlPanelButtonClickDelegate.ExecuteIfBound(ButtonTag);	
-	}
-
-	return Reply;
-}
-
-FReply UControlPanelButton::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	return Super::NativeOnMouseButtonDoubleClick(InGeometry, InMouseEvent);
-}
-
-void UControlPanelButton::HandleButtonClicked()
-{
-
 }

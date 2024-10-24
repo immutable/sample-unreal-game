@@ -7,36 +7,40 @@
 
 #include "GameUIPolicy.generated.h"
 
-
+class UGameUIManagerSubsystem;
 class UCustomLocalPlayer;
 
-UCLASS(Abstract, Blueprintable, Within = GameUIManagerSubsystem)
+UCLASS(Abstract, Blueprintable, Within = "GameUIManagerSubsystem")
 class UGameUIPolicy : public UObject
 {
 	GENERATED_BODY()
 
-public:
-	template <typename GameUIPolicyClass = UGameUIPolicy>
-	static GameUIPolicyClass* GetGameUIPolicyAs(const UObject* WorldContextObject)
-	{
-		return Cast<GameUIPolicyClass>(GetGameUIPolicy(WorldContextObject));
-	}
+	friend UGameUIManagerSubsystem;
 
+public:
 	static UGameUIPolicy* GetGameUIPolicy(const UObject* WorldContextObject);
+
+	template <typename GameUIPolicyClass = UGameUIPolicy>
+	static GameUIPolicyClass* GetGameUIPolicyAs(const UObject* WorldContextObject);
+
+public:
+	/** UWorld: Interface Begin */
 	virtual UWorld* GetWorld() const override;
-	class UGameUIManagerSubsystem* GetOwningUIManager() const;
+	/** UWorld: Interface End */
+
+	UGameUIManagerSubsystem* GetOwningUIManager() const;
 	UPrimaryGameLayout* GetRootLayout() const;
 	UMarketplacePolicy* GetMarketplacePolicy() const;
 	const FDialogType* GetDialogType(FGameplayTag DialogTag) const;
+
 	void ShowThrobber();
 	void HideThrobber();
 
 private:
 	void NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer);
 	void NotifyPlayerDestroyed(UCustomLocalPlayer* LocalPlayer);
-	UActivatableWidget* PushWidget(TSoftClassPtr<UActivatableWidget> WidgetClassPtr, FGameplayTag LayerTag);
 
-	friend class UGameUIManagerSubsystem;
+	UActivatableWidget* PushWidget(TSoftClassPtr<UActivatableWidget> WidgetClassPtr, FGameplayTag LayerTag);
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Main")
@@ -47,13 +51,13 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Main")
 	TSoftClassPtr<UActivatableWidget> ThrobberScreenWidgetClass;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Dialog")
-    TSoftObjectPtr<UDialogTypeDataAsset> DialogTypeDataAsset;
+	TSoftObjectPtr<UDialogTypeDataAsset> DialogTypeDataAsset;
 
 	UPROPERTY(EditAnywhere, Category = "Marketplace")
 	TSoftClassPtr<UMarketplacePolicy> MarketplacePolicyClass;
-	
+
 	UPROPERTY(Transient)
 	UPrimaryGameLayout* RootLayout = nullptr;
 
@@ -66,3 +70,9 @@ private:
 	UPROPERTY(Transient)
 	UActivatableWidget* ThrobberScreenWidget = nullptr;
 };
+
+template <typename GameUIPolicyClass>
+GameUIPolicyClass* UGameUIPolicy::GetGameUIPolicyAs(const UObject* WorldContextObject)
+{
+	return Cast<GameUIPolicyClass>(GetGameUIPolicy(WorldContextObject));
+}

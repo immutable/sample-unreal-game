@@ -137,7 +137,7 @@ void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutableOpenAPI::OpenAPIStac
 	{
 		int32 Row = ResultId / NumberOfColumns;
 		int32 Column = ResultId - Row * NumberOfColumns;
-		auto Item = ListPanel->GetItem(Column, Row);
+		auto Item = ListPanel->GetItemByRowColumn(Row, Column);
 
 		auto ItemData = Response.Content.Result[ResultId];
 		auto ItemWidget = Cast<USearchNFTsItemWidget>(Item);

@@ -1,18 +1,160 @@
 ﻿#include "Base/AWStackWithControlPanels.h"
 
-#include "LogSampleGame.h"
-#include "UIGameplayTags.h"
-#include "Base/ActivatableWidget.h"
-#include "Base/ActivatableWidgetWithControlPanels.h"
-#include "Base/AWStackTopControlPanel.h"
-#include "Base/TopPanelButton.h"
 #include "Widgets/Images/SImage.h"
 
+#include "Base/AWStackTopControlPanel.h"
+#include "Base/ActivatableWidget.h"
+#include "Base/ActivatableWidgetWithControlPanels.h"
+#include "Base/TopPanelButton.h"
+#include "LogSampleGame.h"
+#include "UI/UIGameplayTags.h"
 
-UAWStackWithControlPanels::UAWStackWithControlPanels(const FObjectInitializer& Initializer)
-	: Super(Initializer)
+UAWStackWithControlPanels::UAWStackWithControlPanels(const FObjectInitializer& Initializer) :
+	Super(Initializer)
 {
 	DisplayedWidgetGroupPair = TPair<FActivatableWidgetWithControlPanelsGroup*, int32>(nullptr, -1);
+}
+
+void UAWStackWithControlPanels::ReleaseSlateResources(bool bReleaseChildren)
+{
+	Super::ReleaseSlateResources(bReleaseChildren);
+
+	if (TopPanelWidget)
+	{
+		if (TopPanelWidget->GetCachedWidget())
+		{
+			MyVerticalBox->RemoveSlot(TopPanelWidget->GetCachedWidget().ToSharedRef());
+		}
+
+		TopPanelWidget = nullptr;
+	}
+
+	if (BottomPanelWidget)
+	{
+		if (BottomPanelWidget->GetCachedWidget())
+		{
+			MyVerticalBox->RemoveSlot(BottomPanelWidget->GetCachedWidget().ToSharedRef());
+		}
+
+		BottomPanelWidget = nullptr;
+	}
+
+	MyVerticalBox.Reset();
+	LeftControlPanel.Reset();
+	RightControlPanel.Reset();
+	ControlPanelButtons.Empty();
+
+	for (auto WidgetGroup : WidgetGroups)
+	{
+		ClearWidgetFromGroup(&WidgetGroup);
+	}
+}
+
+UControlPanelButton* UAWStackWithControlPanels::AddButtonToLeft(FGameplayTag ButtonTag)
+{
+	return AddButton(ButtonTag, EAWStackControlPanelSide::Left);
+}
+
+UControlPanelButton* UAWStackWithControlPanels::AddButtonToRight(FGameplayTag ButtonTag)
+{
+	return AddButton(ButtonTag, EAWStackControlPanelSide::Right);
+}
+
+UControlPanelButton* UAWStackWithControlPanels::GetButton(FGameplayTag ButtonTag)
+{
+	if (ControlPanelButtons.Contains(ButtonTag))
+	{
+		return ControlPanelButtons.FindRef(ButtonTag);
+	}
+
+	return nullptr;
+}
+
+UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side)
+{
+	UControlPanelButton* Button = GetButton(ButtonTag);
+
+	if (Button)
+	{
+		return Button;
+	}
+
+	UControlPanelButtonDataAsset* Data = ControlPanelButtonDefaults.LoadSynchronous();
+
+	if (!Data)
+	{
+		return nullptr;
+	}
+
+	UClass* ButtonClass = Data->ControlButtonClass.LoadSynchronous();
+
+	if (!ButtonClass)
+	{
+		return nullptr;
+	}
+
+	Button = GeneratedWidgetsPool.GetOrCreateInstance<UControlPanelButton>(ButtonClass);
+
+	ControlPanelButtons.Add(ButtonTag, Button);
+
+	FControlPanelButtonDisplayInfo* Info = Data->DisplayInfo.Find(ButtonTag);
+
+	if (Info)
+	{
+		Button->SetIcon(Info->Icon);
+		Button->SetName(Info->Name);
+		Button->SetColor(Info->ColorAndOpacity);
+		Button->SetButtonTag(ButtonTag);
+	}
+
+	TSharedPtr<SVerticalBox> Panel = Side == EAWStackControlPanelSide::Left ? LeftControlPanel : RightControlPanel;
+
+	Panel->AddSlot()
+	     .HAlign(HAlign_Fill)
+	     .VAlign(VAlign_Top)
+	     .AutoHeight()
+	     .Padding(ButtonPadding)
+	[
+		Button->TakeWidget()
+	];
+
+	return Button;
+}
+
+void UAWStackWithControlPanels::MoveToNextWidgetInGroup()
+{
+	auto DisplayedWidgetGroup = DisplayedWidgetGroupPair.Key;
+
+	if (!DisplayedWidgetGroup)
+	{
+		return;
+	}
+
+	int32 WidgetIndex = DisplayedWidgetGroupPair.Value + 1;
+	int32 WidgetIndexLimit = DisplayedWidgetGroup->WidgetsInGroup.Num();
+
+	if (WidgetIndex < WidgetIndexLimit)
+	{
+		ShowWidgetFromGroup(DisplayedWidgetGroup, WidgetIndex);
+	}
+}
+
+void UAWStackWithControlPanels::MoveToPrevWidgetInGroup()
+{
+	auto DisplayedWidgetGroup = DisplayedWidgetGroupPair.Key;
+
+	if (!DisplayedWidgetGroup)
+	{
+		return;
+	}
+
+	int32 WidgetIndex = DisplayedWidgetGroupPair.Value - 1;
+	int32 WidgetIndexLimit = 0;
+
+	if (WidgetIndex >= WidgetIndexLimit)
+	{
+		ShowWidgetFromGroup(DisplayedWidgetGroup, WidgetIndex);
+	}
 }
 
 TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
@@ -32,7 +174,7 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 		BottomPanelWidget = CreateWidget<UCustomUserWidget>(this, BottomPanelWidgetClass);
 		BottomPanelSlate = BottomPanelWidget->TakeWidget();
 	}
-	
+
 	SAssignNew(MyVerticalBox, SVerticalBox)
 
 	+ SVerticalBox::Slot()
@@ -42,7 +184,7 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 	[
 		TopPanelSlate
 	]
-	
+
 	+ SVerticalBox::Slot()
 	.HAlign(HAlign_Fill)
 	.VAlign(VAlign_Fill)
@@ -51,7 +193,7 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 		SNew(SHorizontalBox)
 
 		+ SHorizontalBox::Slot()
-		
+
 		.FillWidth(LeftPanelHorizontalWidthFill)
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
@@ -74,7 +216,7 @@ TSharedRef<SWidget> UAWStackWithControlPanels::RebuildWidget()
 				SAssignNew(LeftControlPanel, SVerticalBox)
 			]
 		]
-		
+
 		+ SHorizontalBox::Slot()
 		.HAlign(HAlign_Fill)
 		.VAlign(VAlign_Fill)
@@ -180,7 +322,7 @@ void UAWStackWithControlPanels::OnControlPanelButtonClicked(FGameplayTag ButtonT
 {
 	if (ButtonTag.MatchesTagExact(NativeUIGameplayTags.UI_ControlPanel_Button_Back))
 	{
-		MoveToPrevWidgetInGroup();	
+		MoveToPrevWidgetInGroup();
 	}
 
 	if (ButtonTag.MatchesTagExact(NativeUIGameplayTags.UI_ControlPanel_Button_Forward))
@@ -264,10 +406,10 @@ void UAWStackWithControlPanels::BuildTopPanel()
 				if (!WidgetClass)
 				{
 					UE_LOG(LogTemp, Error, TEXT("Widget class cannot be loaded %s"), *Group.WidgetClassesGroup[WidgetClassIndex].ToString());
-					
+
 					continue;
 				}
-				
+
 				auto WidgetCDO = Cast<UActivatableWidgetWithControlPanels>(WidgetClass->GetDefaultObject(false));
 
 				if (!WidgetCDO)
@@ -291,20 +433,20 @@ void UAWStackWithControlPanels::BuildControlPanel()
 		PreviousWidgetInGroupButton = AddButtonToLeft(NativeUIGameplayTags.UI_ControlPanel_Button_Back);
 		PreviousWidgetInGroupButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &UAWStackWithControlPanels::OnControlPanelButtonClicked));
 	}
-	if(!NextWidgetInGroupButton)
+	if (!NextWidgetInGroupButton)
 	{
 		NextWidgetInGroupButton = AddButtonToLeft(NativeUIGameplayTags.UI_ControlPanel_Button_Forward);
 		NextWidgetInGroupButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &UAWStackWithControlPanels::OnControlPanelButtonClicked));
 	}
 }
 
-void UAWStackWithControlPanels::ShowWidgetFromGroup(struct FActivatableWidgetWithControlPanelsGroup* Group, int32 WidgetIndex)
+void UAWStackWithControlPanels::ShowWidgetFromGroup(FActivatableWidgetWithControlPanelsGroup* Group, int32 WidgetIndex)
 {
 	if (!Group)
 	{
 		return;
 	}
-	
+
 	UActivatableWidgetWithControlPanels* Widget = Group->WidgetsInGroup[WidgetIndex];
 
 	if (!Widget)
@@ -324,7 +466,7 @@ void UAWStackWithControlPanels::ShowWidgetFromGroup(struct FActivatableWidgetWit
 	DisplayedWidgetGroupPair.Value = WidgetIndex;
 }
 
-void UAWStackWithControlPanels::ClearWidgetFromGroup(struct FActivatableWidgetWithControlPanelsGroup* Group)
+void UAWStackWithControlPanels::ClearWidgetFromGroup(FActivatableWidgetWithControlPanelsGroup* Group)
 {
 	int32 NumberOfWidgets = Group->WidgetsInGroup.Num();
 	for (int32 i = 0; i < NumberOfWidgets; ++i)
@@ -336,146 +478,4 @@ void UAWStackWithControlPanels::ClearWidgetFromGroup(struct FActivatableWidgetWi
 			Group->WidgetsInGroup[i] = nullptr;
 		}
 	}
-}
-
-void UAWStackWithControlPanels::ReleaseSlateResources(bool bReleaseChildren)
-{
-	Super::ReleaseSlateResources(bReleaseChildren);
-
-	if (TopPanelWidget)
-	{
-		if (TopPanelWidget->GetCachedWidget())
-		{
-			MyVerticalBox->RemoveSlot(TopPanelWidget->GetCachedWidget().ToSharedRef());
-		}
-
-		TopPanelWidget = nullptr;
-	}
-
-	if (BottomPanelWidget)
-	{
-		if (BottomPanelWidget->GetCachedWidget())
-		{
-			MyVerticalBox->RemoveSlot(BottomPanelWidget->GetCachedWidget().ToSharedRef());
-		}
-
-		BottomPanelWidget = nullptr;
-	}
-
-	MyVerticalBox.Reset();
-	LeftControlPanel.Reset();
-	RightControlPanel.Reset();
-	ControlPanelButtons.Empty();
-
-	for (auto WidgetGroup : WidgetGroups)
-	{
-		ClearWidgetFromGroup(&WidgetGroup);	
-	}
-}
-
-UControlPanelButton* UAWStackWithControlPanels::AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side)
-{
-	UControlPanelButton* Button = GetButton(ButtonTag);
-	
-	if (Button)
-	{
-		return Button;
-	}
-
-	UControlPanelButtonDataAsset* Data = ControlPanelButtonDefaults.LoadSynchronous();
-	
-	if (!Data)
-	{
-		return nullptr;
-	}
-
-	UClass* ButtonClass = Data->ControlButtonClass.LoadSynchronous();
-
-	if (!ButtonClass)
-	{
-		return nullptr;
-	}
-
-	Button = GeneratedWidgetsPool.GetOrCreateInstance<UControlPanelButton>(ButtonClass);
-
-	ControlPanelButtons.Add(ButtonTag, Button);	
-	
-	FControlPanelButtonDisplayInfo *Info = Data->DisplayInfo.Find(ButtonTag);
-
-	if (Info)
-	{
-		Button->SetIcon(Info->Icon);
-		Button->SetName(Info->Name);
-		Button->SetColor(Info->ColorAndOpacity);
-		Button->SetButtonTag(ButtonTag);
-	}
-
-	TSharedPtr<SVerticalBox> Panel = Side == EAWStackControlPanelSide::Left ? LeftControlPanel : RightControlPanel;
-
-	Panel->AddSlot()
-	.HAlign(HAlign_Fill)
-	.VAlign(VAlign_Top)
-	.AutoHeight()
-	.Padding(ButtonPadding)
-	[
-		Button->TakeWidget()	
-	];
-
-	return Button;
-}
-
-UControlPanelButton* UAWStackWithControlPanels::GetButton(FGameplayTag ButtonTag)
-{
-	if (ControlPanelButtons.Contains(ButtonTag))
-	{
-		return ControlPanelButtons.FindRef(ButtonTag);
-	}
-	
-	return nullptr;
-}
-
-void UAWStackWithControlPanels::MoveToNextWidgetInGroup()
-{
-	auto DisplayedWidgetGroup = DisplayedWidgetGroupPair.Key;
-	
-	if (!DisplayedWidgetGroup)
-	{
-		return;
-	}
-	
-	int32 WidgetIndex = DisplayedWidgetGroupPair.Value + 1;
-	int32 WidgetIndexLimit = DisplayedWidgetGroup->WidgetsInGroup.Num();
-	
-	if (WidgetIndex < WidgetIndexLimit)
-	{
-		ShowWidgetFromGroup(DisplayedWidgetGroup, WidgetIndex);
-	}
-}
-
-void UAWStackWithControlPanels::MoveToPrevWidgetInGroup()
-{
-	auto DisplayedWidgetGroup = DisplayedWidgetGroupPair.Key;
-	
-	if (!DisplayedWidgetGroup)
-	{
-		return;
-	}
-	
-	int32 WidgetIndex = DisplayedWidgetGroupPair.Value - 1;
-	int32 WidgetIndexLimit = 0;
-	
-	if (WidgetIndex >= WidgetIndexLimit)
-	{
-		ShowWidgetFromGroup(DisplayedWidgetGroup, WidgetIndex);
-	}
-}
-
-UControlPanelButton* UAWStackWithControlPanels::AddButtonToLeft(FGameplayTag ButtonTag)
-{
-	return AddButton(ButtonTag, EAWStackControlPanelSide::Left);
-}
-
-UControlPanelButton* UAWStackWithControlPanels::AddButtonToRight(FGameplayTag ButtonTag)
-{
-	return AddButton(ButtonTag, EAWStackControlPanelSide::Right);
 }

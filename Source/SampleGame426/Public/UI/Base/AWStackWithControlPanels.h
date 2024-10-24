@@ -1,16 +1,21 @@
 ﻿#pragma once
 
 #include "GameplayTagContainer.h"
-#include "Base/ActivatableWidgetContainer.h"
-#include "Data/ControlPanelButtonDataAsset.h"
+
+#include "UI/Base/ActivatableWidgetContainer.h"
+#include "UI/Data/ControlPanelButtonDataAsset.h"
 
 #include "AWStackWithControlPanels.generated.h"
 
+struct FActivatableWidgetWithControlPanelsGroup;
 
+class UAWStackTopControlPanel;
 class UCustomUserWidget;
 class UTopPanelButton;
+
 /**
- *
+ * @class UAWStackWithControlPanels 
+ * @brief Slate widget with the functionality to manage and organise multiple control panels.
  */
 UCLASS()
 class UAWStackWithControlPanels : public UActivatableWidgetStack
@@ -19,29 +24,33 @@ class UAWStackWithControlPanels : public UActivatableWidgetStack
 
 public:
 	UAWStackWithControlPanels(const FObjectInitializer& Initializer);
-	
+
+	/** UWidget: Interface Begin */
+	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+	/** UWidget: Interface End */
+
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	UControlPanelButton* AddButtonToLeft(FGameplayTag ButtonTag);
+
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Immutable Marketplace")
 	UControlPanelButton* AddButtonToRight(FGameplayTag ButtonTag);
-	UControlPanelButton* AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side);
+
 	UControlPanelButton* GetButton(FGameplayTag ButtonTag);
+	UControlPanelButton* AddButton(FGameplayTag ButtonTag, EAWStackControlPanelSide Side);
 
 	void MoveToNextWidgetInGroup();
 	void MoveToPrevWidgetInGroup();
 
-	/* UWidget interface */
-	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
-	/* UWidget interface */
-
 protected:
-	/* UWidget interface */
+	/** UWidget: Interface Begin */
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 	virtual void OnWidgetRebuilt() override;
 	virtual void SynchronizeProperties() override;
-	/* UWidget interface */
+	/** UWidget: Interface End */
 
+	/** UActivatableWidgetContainer: Interface Begin */
 	virtual void OnWidgetAddedToList(UActivatableWidget& AddedWidget) override;
+	/** UActivatableWidgetContainer: Interface End */
 
 	void OnControlPanelButtonClicked(FGameplayTag ButtonTag);
 	void OnMainPanelButtonClicked(UTopPanelButton* Button);
@@ -50,45 +59,59 @@ protected:
 private:
 	void BuildTopPanel();
 	void BuildControlPanel();
-	void ShowWidgetFromGroup(struct FActivatableWidgetWithControlPanelsGroup*, int32 WidgetIndex = 0);
-	void ClearWidgetFromGroup(struct FActivatableWidgetWithControlPanelsGroup* Group);
+	void ShowWidgetFromGroup(FActivatableWidgetWithControlPanelsGroup*, int32 WidgetIndex = 0);
+	void ClearWidgetFromGroup(FActivatableWidgetWithControlPanelsGroup* Group);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
 	TSoftObjectPtr<UControlPanelButtonDataAsset> ControlPanelButtonDefaults;
+
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
-	TSubclassOf<class UAWStackTopControlPanel> TopPanelWidgetClass;
+	TSubclassOf<UAWStackTopControlPanel> TopPanelWidgetClass;
+
 	UPROPERTY(EditAnywhere, Category = "Window Settings")
 	TSubclassOf<UCustomUserWidget> BottomPanelWidgetClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	FSlateBrush PanelsBrush;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	FSlateBrush ActivatableWidgetBackgroundBrush;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
 	FMargin ActivatableWidgetPadding;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
 	FMargin PanelsPadding;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Window Settings")
 	FMargin ButtonPadding;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float TopPanelVerticalHeightFill = 0.05f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float CenterPanelVerticalHeightFill = 0.9f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float BottomPanelVerticalHeightFill = 0.05f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float LeftPanelHorizontalWidthFill = 0.05f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float RightPanelHorizontalWidthFill = 0.05f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Window Settings")
 	float CenterPanelHorizontalWidthFill = 0.9f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget Groups")
-	TArray<struct FActivatableWidgetWithControlPanelsGroup> WidgetGroups;
-	
+	TArray<FActivatableWidgetWithControlPanelsGroup> WidgetGroups;
+
 private:
 	UPROPERTY(Transient)
-	class UAWStackTopControlPanel* TopPanelWidget = nullptr;
+	UAWStackTopControlPanel* TopPanelWidget = nullptr;
+
 	UPROPERTY(Transient)
 	UCustomUserWidget* BottomPanelWidget = nullptr;
 
@@ -97,6 +120,7 @@ private:
 
 	UPROPERTY(Transient)
 	UControlPanelButton* PreviousWidgetInGroupButton = nullptr;
+
 	UPROPERTY(Transient)
 	UControlPanelButton* NextWidgetInGroupButton = nullptr;
 
@@ -106,7 +130,6 @@ private:
 
 	UTopPanelButton* ActiveMainButton = nullptr;
 	UTopPanelButton* ActiveSecondaryButton = nullptr;
-	TMap<UTopPanelButton*, struct FActivatableWidgetWithControlPanelsGroup*> MapMainButtonToWidgetGroup;
+	TMap<UTopPanelButton*, FActivatableWidgetWithControlPanelsGroup*> MapMainButtonToWidgetGroup;
 	TPair<FActivatableWidgetWithControlPanelsGroup* /* Group */, int32 /* Widget Index */> DisplayedWidgetGroupPair;
-
 };

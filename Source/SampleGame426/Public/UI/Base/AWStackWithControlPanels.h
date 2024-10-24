@@ -124,12 +124,16 @@ private:
 	UPROPERTY(Transient)
 	UControlPanelButton* NextWidgetInGroupButton = nullptr;
 
+	UPROPERTY(Transient)
+	UTopPanelButton* ActiveMainButton = nullptr;
+
+	UPROPERTY(Transient)
+	UTopPanelButton* ActiveSecondaryButton = nullptr;
+
 	TSharedPtr<SVerticalBox> MyVerticalBox;
 	TSharedPtr<SVerticalBox> LeftControlPanel;
 	TSharedPtr<SVerticalBox> RightControlPanel;
 
-	UTopPanelButton* ActiveMainButton = nullptr;
-	UTopPanelButton* ActiveSecondaryButton = nullptr;
 	TMap<UTopPanelButton*, FActivatableWidgetWithControlPanelsGroup*> MapMainButtonToWidgetGroup;
 	TPair<FActivatableWidgetWithControlPanelsGroup* /* Group */, int32 /* Widget Index */> DisplayedWidgetGroupPair;
 };

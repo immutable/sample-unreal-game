@@ -16,13 +16,13 @@ void UCustomButtonBase::NativeOnInitialized()
 	ChangeEnableStatus(false);
 }
 
-void UCustomButtonBase::OnActualButtonClicked()
+void UCustomButtonBase::ChangeEnableStatus(bool bNewEnableStatus)
 {
-	BP_OnButtonCLicked();
+	ActualButton->SetIsEnabled(bNewEnableStatus);
+	BP_ChangeEnableStatus(bNewEnableStatus);
 }
 
-void UCustomButtonBase::ChangeEnableStatus(bool EnableStatus)
+void UCustomButtonBase::OnActualButtonClicked()
 {
-	ActualButton->SetIsEnabled(EnableStatus);
-	BP_ChangeEnableStatus(EnableStatus);
+	BP_OnButtonClicked();
 }

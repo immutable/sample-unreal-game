@@ -1,16 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+
 #include "CustomButtonBase.generated.h"
 
+class UButton;
 
 DECLARE_DYNAMIC_DELEGATE(FOnCustomButtonClicked);
 
 /**
- * 
+ * @class UCustomButtonBase
+ * @brief A user widget button with additional wrapper functionality
  */
 UCLASS()
 class SAMPLEGAME426_API UCustomButtonBase : public UUserWidget
@@ -18,28 +18,25 @@ class SAMPLEGAME426_API UCustomButtonBase : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	/* UUserWidget */
+	/** UUserWidget: Interface Begin */
 	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
-	/* UUserWidget */
+	/** UUserWidget: Interface End */
 
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Button")
+	virtual void ChangeEnableStatus(bool bNewEnableStatus);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Button", Meta = (DisplayName = "On Button Clicked"))
+	void BP_OnButtonClicked();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Button", Meta = (DisplayName = "Change Enable Status"))
+	void BP_ChangeEnableStatus(bool bEnableStatus);
+
+protected:
 	UFUNCTION()
 	virtual void OnActualButtonClicked();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = UCustomButtonBase, meta = (DisplayName = "On Button Clicked"))
-	void BP_OnButtonCLicked();
-	//
-	// UPROPERTY(BlueprintAssignable, Category = "Immutable", meta = (AllowPrivateAccess = true))
-	// FOnCustomButtonClicked OnCustomButtonClicked;
-
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = UCustomButtonBase)
-	virtual void ChangeEnableStatus(bool EnableStatus);
-
-	UFUNCTION(BlueprintImplementableEvent, Category = UCustomButtonBase, meta = (DisplayName = "Change Enable Status"))
-	void BP_ChangeEnableStatus(bool EnableStatus);
-
 protected:
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
-	class UButton* ActualButton = nullptr;
-	
+	UPROPERTY(BlueprintReadOnly, Meta = (BindWidget))
+	UButton* ActualButton = nullptr;
 };

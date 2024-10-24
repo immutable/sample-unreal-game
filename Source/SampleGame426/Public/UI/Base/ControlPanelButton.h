@@ -38,8 +38,13 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	void SetEnable(bool bNewIsEnabled = true);
 
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	void SetIcon(const FSlateBrush& NewIcon);
+
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	void SetButtonTag(FGameplayTag& NewButtonTag);
+
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Control Panel")
 	void SetName(const FText& NewName);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic, Category = "Control Panel")

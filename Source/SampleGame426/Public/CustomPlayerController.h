@@ -4,20 +4,13 @@
 
 #include "CustomPlayerController.generated.h"
 
-class UObject;
-
-/**
- *
- *  
- */
 UCLASS(Blueprintable)
 class SAMPLEGAME426_API ACustomPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
-
-	//~ Begin APlayerController interface
+	/** APlayerController: Interface Begin */
 	virtual void ReceivedPlayer() override;
-	//~ End APlayerController interface
+	/** APlayerController: Interface End */
 };

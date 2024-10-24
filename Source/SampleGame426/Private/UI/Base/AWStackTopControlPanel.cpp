@@ -1,8 +1,13 @@
 ﻿#include "Base/AWStackTopControlPanel.h"
 
-#include "NetworkMessage.h"
 #include "Components/HorizontalBox.h"
 
+#include "UI/Base/TopPanelButton.h"
+
+UTopPanelButton* UAWStackTopControlPanel::GetMainButton(UTopPanelButton* SecondaryButton)
+{
+	return *MapSecondaryToMainButtons.Find(SecondaryButton);
+}
 
 UTopPanelButton* UAWStackTopControlPanel::AddMainButton(const FString& ButtonTitle, int32 Index)
 {
@@ -44,7 +49,7 @@ UTopPanelButton* UAWStackTopControlPanel::AddSecondaryButton(UTopPanelButton* Ma
 	}
 
 	UClass* LoaddedClass = SecondaryButtonClass.LoadSynchronous();
-	
+
 	if (!SecondaryButtonPanel || !LoaddedClass)
 	{
 		return nullptr;
@@ -59,7 +64,7 @@ UTopPanelButton* UAWStackTopControlPanel::AddSecondaryButton(UTopPanelButton* Ma
 		SecondaryButtons->Add(Button);
 		MapSecondaryToMainButtons.Add(Button, MainButton);
 		Button->SetIndex(Index);
-		
+
 		return Button;
 	}
 
@@ -69,7 +74,7 @@ UTopPanelButton* UAWStackTopControlPanel::AddSecondaryButton(UTopPanelButton* Ma
 void UAWStackTopControlPanel::ShowSecondaryButtons(UTopPanelButton* MainButton)
 {
 	TArray<UTopPanelButton*>* NewSecondaryButtons = MapMainToSecondaryButtons.Find(MainButton);
-	
+
 	if (!MainButton || !NewSecondaryButtons)
 	{
 		return;
@@ -89,9 +94,4 @@ void UAWStackTopControlPanel::ShowSecondaryButtons(UTopPanelButton* MainButton)
 	}
 
 	ShownMainButton = MainButton;
-}
-
-UTopPanelButton* UAWStackTopControlPanel::GetMainButton(UTopPanelButton* SecondaryButton)
-{
-	return *MapSecondaryToMainButtons.Find(SecondaryButton);
 }

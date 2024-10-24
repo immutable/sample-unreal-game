@@ -5,6 +5,7 @@
 #include "Base/ActivatableWidget.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Base/AWStackTopControlPanel.h"
+#include "Base/TopPanelButton.h"
 #include "Widgets/Images/SImage.h"
 
 

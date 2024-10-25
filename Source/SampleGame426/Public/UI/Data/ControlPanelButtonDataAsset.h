@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/DataAsset.h"
+
 #include "GameplayTagContainer.h"
 
 #include "ControlPanelButtonDataAsset.generated.h"

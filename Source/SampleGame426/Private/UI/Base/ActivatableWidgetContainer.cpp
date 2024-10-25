@@ -308,12 +308,17 @@ void UActivatableWidgetContainer::ReleaseWidget(const TSharedRef<SWidget>& Widge
 		ReleasedWidgets.Add(WidgetToRelease);
 		if (ReleasedWidgets.Num() == 1)
 		{
-			FTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateWeakLambda(this, [this](float)
-			{
-				QUICK_SCOPE_CYCLE_COUNTER(STAT_UActivatableWidgetContainer_ReleaseWidget);
-				ReleasedWidgets.Reset();
-				return false;
-			}));
+#if UE_5_3_OR_LATER
+			FTSTicker::
+#else
+			FTicker::
+#endif
+				GetCoreTicker().AddTicker(FTickerDelegate::CreateWeakLambda(this, [this](float)
+				{
+					QUICK_SCOPE_CYCLE_COUNTER(STAT_UActivatableWidgetContainer_ReleaseWidget);
+					ReleasedWidgets.Reset();
+					return false;
+				}));
 		}
 	}
 }

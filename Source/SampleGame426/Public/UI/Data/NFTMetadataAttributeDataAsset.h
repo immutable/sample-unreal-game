@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Engine/DataAsset.h"
+
 #include "NFTMetadataAttributeDataAsset.generated.h"
 
 // enum class DisplayTypeEnum
@@ -24,7 +26,7 @@ enum ENFTMetadataAttribute_DisplayType
  * @struct FNFTMetadataAttribute_TraitType
  * @brief A structure to encapsulate NFT Metadata Attribute Trait Type
  */
-USTRUCT(BlueprintType, meta=(HasNativeMake="/Script/SampleGame426.UI.UIBlueprintFunctionLibrary.MakeNFTMetadataAttribute_TraitType"))
+USTRUCT(BlueprintType, Meta = (HasNativeMake = "/Script/SampleGame426.UIBlueprintFunctionLibrary.MakeNFTMetadataAttribute_TraitType"))
 struct SAMPLEGAME426_API FNFTMetadataAttribute_TraitType
 {
 	GENERATED_BODY()

@@ -61,6 +61,17 @@ void UActivatableWidget::DeactivateWidget()
 	}
 }
 
+bool UActivatableWidget::Initialize()
+{
+	const bool bResult = Super::Initialize();
+
+#if UE_5_1_OR_LATER
+	bWidgetInitialized = true;
+#endif
+
+	return bResult;
+}
+
 void UActivatableWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

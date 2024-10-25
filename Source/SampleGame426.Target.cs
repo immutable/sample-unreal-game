@@ -7,6 +7,7 @@ public class SampleGame426Target : TargetRules
 {
 	public SampleGame426Target( TargetInfo Target) : base(Target)
 	{
+		bOverrideBuildEnvironment = true;
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.AddRange( new string[] { "SampleGame426" } );

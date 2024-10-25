@@ -36,6 +36,7 @@ public:
 public:
 	// UPrimaryGameLayout(const FObjectInitializer& ObjectInitializer);
 
+#if 0
 	template <typename ActivatableWidgetT = UActivatableWidget>
 	TSharedPtr<FStreamableHandle> PushWidgetToLayerStackAsync(FGameplayTag LayerName, bool bSuspendInputUntilComplete, TSoftClassPtr<UActivatableWidget> ActivatableWidgetClass)
 	{
@@ -75,6 +76,7 @@ public:
 
 		return StreamingHandle;
 	}
+#endif
 
 	template <typename ActivatableWidgetT = UActivatableWidget>
 	ActivatableWidgetT* PushWidgetToLayerStack(FGameplayTag LayerName, UClass* ActivatableWidgetClass)

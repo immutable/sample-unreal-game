@@ -263,7 +263,7 @@ void UActivatableWidgetContainer::HandleActiveIndexChanged(int32 ActiveWidgetInd
 		if (UWorld* MyWorld = GetWorld())
 		{
 			FTimerManager& TimerManager = MyWorld->GetTimerManager();
-			TimerManager.SetTimerForNextTick(FSimpleDelegate::CreateWeakLambda(this, [this]() { InvalidateLayoutAndVolatility(); }));
+			TimerManager.SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]() { InvalidateLayoutAndVolatility(); }));
 		}
 	}
 	else

@@ -58,7 +58,10 @@ const FDialogType* UGameUIPolicy::GetDialogType(FGameplayTag DialogTag) const
 
 void UGameUIPolicy::ShowThrobber()
 {
-	ThrobberScreenWidget = PushWidget(ThrobberScreenWidgetClass, NativeUIGameplayTags.UI_Layer_Modal);
+	if (!ThrobberScreenWidgetClass.IsNull())
+	{
+		ThrobberScreenWidget = PushWidget(ThrobberScreenWidgetClass, NativeUIGameplayTags.UI_Layer_Modal);
+	}
 }
 
 void UGameUIPolicy::HideThrobber()
@@ -77,7 +80,7 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 
 		if (ensure(LayoutWidgetClass && !LayoutWidgetClass->HasAnyClassFlags(CLASS_Abstract)))
 		{
-			RootLayout = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass, TEXT("PrimaryGameLayout"));
+			RootLayout = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass);
 			RootLayout->SetPlayerContext(FLocalPlayerContext(LocalPlayer));
 			RootLayout->AddToPlayerScreen(1000);
 
@@ -87,7 +90,10 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 			UE_LOG(LogSampleGame, Log, TEXT("[%s] is adding s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(RootLayout));
 
 			// add login screen widget as an initial screen
-			LoginScreenWidget = Cast<ULoginScreenWidget>(PushWidget(LoginScreenWidgetClass, NativeUIGameplayTags.UI_Layer_Menu));
+			if (!LoginScreenWidgetClass.IsNull())
+			{
+				LoginScreenWidget = Cast<ULoginScreenWidget>(PushWidget(LoginScreenWidgetClass, NativeUIGameplayTags.UI_Layer_Menu));
+			}
 
 #if WITH_EDITOR
 			if (GIsEditor)
@@ -123,7 +129,10 @@ void UGameUIPolicy::NotifyPlayerAdded(UCustomLocalPlayer* LocalPlayer)
 		}
 
 		// create marketplace policy
-		MarketplacePolicy = NewObject<UMarketplacePolicy>(this, MarketplacePolicyClass.LoadSynchronous());
+		if (!MarketplacePolicyClass.IsNull())
+		{
+			MarketplacePolicy = NewObject<UMarketplacePolicy>(this, MarketplacePolicyClass.LoadSynchronous());
+		}
 	}));
 }
 

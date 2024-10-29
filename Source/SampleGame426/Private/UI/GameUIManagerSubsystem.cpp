@@ -48,17 +48,6 @@ void UGameUIManagerSubsystem::PopWidgetFromLayer(UActivatableWidget* Activatable
 	}
 }
 
-void UGameUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
-{
-	Super::Initialize(Collection);
-
-	if (!CurrentPolicy && !DefaultUIPolicyClass.IsNull())
-	{
-		TSubclassOf<UGameUIPolicy> PolicyClass = DefaultUIPolicyClass.LoadSynchronous();
-		SwitchToPolicy(NewObject<UGameUIPolicy>(this, PolicyClass));
-	}
-}
-
 void UGameUIManagerSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
@@ -76,11 +65,23 @@ UGameUIPolicy* UGameUIManagerSubsystem::GetCurrentUIPolicy()
 	return CurrentPolicy;
 }
 
+const TSoftClassPtr<UGameUIPolicy>& UGameUIManagerSubsystem::GetDefaultUIPolicyClass() const
+{
+	return DefaultUIPolicyClass;
+}
+
 void UGameUIManagerSubsystem::NotifyPlayerAdded(ULocalPlayer* LocalPlayer)
 {
 	if (ensure(LocalPlayer) && CurrentPolicy)
 	{
 		CurrentPolicy->NotifyPlayerAdded(Cast<UCustomLocalPlayer>(LocalPlayer));
+	}
+	else
+	{
+		OnPolicyChanged.AddWeakLambda(LocalPlayer, [this, LocalPlayer]()
+		{
+			CurrentPolicy->NotifyPlayerAdded(Cast<UCustomLocalPlayer>(LocalPlayer));
+		});
 	}
 }
 
@@ -90,6 +91,13 @@ void UGameUIManagerSubsystem::NotifyPlayerDestroyed(ULocalPlayer* LocalPlayer)
 	{
 		CurrentPolicy->NotifyPlayerDestroyed(Cast<UCustomLocalPlayer>(LocalPlayer));
 	}
+
+	OnPolicyChanged.RemoveAll(LocalPlayer);
+}
+
+void UGameUIManagerSubsystem::SwitchToPolicy(TSubclassOf<UGameUIPolicy> PolicyClass)
+{
+	SwitchToPolicy(NewObject<UGameUIPolicy>(this, PolicyClass));
 }
 
 void UGameUIManagerSubsystem::SwitchToPolicy(UGameUIPolicy* InPolicy)

@@ -20,18 +20,23 @@ public:
 
 public:
 	/** USubsystem: Interface Begin */
-	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	/** USubsystem: Interface End */
 
 	const UGameUIPolicy* GetCurrentUIPolicy() const;
 	UGameUIPolicy* GetCurrentUIPolicy();
+	const TSoftClassPtr<UGameUIPolicy>& GetDefaultUIPolicyClass() const;
 
 	virtual void NotifyPlayerAdded(ULocalPlayer* LocalPlayer);
 	virtual void NotifyPlayerDestroyed(ULocalPlayer* LocalPlayer);
 
+	void SwitchToPolicy(TSubclassOf<UGameUIPolicy> PolicyClass);
+
 protected:
 	void SwitchToPolicy(UGameUIPolicy* InPolicy);
+
+protected:
+	FSimpleMulticastDelegate OnPolicyChanged;
 
 private:
 	UPROPERTY(Transient)

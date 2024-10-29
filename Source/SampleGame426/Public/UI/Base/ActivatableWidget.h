@@ -36,6 +36,7 @@ public:
 
 protected:
 	/** UUserWidget: Interface Begin */
+	virtual bool Initialize() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 	/** UUserWidget: Interface End */
@@ -78,6 +79,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Activation", Meta = (EditCondition = "bSetVisibilityOnDeactivated"))
 	ESlateVisibility DeactivatedVisibility = ESlateVisibility::Collapsed;
+
+#if UE_5_1_OR_LATER
+	bool bWidgetInitialized = false;
+#endif
 
 private:
 	UPROPERTY(BlueprintReadOnly, Category = "ActivatableWidget", Meta = (AllowPrivateAccess = true))

@@ -19,7 +19,11 @@
 
 void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 {
+#if UE_5_1_OR_LATER
+	if (!bWidgetInitialized)
+#else
 	if (!bInitialized)
+#endif
 	{
 		return;
 	}

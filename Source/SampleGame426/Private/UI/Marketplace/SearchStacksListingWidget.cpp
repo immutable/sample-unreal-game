@@ -50,7 +50,7 @@ void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPa
 
 	if (BuyButton)
 	{
-		BuyButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchStacksListingWidget::OnBuyButtonClicked));
+		BuyButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchStacksListingWidget::OnControlButtonClicked));
 	}
 }
 
@@ -155,8 +155,15 @@ void USearchStacksListingWidget::OnItemSelectionStatusChange(bool IsItemSelected
 	}
 }
 
-void USearchStacksListingWidget::OnBuyButtonClicked(FGameplayTag ButtonTag)
+void USearchStacksListingWidget::OnBuyButtonClicked(UDialog* DialogPtr, EDialogResult Result)
 {
+	if (!DialogPtr || Result != EDialogResult::Confirmed)
+	{
+		return;
+	}
+
+	DialogPtr->KillDialog();
+	
 	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
 	UMarketplacePolicy* Policy = LocalPlayer->GetGameUIPolicy()->GetMarketplacePolicy();
 
@@ -199,6 +206,19 @@ void USearchStacksListingWidget::OnProcessDialogAction(UDialog* DialogPtr, EDial
 	if (Result == EDialogResult::Closed || Result == EDialogResult::Cancelled)
 	{
 		DialogPtr->KillDialog();
+	}
+}
+
+void USearchStacksListingWidget::OnControlButtonClicked(FGameplayTag ButtonTag)
+{
+	if (ButtonTag.MatchesTagExact(NativeUIGameplayTags.UI_ControlPanel_Button_Buy))
+	{
+		UDialog* BuyDialog = UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_Confirmation, UDialogSubsystem::CreateConfirmMessageDescriptor(TEXT(""), TEXT("Please confirm that you are ready to purchase this NFT")));
+
+		if (BuyDialog)
+		{
+			BuyDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchStacksListingWidget::OnBuyButtonClicked);	
+		}
 	}
 }
 

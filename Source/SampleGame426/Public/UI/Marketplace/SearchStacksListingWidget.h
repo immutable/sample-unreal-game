@@ -104,12 +104,13 @@ private:
 	void OnFulfillOrder(const ImmutableOrderbook::APIOrderbookApi::FulfillOrderResponse& Response);
 
 	/**
-	 * Handles the event when the buy button of the control panel is clicked.
+	 * Handles the event when the player confirms a purchase via a buy confirmation dialog.
 	 *
-	 * @param ButtonTag The gameplay tag associated with the button that was clicked.
-	 * @see Source/SampleGame426/Public/UI/UIGameplayTags.h
+	 * @param DialogPtr A pointer to the dialog that triggered the event.
+	 * @param Result The result of the dialog interaction.
 	 */
-	void OnBuyButtonClicked(FGameplayTag ButtonTag);
+	UFUNCTION()
+	void OnBuyButtonClicked(UDialog* DialogPtr, EDialogResult Result);
 
 	/**
 	 * Handles the dialog callback action such as close, cancel, or confirm.
@@ -119,6 +120,15 @@ private:
 	 */
 	UFUNCTION()
 	void OnProcessDialogAction(UDialog* DialogPtr, EDialogResult Result);
+
+	/**
+	 * Control panel button handler
+	 *
+	 * @param ButtonTag The gameplay tag associated with the button that was clicked.
+	 * @see Source/SampleGame426/Public/UI/UIGameplayTags.h
+	 */
+	void OnControlButtonClicked(FGameplayTag ButtonTag);
+
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))

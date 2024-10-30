@@ -293,7 +293,6 @@ void UAWStackWithControlPanels::OnControlPanelButtonClicked(FGameplayTag ButtonT
 
 void UAWStackWithControlPanels::OnMainPanelButtonClicked(UTopPanelButton* Button)
 {
-	TopPanelWidget->ShowSecondaryButtons(Button);
 	auto Group = MapMainButtonToWidgetGroup.Find(Button);
 
 	if (!Group)
@@ -305,25 +304,25 @@ void UAWStackWithControlPanels::OnMainPanelButtonClicked(UTopPanelButton* Button
 	{
 		if (ActiveMainButton && DisplayedWidgetGroupPair.Key)
 		{
+			ActiveMainButton->BP_OnHighlightChanged(false);
 			ClearWidgetFromGroup(DisplayedWidgetGroupPair.Key);
 			DisplayedWidgetGroupPair.Key = nullptr;
 			DisplayedWidgetGroupPair.Value = -1;
 		}
 		ActiveMainButton = Button;
+		ActiveMainButton->BP_OnHighlightChanged(true);
 		ShowWidgetFromGroup(*Group);
-	}
+		TopPanelWidget->ShowSecondaryButtons(Button);
 
-	// DisplayedWidgetGroupPair.Key = *Group;
-	// DisplayedWidgetGroupPair.Value = 0;
-	//
-	// if (DisplayedWidgetGroupPair.Key->WidgetsInGroup.Num() && DisplayedWidgetGroupPair.Key->WidgetsInGroup[0])
-	// {
-	// 	DisplayedWidgetGroupPair.Key->WidgetsInGroup[0]->ActivateWidget();
-	// }
-	// else if ((*Group)->WidgetClassesGroup.Num())
-	// {
-	// 	DisplayedWidgetGroupPair.Key->WidgetsInGroup[0] = AddWidget<UActivatableWidgetWithControlPanels>((*Group)->WidgetClassesGroup[0].LoadSynchronous());
-	// }
+		// highlight first secondary button in the group
+		auto* SecondaryButtons = TopPanelWidget->GetSecondaryButtons(Button);
+
+		if (SecondaryButtons && SecondaryButtons->Num() > 0)
+		{
+			ActiveSecondaryButton = (*SecondaryButtons)[0];
+			ActiveSecondaryButton->BP_OnHighlightChanged(true);
+		}
+	}
 }
 
 void UAWStackWithControlPanels::OnSecondaryPanelButtonClicked(UTopPanelButton* Button)
@@ -338,7 +337,13 @@ void UAWStackWithControlPanels::OnSecondaryPanelButtonClicked(UTopPanelButton* B
 
 	if (ActiveSecondaryButton != Button)
 	{
+		if (ActiveSecondaryButton)
+		{
+			ActiveSecondaryButton->BP_OnHighlightChanged(false);
+		}
 		ShowWidgetFromGroup(*Group, Button->GetIndex());
+		ActiveSecondaryButton = Button;
+		ActiveSecondaryButton->BP_OnHighlightChanged(true);
 	}
 }
 

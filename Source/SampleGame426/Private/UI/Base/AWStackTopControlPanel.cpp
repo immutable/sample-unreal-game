@@ -9,6 +9,11 @@ UTopPanelButton* UAWStackTopControlPanel::GetMainButton(UTopPanelButton* Seconda
 	return *MapSecondaryToMainButtons.Find(SecondaryButton);
 }
 
+TArray<UTopPanelButton*>* UAWStackTopControlPanel::GetSecondaryButtons(UTopPanelButton* MainButton)
+{
+	return MapMainToSecondaryButtons.Find(MainButton);
+}
+
 UTopPanelButton* UAWStackTopControlPanel::AddMainButton(const FString& ButtonTitle, int32 Index)
 {
 	check(MainButtonPanel);

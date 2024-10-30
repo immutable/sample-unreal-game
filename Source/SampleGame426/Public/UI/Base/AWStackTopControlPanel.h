@@ -18,6 +18,7 @@ class SAMPLEGAME426_API UAWStackTopControlPanel : public UCustomUserWidget
 
 public:
 	UTopPanelButton* GetMainButton(UTopPanelButton* SecondaryButton);
+	TArray<UTopPanelButton*>* GetSecondaryButtons(UTopPanelButton* MainButton);
 
 	UTopPanelButton* AddMainButton(const FString& ButtonTitle, int32 Index);
 	UTopPanelButton* AddSecondaryButton(UTopPanelButton* MainButton, const FString& ButtonTitle, int32 Index);

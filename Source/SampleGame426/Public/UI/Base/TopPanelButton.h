@@ -42,6 +42,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
 	void BP_OnUnhovered();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCosmetic)
+	void BP_OnHighlightChanged(bool IsHighlighted);
+
 protected:
 	/** UUserWidget: Interface Begin */
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

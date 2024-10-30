@@ -287,6 +287,11 @@ void UActivatableWidgetContainer::HandleActiveWidgetDeactivated(UActivatableWidg
 
 void UActivatableWidgetContainer::ReleaseWidget(const TSharedRef<SWidget>& WidgetToRelease)
 {
+	if (WidgetToRelease == SNullWidget::NullWidget)
+	{
+		return;
+	}
+	
 	UActivatableWidget* ActivatableWidget = ActivatableWidgetFromSlate(WidgetToRelease);
 
 	if (!ActivatableWidget)

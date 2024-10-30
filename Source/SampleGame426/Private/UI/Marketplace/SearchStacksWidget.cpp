@@ -154,6 +154,7 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutablezkEVMAPI::APISta
 
 	int32 NumberOfColumns = ListPanel->GetNumberOfColumns();
 	int32 NumberOfResults = Response.Content.Result.Num();
+	int32 NumberOfDisplayedResults = 0;
 
 	HandlePageData(Response.Content.Page);
 	// Assign the results data to the list panel's items
@@ -171,6 +172,7 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutablezkEVMAPI::APISta
 			 * @see Definition of UStackItemWidget::ProcessModel to understand how the data is processed and displayed in the list panel.
 			 */
 			ItemWidget->ProcessModel(Response.Content.Result[ResultId]);
+			++NumberOfDisplayedResults;
 		}
 
 		// click and selection handlers
@@ -181,6 +183,17 @@ void USearchStacksWidget::OnSearchStacksResponse(const ImmutablezkEVMAPI::APISta
 			ItemWidget->RegisterOnSelectionChange(UItemWidget::FOnSelectionChange::CreateUObject(this, &USearchStacksWidget::OnItemSelectionChange));
 			ItemWidget->RegisterOnDoubleClick(UItemWidget::FOnDoubleClick::CreateUObject(this, &USearchStacksWidget::OnItemDoubleClick));
 		}
+	}
+		
+	if (!SelectedItemWidget && NumberOfDisplayedResults > 0)
+	{
+		SelectedItemWidget = ListPanel->GetItemById(0);
+		SelectedItemWidget->SetSelection(true);
+	}
+
+	if (NumberOfDisplayedResults != NumberOfResults)
+	{
+		UCustomGameInstance::SendDisplayMessage(this, FString::Format(TEXT("{0} search result(s) are not displayed due to issues with received data"), { NumberOfResults - NumberOfDisplayedResults}));
 	}
 }
 

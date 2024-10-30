@@ -105,5 +105,6 @@ void UGameUIManagerSubsystem::SwitchToPolicy(UGameUIPolicy* InPolicy)
 	if (CurrentPolicy != InPolicy)
 	{
 		CurrentPolicy = InPolicy;
+		OnPolicyChanged.Broadcast();
 	}
 }

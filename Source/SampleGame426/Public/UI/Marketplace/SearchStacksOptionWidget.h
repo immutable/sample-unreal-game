@@ -51,6 +51,16 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	void SetTraits(const TArray<FNFTMetadataAttribute_TraitType>& Traits);
 
+	/** 
+	 * Called when the search is initialized.
+	 *
+	 * @note This event is implemented by widget.
+	 * @details This method is triggered to perform any necessary setup or initialization
+	 * tasks when the search functionality is ready to be used.
+	 */ 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnSearchInitilized();
+
 protected:
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
 

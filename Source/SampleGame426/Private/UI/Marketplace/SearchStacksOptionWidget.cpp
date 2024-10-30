@@ -58,8 +58,9 @@ void USearchStacksOptionWidget::SetupControlButtons(UAWStackWithControlPanels* H
 
 	if (SearchButton)
 	{
-		SearchButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateWeakLambda(this, [HostLayer](FGameplayTag ButtonTag)
+		SearchButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateWeakLambda(this, [this, HostLayer](FGameplayTag ButtonTag)
 		{
+			OnSearchInitilized();
 			HostLayer->MoveToNextWidgetInGroup();
 		}));
 		SearchButton->SetEnable();

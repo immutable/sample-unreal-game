@@ -26,7 +26,7 @@ void USearchStacksListing_ListingsWidget::AddItem(const ImmutablezkEVMAPI::APILi
 
 				for (const auto& Fee : Listing.PriceDetails.Fees)
 				{
-					switch(static_cast<ImmutableOpenAPI::OpenAPIFee::TypeEnum>(Fee.Type))
+					switch(static_cast<ImmutablezkEVMAPI::APIFee::TypeEnum>(Fee.Type))
 					{
 					case ImmutablezkEVMAPI::APIFee::TypeEnum::Protocol:
 						FeeProtocol = FMathUtility::ConvertWeiStringToFloatValueString(Decimals.GetValue(), Fee.Amount);	

@@ -83,7 +83,7 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	}
 	if (!Policy->GetTraits().IsEmpty())
 	{
-		SearchStacksRequest.Trait = Policy->GetTraits();
+		SearchStacksRequest.Traits = Policy->GetTraits();
 	}
 	
 	Policy->GetStacksAPI()->SearchStacks(SearchStacksRequest, ImmutablezkEVMAPI::APIStacksApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));

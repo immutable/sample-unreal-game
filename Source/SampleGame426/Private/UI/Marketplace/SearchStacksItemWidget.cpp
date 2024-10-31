@@ -1,4 +1,4 @@
-﻿#include "Marketplace/StackItemWidget.h"
+﻿#include "Marketplace/SearchStacksItemWidget.h"
 
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
@@ -13,7 +13,7 @@
 #include "NFT/NFT_TableRowBase.h"
 
 
-void UStackItemWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Data)
+void USearchStacksItemWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Data)
 {
 	StackBundle = MakeShareable(new ImmutablezkEVMAPI::APIStackBundle(static_cast<const ImmutablezkEVMAPI::APIStackBundle&>(Data)));
 	
@@ -57,12 +57,12 @@ void UStackItemWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Data)
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
-TSharedPtr<ImmutablezkEVMAPI::APIStackBundle> UStackItemWidget::GetStackBundle() const
+TSharedPtr<ImmutablezkEVMAPI::APIStackBundle> USearchStacksItemWidget::GetStackBundle() const
 {
 	return StackBundle;
 }
 
-void UStackItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
+void USearchStacksItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 {
 	if (NFTThumbnail)
 	{
@@ -75,7 +75,7 @@ void UStackItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 	}
 }
 
-void UStackItemWidget::SetName(const FString& Name)
+void USearchStacksItemWidget::SetName(const FString& Name)
 {
 	if (NFTName)
 	{
@@ -83,7 +83,7 @@ void UStackItemWidget::SetName(const FString& Name)
 	}
 }
 
-void UStackItemWidget::SetPrice(const ImmutablezkEVMAPI::APIMarketPriceDetails& PriceDetails)
+void USearchStacksItemWidget::SetPrice(const ImmutablezkEVMAPI::APIMarketPriceDetails& PriceDetails)
 {
 	if (NFTLowestPrice && PriceDetails.Token.Decimals.IsSet())
 	{
@@ -95,7 +95,7 @@ void UStackItemWidget::SetPrice(const ImmutablezkEVMAPI::APIMarketPriceDetails& 
 	}
 }
 
-void UStackItemWidget::SetPriceTokenName(const FString& Name)
+void USearchStacksItemWidget::SetPriceTokenName(const FString& Name)
 {
 	if (NFTPriceTokenName)
 	{
@@ -103,7 +103,7 @@ void UStackItemWidget::SetPriceTokenName(const FString& Name)
 	}
 }
 
-void UStackItemWidget::SetListingCount(int32 Count)
+void USearchStacksItemWidget::SetListingCount(int32 Count)
 {
 	if (NFTListingCount)
 	{

@@ -124,6 +124,18 @@ void UAWStackWithControlPanels::MoveToNextWidgetInGroup()
 	{
 		ShowWidgetFromGroup(DisplayedWidgetGroup, WidgetIndex);
 	}
+
+	if (ActiveSecondaryButton)
+	{
+		auto* NextActiveSecondaryButton = TopPanelWidget->GetNextSecondaryButton(ActiveSecondaryButton);
+
+		if (NextActiveSecondaryButton)
+		{
+			ActiveSecondaryButton->BP_OnHighlightChanged(false);
+			ActiveSecondaryButton = NextActiveSecondaryButton;
+			ActiveSecondaryButton->BP_OnHighlightChanged(true);
+		}
+	}
 }
 
 void UAWStackWithControlPanels::MoveToPrevWidgetInGroup()
@@ -141,6 +153,18 @@ void UAWStackWithControlPanels::MoveToPrevWidgetInGroup()
 	if (WidgetIndex >= WidgetIndexLimit)
 	{
 		ShowWidgetFromGroup(DisplayedWidgetGroup, WidgetIndex);
+	}
+
+	if (ActiveSecondaryButton)
+	{
+		auto* PrevActiveSecondaryButton = TopPanelWidget->GetPrevSecondaryButton(ActiveSecondaryButton);
+
+		if (PrevActiveSecondaryButton)
+		{
+			ActiveSecondaryButton->BP_OnHighlightChanged(false);
+			ActiveSecondaryButton = PrevActiveSecondaryButton;
+			ActiveSecondaryButton->BP_OnHighlightChanged(true);
+		}
 	}
 }
 
@@ -275,6 +299,7 @@ void UAWStackWithControlPanels::OnWidgetAddedToList(UActivatableWidget& AddedWid
 	if (UActivatableWidgetWithControlPanels* Widget = Cast<UActivatableWidgetWithControlPanels>(&AddedWidget))
 	{
 		Widget->SetupControlButtons(this);
+		Widget->Refresh();
 	}
 }
 
@@ -416,15 +441,16 @@ void UAWStackWithControlPanels::ShowWidgetFromGroup(FActivatableWidgetWithContro
 
 	if (!Widget)
 	{
-		Group->WidgetsInGroup[WidgetIndex] = AddWidget<UActivatableWidgetWithControlPanels>(Group->WidgetClassesGroup[WidgetIndex].LoadSynchronous());
-		Group->WidgetsInGroup[WidgetIndex]->Reset();
-		Group->WidgetsInGroup[WidgetIndex]->SetIndexInGroup(WidgetIndex);
-		Group->WidgetsInGroup[WidgetIndex]->SetOwningGroup(Group);
-		Group->WidgetsInGroup[WidgetIndex]->Refresh();
+		Widget = AddWidget<UActivatableWidgetWithControlPanels>(Group->WidgetClassesGroup[WidgetIndex].LoadSynchronous());
+		Group->WidgetsInGroup[WidgetIndex] = Widget;
+		Widget->Reset();
+		Widget->SetIndexInGroup(WidgetIndex);
+		Widget->SetOwningGroup(Group);
 	}
 	else
 	{
 		SetSwitcherActiveWidget(*Widget);
+		Widget->Refresh();
 	}
 
 	DisplayedWidgetGroupPair.Key = Group;

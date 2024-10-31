@@ -63,6 +63,11 @@ void UControlPanelButton::RegisterOnClick(const FOnControlPanelButtonClick& InOn
 	OnControlPanelButtonClickDelegate = InOnControlPanelButtonClick;
 }
 
+void UControlPanelButton::ExecuteOnClick()
+{
+	OnControlPanelButtonClickDelegate.ExecuteIfBound(ButtonTag);
+}
+
 FReply UControlPanelButton::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	auto Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);

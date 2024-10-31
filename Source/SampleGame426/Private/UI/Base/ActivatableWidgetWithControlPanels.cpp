@@ -15,7 +15,6 @@ void UActivatableWidgetWithControlPanels::Reset()
 	bCanBeReleased = false;
 	IndexInGroup = -1;
 	OwningGroup = nullptr;
-	ControlPanelButtons.Reset();
 }
 
 FString UActivatableWidgetWithControlPanels::GetWidgetTitle() const
@@ -46,14 +45,6 @@ void UActivatableWidgetWithControlPanels::SetCanBeReleased()
 void UActivatableWidgetWithControlPanels::SetOwningGroup(FActivatableWidgetWithControlPanelsGroup* NewOwningGroup)
 {
 	OwningGroup = NewOwningGroup;
-}
-
-void UActivatableWidgetWithControlPanels::Refresh()
-{
-}
-
-void UActivatableWidgetWithControlPanels::SetupControlButtons(UAWStackWithControlPanels* HostLayer)
-{
 }
 
 void UActivatableWidgetWithControlPanels::NativeDestruct()

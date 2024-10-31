@@ -21,11 +21,6 @@ class SAMPLEGAME426_API USearchStacksListingWidget : public UActivatableWidgetWi
 	GENERATED_BODY()
 
 public:
-	/* UActivatableWidget interface */
-	virtual void NativeOnActivated() override;
-	virtual void NativeOnDeactivated() override;
-	/* UActivatableWidget interface */
-	
 	/* IMarketplaceOpenAPIProcessorInterface interface */
 	virtual void ProcessModel(const ImmutablezkEVMAPI::Model& Data) override;
 	/* IMarketplaceOpenAPIProcessorInterface interface */

@@ -1,7 +1,9 @@
 ﻿#pragma once
 
+#include "APIStacksApiOperations.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
+#include "Interfaces/IItemListInterface.h"
 
 #include "SearchStacksOptionWidget.generated.h"
 
@@ -15,16 +17,23 @@
  * In addtion, there is a keyword search bar which is used to filter the search results based on the keyword.
  */
 UCLASS(Abstract)
-class SAMPLEGAME426_API USearchStacksOptionWidget : public UActivatableWidgetWithControlPanels
+class SAMPLEGAME426_API USearchStacksOptionWidget : public UActivatableWidgetWithControlPanels, public IItemListInterface
 {
 	GENERATED_BODY()
 
 public:
-	/* UActivatableWidget interface */
-	virtual void NativeOnActivated() override;
-	virtual void NativeOnDeactivated() override;
-	/* UActivatableWidget interface */
+	/* UActivatableWidgetWithControlPanels interface */
+	virtual void Refresh() override;
+	/* UActivatableWidgetWithControlPanels interface */
 
+	/**
+	 * Refreshes the filters in the marketplace search option widget. Overrides IItemListInterface::RefreshItemList.
+	 *
+	 * @param PageCursor An optional string representing the cursor for pagination. 
+	 *                   If provided, the item list will be refreshed starting from the specified page cursor.
+	 */
+	virtual void RefreshItemList(TOptional<FString> PageCursor) override;
+	
 	/**
 	 * Adds a NFT metadata filter to the search options widget.
 	 *
@@ -63,10 +72,11 @@ public:
 
 protected:
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
+	void OnListFiltersResponse(const ImmutablezkEVMAPI::APIStacksApi::ListFiltersResponse& Response);
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Metadata")
-	TSoftObjectPtr<UNFTMetadataAttributeDataAsset> AttributeMetadata;
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Metadata")
+	// TSoftObjectPtr<UNFTMetadataAttributeDataAsset> AttributeMetadata;
 
 private:
 	UPROPERTY(Transient)

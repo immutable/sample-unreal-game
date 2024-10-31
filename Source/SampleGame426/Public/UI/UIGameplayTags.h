@@ -30,6 +30,7 @@ struct SAMPLEGAME426_API FNativeUIGameplayTags : public FGameplayTagNativeAdder
 	FGameplayTag UI_ControlPanel_Button_CancelSell;
 	FGameplayTag UI_ControlPanel_Button_NFTInfo;
 	FGameplayTag UI_ControlPanel_Button_Search;
+	FGameplayTag UI_ControlPanel_Button_Filters;
 };
 
 static FNativeUIGameplayTags NativeUIGameplayTags;

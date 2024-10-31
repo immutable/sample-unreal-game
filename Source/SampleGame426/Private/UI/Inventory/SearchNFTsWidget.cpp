@@ -82,28 +82,28 @@ void USearchNfTsWidget::NativeOnActivated()
 
 	RefreshItemList(TOptional<FString>());
 
-	if (SellButton)
-	{
-		SellButton->Show();
-	}
-	if (CancelSellButton)
-	{
-		CancelSellButton->Show();
-	}
+	// if (SellButton)
+	// {
+	// 	SellButton->Show();
+	// }
+	// if (CancelSellButton)
+	// {
+	// 	CancelSellButton->Show();
+	// }
 }
 
 void USearchNfTsWidget::NativeOnDeactivated()
 {
 	Super::NativeOnDeactivated();
 
-	if (SellButton)
-	{
-		SellButton->Hide();
-	}
-	if (CancelSellButton)
-	{
-		CancelSellButton->Hide();
-	}
+	// if (SellButton)
+	// {
+	// 	SellButton->Hide();
+	// }
+	// if (CancelSellButton)
+	// {
+	// 	CancelSellButton->Hide();
+	// }
 }
 
 void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostLayer)
@@ -115,11 +115,13 @@ void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostLayer
 
 	if (SellButton)
 	{
-		SellButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchNfTsWidget::OnButtonClicked));	
+		SellButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchNfTsWidget::OnButtonClicked));
+		ControlPanelButtons.Add(NativeUIGameplayTags.UI_ControlPanel_Button_Sell, SellButton);
 	}
 	if (CancelSellButton)
 	{
-		CancelSellButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchNfTsWidget::OnButtonClicked));	
+		CancelSellButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchNfTsWidget::OnButtonClicked));
+		ControlPanelButtons.Add(NativeUIGameplayTags.UI_ControlPanel_Button_CancelSell, CancelSellButton);
 	}
 }
 

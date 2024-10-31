@@ -19,6 +19,8 @@ class SAMPLEGAME426_API UAWStackTopControlPanel : public UCustomUserWidget
 public:
 	UTopPanelButton* GetMainButton(UTopPanelButton* SecondaryButton);
 	TArray<UTopPanelButton*>* GetSecondaryButtons(UTopPanelButton* MainButton);
+	UTopPanelButton* GetNextSecondaryButton(UTopPanelButton* SecondaryButton);
+	UTopPanelButton* GetPrevSecondaryButton(UTopPanelButton* SecondaryButton);
 
 	UTopPanelButton* AddMainButton(const FString& ButtonTitle, int32 Index);
 	UTopPanelButton* AddSecondaryButton(UTopPanelButton* MainButton, const FString& ButtonTitle, int32 Index);
@@ -43,5 +45,7 @@ private:
 	TMap<UTopPanelButton* /* Secondary Button */, UTopPanelButton* /* Main Button */> MapSecondaryToMainButtons;
 
 	UPROPERTY(Transient)
-	UTopPanelButton* ShownMainButton = nullptr;
+	UTopPanelButton* SelectedMainButton = nullptr;
+	
+	TArray<UTopPanelButton*>* DisplayedSecondaryButtons = nullptr;
 };

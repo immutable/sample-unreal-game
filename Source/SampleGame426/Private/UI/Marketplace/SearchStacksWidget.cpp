@@ -11,7 +11,7 @@
 #include "Dialog/DialogSubsystem.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Marketplace/SearchStacksListingWidget.h"
-#include "Marketplace/StackItemWidget.h"
+#include "Marketplace/SearchStacksItemWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 
 
@@ -101,41 +101,11 @@ void USearchStacksWidget::NativeOnActivated()
 	Super::NativeOnActivated();
 
 	RefreshItemList(TOptional<FString>());
-
-	if (PreviousPageButton)
-	{
-		PreviousPageButton->Show();
-	}
-	
-	if (NextPageButton)
-	{
-		NextPageButton->Show();
-	}
-	
-	if (NFTInfoButton)
-	{
-		NFTInfoButton->Show();
-	}
 }
 
 void USearchStacksWidget::NativeOnDeactivated()
 {
 	Super::NativeOnDeactivated();
-
-	if (PreviousPageButton)
-	{
-		PreviousPageButton->Hide();
-	}
-	
-	if (NextPageButton)
-	{
-		NextPageButton->Hide();
-	}
-	
-	if (NFTInfoButton)
-	{
-		NFTInfoButton->Hide();
-	}
 }
 
 void USearchStacksWidget::OnWidgetRebuilt()
@@ -208,10 +178,12 @@ void USearchStacksWidget::SetupControlButtons(UAWStackWithControlPanels* HostLay
 	if (PreviousPageButton)
 	{
 		PreviousPageButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchStacksWidget::OnControlButtonClicked));
+		ControlPanelButtons.Add(NativeUIGameplayTags.UI_ControlPanel_Button_PreviousPage, PreviousPageButton);
 	}
 	if (NextPageButton)
 	{
 		NextPageButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchStacksWidget::OnControlButtonClicked));
+		ControlPanelButtons.Add(NativeUIGameplayTags.UI_ControlPanel_Button_NextPage, NextPageButton);
 	}
 	if (NFTInfoButton)
 	{
@@ -219,6 +191,7 @@ void USearchStacksWidget::SetupControlButtons(UAWStackWithControlPanels* HostLay
 		{
 			HostLayer->MoveToNextWidgetInGroup();
 		}));
+		ControlPanelButtons.Add(NativeUIGameplayTags.UI_ControlPanel_Button_NFTInfo, NFTInfoButton);
 	}
 }
 

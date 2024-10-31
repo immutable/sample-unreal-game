@@ -1,5 +1,7 @@
 ﻿#include "Marketplace/SearchStacksOptionWidget.h"
 
+#include "APIStacksApiOperations.h"
+#include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "UIGameplayTags.h"
@@ -7,31 +9,28 @@
 #include "Marketplace/MarketplacePolicy.h"
 
 
-void USearchStacksOptionWidget::NativeOnActivated()
+void USearchStacksOptionWidget::RefreshItemList(TOptional<FString> PageCursor)
 {
-	Super::NativeOnActivated();
+	UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
 
-	if (UNFTMetadataAttributeDataAsset* Metadata = AttributeMetadata.LoadSynchronous())
+	if (!Policy)
 	{
-		for (const auto Trait : Metadata->TraitType)
-		{
-			AddMetadataFilter(Trait.Name, Trait.Values);	
-		}
+		return;
 	}
-	if (SearchButton)
-	{
-		SearchButton->Show();
-	}
+
+	ImmutablezkEVMAPI::APIStacksApi::ListFiltersRequest ListFiltersRequest;
+	
+	ListFiltersRequest.ContractAddress = Policy->GetSelectedContractAddress();
+	ListFiltersRequest.ChainName = Policy->GetChainName();
+
+	Policy->GetStacksAPI()->ListFilters(ListFiltersRequest, ImmutablezkEVMAPI::APIStacksApi::FListFiltersDelegate::CreateUObject(this, &USearchStacksOptionWidget::OnListFiltersResponse));	
 }
 
-void USearchStacksOptionWidget::NativeOnDeactivated()
+void USearchStacksOptionWidget::Refresh()
 {
-	Super::NativeOnDeactivated();
+	Super::Refresh();
 
-	if (SearchButton)
-	{
-		SearchButton->Hide();
-	}
+	RefreshItemList(TOptional<FString>());
 }
 
 void USearchStacksOptionWidget::SetKeyword(const FString& Keyword)
@@ -63,6 +62,31 @@ void USearchStacksOptionWidget::SetupControlButtons(UAWStackWithControlPanels* H
 			OnSearchInitilized();
 			HostLayer->MoveToNextWidgetInGroup();
 		}));
+		ControlPanelButtons.Add(NativeUIGameplayTags.UI_ControlPanel_Button_Search, SearchButton);
 		SearchButton->SetEnable();
+	}
+}
+
+void USearchStacksOptionWidget::OnListFiltersResponse(const ImmutablezkEVMAPI::APIStacksApi::ListFiltersResponse& Response)
+{
+	if (!Response.IsSuccessful())
+	{
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to acquire list of filters"), Response.GetHttpResponse()->GetContentAsString()));
+		
+		return;
+	}
+
+	auto Filters = Response.Content.Result.Filters;
+
+	for (auto Filter : Filters)
+	{
+		TArray<FString> StringValues;
+		
+		for (auto FilterValue : Filter.Values)
+		{
+			StringValues.Add(FilterValue.Value);
+		}
+		
+		AddMetadataFilter(Filter.Name, StringValues);
 	}
 }

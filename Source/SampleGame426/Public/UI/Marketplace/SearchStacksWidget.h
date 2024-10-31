@@ -30,6 +30,10 @@ class SAMPLEGAME426_API USearchStacksWidget : public UActivatableWidgetWithContr
 	GENERATED_BODY()
 
 public:
+	/* UActivatableWidgetWithControlPanels interface */
+	virtual void Refresh() override;
+	/* UActivatableWidgetWithControlPanels interface */
+	
 	/**
 	 * Refreshes the item list in the marketplace search stacks widget. Overrides IItemListInterface::RefreshItemList.
 	 *
@@ -37,8 +41,6 @@ public:
 	 *                   If provided, the item list will be refreshed starting from the specified page cursor.
 	 */
 	virtual void RefreshItemList(TOptional<FString> PageCursor) override;
-	
-	virtual void Refresh() override;	
 	
 	// Get the currently selected item widget
 	UItemWidget* GetSelectedItem() const { return SelectedItemWidget; }

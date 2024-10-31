@@ -28,4 +28,5 @@ void FNativeUIGameplayTags::AddTags()
 	UI_ControlPanel_Button_CancelSell		= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.CancelSell"));
 	UI_ControlPanel_Button_NFTInfo			= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.NFTInfo"));
 	UI_ControlPanel_Button_Search			= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.Search"));
+	UI_ControlPanel_Button_Filters			= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.Filters"));
 }

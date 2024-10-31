@@ -47,6 +47,7 @@ public:
 	void Hide();
 
 	void RegisterOnClick(const FOnControlPanelButtonClick& InOnControlPanelButtonClick);
+	void ExecuteOnClick();
 
 protected:
 	/** UUserWidget: Interface Begin */

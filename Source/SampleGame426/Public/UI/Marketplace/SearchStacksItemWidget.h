@@ -4,17 +4,20 @@
 #include "Base/ItemWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
 
-#include "StackItemWidget.generated.h"
+#include "SearchStacksItemWidget.generated.h"
 
+
+class UTextBlock;
+class UImage;
 
 /**
- * @class UStackItemWidget
+ * @class USearchStacksItemWidget
  * @ingroup Marketplace
  * @brief A widget class that represents an item in the search stack widget within the marketplace UI.
  * @see Blueprint that inherits from USearchStacksWidget. /Game/UI/Parts/Marketplace/WBP_SearchStackResults_Main
  */
 UCLASS(Abstract, BlueprintType)
-class SAMPLEGAME426_API UStackItemWidget : public UItemWidget, public IMarketplaceOpenAPIProcessorInterface
+class SAMPLEGAME426_API USearchStacksItemWidget : public UItemWidget, public IMarketplaceOpenAPIProcessorInterface
 {
 	GENERATED_BODY()
 
@@ -64,15 +67,15 @@ protected:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Marketplace", meta=(BindWidget))
-	class UTextBlock* NFTName = nullptr;
+	UTextBlock* NFTName = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Marketplace", meta=(BindWidget))
-	class UImage* NFTThumbnail  = nullptr;
+	UImage* NFTThumbnail  = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Marketplace", meta=(BindWidget))
-	class UTextBlock* NFTListingCount  = nullptr;
+	UTextBlock* NFTListingCount  = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Marketplace", meta=(BindWidget))
-	class UTextBlock* NFTLowestPrice = nullptr;
+	UTextBlock* NFTLowestPrice = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Marketplace", meta=(BindWidget))
-	class UTextBlock* NFTPriceTokenName  = nullptr;
+	UTextBlock* NFTPriceTokenName  = nullptr;
 
 private:
 	TSharedPtr<ImmutablezkEVMAPI::APIStackBundle> StackBundle;

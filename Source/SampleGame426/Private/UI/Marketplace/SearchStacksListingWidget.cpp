@@ -13,7 +13,7 @@
 #include "APIOrderbookApiOperations.h"
 #include "Base/AWStackWithControlPanels.h"
 #include "Marketplace/SearchStacksWidget.h"
-#include "Marketplace/StackItemWidget.h"
+#include "Marketplace/SearchStacksItemWidget.h"
 
 #define MP_DESCRIPTION_DESCRIPTION TEXT("Description")
 #define MP_DESCRIPTION_CREATED_AT TEXT("Created at")
@@ -21,26 +21,6 @@
 
 #define LOCTEXT_NAMESPACE "ImmutableUI"
 
-
-void USearchStacksListingWidget::NativeOnActivated()
-{
-	Super::NativeOnActivated();
-
-	if (BuyButton)
-	{
-		BuyButton->Show();
-	}
-}
-
-void USearchStacksListingWidget::NativeOnDeactivated()
-{
-	Super::NativeOnDeactivated();
-
-	if (BuyButton)
-	{
-		BuyButton->Hide();
-	}
-}
 
 void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPanels* HostLayer)
 {
@@ -51,6 +31,7 @@ void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPa
 	if (BuyButton)
 	{
 		BuyButton->RegisterOnClick(UControlPanelButton::FOnControlPanelButtonClick::CreateUObject(this, &USearchStacksListingWidget::OnControlButtonClicked));
+		ControlPanelButtons.Add(NativeUIGameplayTags.UI_ControlPanel_Button_Buy, BuyButton);
 	}
 }
 
@@ -130,7 +111,7 @@ void USearchStacksListingWidget::Refresh()
 		return;
 	}
 
-	UStackItemWidget* ItemWidget = Cast<UStackItemWidget>(ResultsWidget->GetSelectedItem());
+	USearchStacksItemWidget* ItemWidget = Cast<USearchStacksItemWidget>(ResultsWidget->GetSelectedItem());
 	
 	if (ItemWidget && ItemWidget->GetStackBundle().IsValid())
 	{

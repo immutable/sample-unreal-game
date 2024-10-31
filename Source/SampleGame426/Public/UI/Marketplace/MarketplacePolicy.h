@@ -124,6 +124,15 @@ public:
 	{
 		return SearchStacksTraits;
 	}
+
+	/**
+	 * Setter and getter of the selected NFT contract address for the marketplace search filters.
+	 * @see USearchStacksContractSelectWidget for more details on how it is used.
+	 *
+	 * @param InSelectedContractAddress NFT contract address used to obtain metadata filters to perform further search of NFTs.
+	 */
+	void SetSelectedContractAddress(const FString& InSelectedContractAddress) { SelectedContractAddress = InSelectedContractAddress; }
+	const FString& GetSelectedContractAddress() { return SelectedContractAddress; }
 	
 protected:
 	/// A pointer to a UDataTable that holds the NFT data.
@@ -179,5 +188,6 @@ private:
 
 	FString SearchStacksKeyword;
 	FString SearchStacksTraits;
+	FString SelectedContractAddress;
 	
 };

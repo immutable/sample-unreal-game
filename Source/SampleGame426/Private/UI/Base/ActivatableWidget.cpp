@@ -4,8 +4,6 @@
 
 void UActivatableWidget::Reset()
 {
-	bIsActive = false;
-
 	BP_OnWidgetActivated.Clear();
 	BP_OnWidgetDeactivated.Clear();
 }

@@ -57,9 +57,9 @@ public:
 	void SetOwningGroup(FActivatableWidgetWithControlPanelsGroup* NewOwningGroup);
 
 	UFUNCTION(BlueprintCallable)
-	virtual void Refresh();
+	virtual void Refresh() {}
 
-	virtual void SetupControlButtons(UAWStackWithControlPanels* HostLayer);
+	virtual void SetupControlButtons(UAWStackWithControlPanels* HostLayer) {}
 
 protected:
 	/** UUserWidget: Interface Begin */

@@ -14,6 +14,40 @@ TArray<UTopPanelButton*>* UAWStackTopControlPanel::GetSecondaryButtons(UTopPanel
 	return MapMainToSecondaryButtons.Find(MainButton);
 }
 
+UTopPanelButton* UAWStackTopControlPanel::GetNextSecondaryButton(UTopPanelButton* SecondaryButton)
+{
+	if (!DisplayedSecondaryButtons)
+	{
+		return nullptr;
+	}
+
+	int32 Index = INDEX_NONE;
+
+	if (DisplayedSecondaryButtons->Find(SecondaryButton, Index) && DisplayedSecondaryButtons->Num() > Index + 1)
+	{
+		return (*DisplayedSecondaryButtons)[Index + 1];
+	}
+
+	return nullptr;
+}
+
+UTopPanelButton* UAWStackTopControlPanel::GetPrevSecondaryButton(UTopPanelButton* SecondaryButton)
+{
+	if (!DisplayedSecondaryButtons)
+	{
+		return nullptr;
+	}
+
+	int32 Index = INDEX_NONE;
+
+	if (DisplayedSecondaryButtons->Find(SecondaryButton, Index) && Index - 1 > 0)
+	{
+		return (*DisplayedSecondaryButtons)[Index - 1];
+	}
+
+	return nullptr;
+}
+
 UTopPanelButton* UAWStackTopControlPanel::AddMainButton(const FString& ButtonTitle, int32 Index)
 {
 	check(MainButtonPanel);
@@ -85,9 +119,9 @@ void UAWStackTopControlPanel::ShowSecondaryButtons(UTopPanelButton* MainButton)
 		return;
 	}
 
-	if (TArray<UTopPanelButton*>* ShownSecondaryButtons = MapMainToSecondaryButtons.Find(ShownMainButton))
+	if (DisplayedSecondaryButtons)
 	{
-		for (auto* Button : *ShownSecondaryButtons)
+		for (auto* Button : *DisplayedSecondaryButtons)
 		{
 			Button->Hide();
 		}
@@ -98,5 +132,6 @@ void UAWStackTopControlPanel::ShowSecondaryButtons(UTopPanelButton* MainButton)
 		Button->Show();
 	}
 
-	ShownMainButton = MainButton;
+	DisplayedSecondaryButtons = NewSecondaryButtons;
+	SelectedMainButton = MainButton;
 }

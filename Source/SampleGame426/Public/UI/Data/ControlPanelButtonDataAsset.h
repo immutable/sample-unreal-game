@@ -21,9 +21,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
 	FText Name;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
-	FSlateBrush Icon;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Display Info", Meta = (sRGB = "true"))
 	FLinearColor ColorAndOpacity;
 };

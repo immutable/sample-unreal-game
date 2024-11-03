@@ -5,7 +5,7 @@
 #include "Marketplace/MarketplacePolicy.h"
 #include "Base/ItemListWidget.h"
 #include "Inventory/SearchNFTsItemWidget.h"
-#include "APIStacksApi.h"
+#include "APIMetadataSearchApi.h"
 #include "APIOrderbookApi.h"
 #include "APIOrdersApi.h"
 #include "APIPage.h"
@@ -50,7 +50,7 @@ protected:
 	 *
 	 * @param Response The response object containing the results of the NFT search.
 	 */
-	void OnSearchNFTsResponse(const ImmutablezkEVMAPI::APIStacksApi::SearchNFTsResponse& Response);
+	void OnSearchNFTsResponse(const ImmutablezkEVMAPI::APIMetadataSearchApi::SearchNFTsResponse& Response);
 	/**
 	 * Handles the selection state of an item in the inventory.
 	 *

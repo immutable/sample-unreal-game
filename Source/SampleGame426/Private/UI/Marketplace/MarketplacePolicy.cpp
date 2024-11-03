@@ -2,7 +2,7 @@
 
 #include "CustomLocalPlayer.h"
 #include "APIHelpers.h"
-#include "APIStacksApiOperations.h"
+#include "APIMetadataSearchApiOperations.h"
 #include "Dialog/DialogSubsystem.h"
 #include "Engine/DataTable.h"
 
@@ -13,10 +13,10 @@ void UMarketplacePolicy::PostInitProperties()
 
 	HttpRetryManager = MakeUnique<ImmutablezkEVMAPI::HttpRetryManager>(RetryLimitCount, RetryTimeoutRelativeSeconds);
 
-	StacksAPI = MakeUnique<ImmutablezkEVMAPI::APIStacksApi>();
-	StacksAPI->SetURL(ImmutableAPIURL);
-	StacksAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
-	StacksAPI->SetHttpRetryManager(*HttpRetryManager);
+	MetadataSearchAPI = MakeUnique<ImmutablezkEVMAPI::APIMetadataSearchApi>();
+	MetadataSearchAPI->SetURL(ImmutableAPIURL);
+	MetadataSearchAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
+	MetadataSearchAPI->SetHttpRetryManager(*HttpRetryManager);
 
 	OrdersAPI = MakeUnique<ImmutablezkEVMAPI::APIOrdersApi>();
 	OrdersAPI->SetURL(ImmutableAPIURL);

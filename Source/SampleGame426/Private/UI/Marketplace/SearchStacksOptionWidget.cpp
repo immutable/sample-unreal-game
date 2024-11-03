@@ -1,6 +1,6 @@
 ﻿#include "Marketplace/SearchStacksOptionWidget.h"
 
-#include "APIStacksApiOperations.h"
+#include "APIMetadataSearchApiOperations.h"
 #include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
@@ -18,12 +18,12 @@ void USearchStacksOptionWidget::RefreshItemList(TOptional<FString> PageCursor)
 		return;
 	}
 
-	ImmutablezkEVMAPI::APIStacksApi::ListFiltersRequest ListFiltersRequest;
+	ImmutablezkEVMAPI::APIMetadataSearchApi::ListFiltersRequest ListFiltersRequest;
 	
 	ListFiltersRequest.ContractAddress = Policy->GetSelectedContractAddress();
 	ListFiltersRequest.ChainName = Policy->GetChainName();
 
-	Policy->GetStacksAPI()->ListFilters(ListFiltersRequest, ImmutablezkEVMAPI::APIStacksApi::FListFiltersDelegate::CreateUObject(this, &USearchStacksOptionWidget::OnListFiltersResponse));	
+	Policy->GetStacksAPI()->ListFilters(ListFiltersRequest, ImmutablezkEVMAPI::APIMetadataSearchApi::FListFiltersDelegate::CreateUObject(this, &USearchStacksOptionWidget::OnListFiltersResponse));	
 }
 
 void USearchStacksOptionWidget::Refresh()
@@ -67,7 +67,7 @@ void USearchStacksOptionWidget::SetupControlButtons(UAWStackWithControlPanels* H
 	}
 }
 
-void USearchStacksOptionWidget::OnListFiltersResponse(const ImmutablezkEVMAPI::APIStacksApi::ListFiltersResponse& Response)
+void USearchStacksOptionWidget::OnListFiltersResponse(const ImmutablezkEVMAPI::APIMetadataSearchApi::ListFiltersResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{

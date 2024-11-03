@@ -6,7 +6,7 @@
 #include "LogSampleGame.h"
 #include "APIOrderbookApiOperations.h"
 #include "APIOrdersApiOperations.h"
-#include "APIStacksApiOperations.h"
+#include "APIMetadataSearchApiOperations.h"
 #include "UIGameplayTags.h"
 #include "Base/AWStackWithControlPanels.h"
 #include "Base/ItemWidget.h"
@@ -57,7 +57,7 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 	 * 
 	 * The search request is sent using the ImmutablezkEVMAPI::APIStacksApi, and the response is bound to the USearchNfTsWidget::OnSearchNFTsResponse method.
 	 */
-	ImmutablezkEVMAPI::APIStacksApi::SearchNFTsRequest SearchNFTsRequest;
+	ImmutablezkEVMAPI::APIMetadataSearchApi::SearchNFTsRequest SearchNFTsRequest;
 	
 	SearchNFTsRequest.ChainName = Policy->GetChainName();
 	SearchNFTsRequest.PageSize = (ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows());
@@ -66,7 +66,7 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 	SearchNFTsRequest.ContractAddress = Policy->GetContracts();
 	SearchNFTsRequest.OnlyIncludeOwnerListings = true;
 	
-	Policy->GetStacksAPI()->SearchNFTs(SearchNFTsRequest, ImmutablezkEVMAPI::APIStacksApi::FSearchNFTsDelegate::CreateUObject(this, &USearchNfTsWidget::OnSearchNFTsResponse));
+	Policy->GetStacksAPI()->SearchNFTs(SearchNFTsRequest, ImmutablezkEVMAPI::APIMetadataSearchApi::FSearchNFTsDelegate::CreateUObject(this, &USearchNfTsWidget::OnSearchNFTsResponse));
 }
 
 void USearchNfTsWidget::NativeOnInitialized()
@@ -125,7 +125,7 @@ void USearchNfTsWidget::SetupControlButtons(UAWStackWithControlPanels* HostLayer
 	}
 }
 
-void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutablezkEVMAPI::APIStacksApi::SearchNFTsResponse& Response)
+void USearchNfTsWidget::OnSearchNFTsResponse(const ImmutablezkEVMAPI::APIMetadataSearchApi::SearchNFTsResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{

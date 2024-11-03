@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "APIOrderbookApi.h"
-#include "APIStacksApi.h"
+#include "APIMetadataSearchApi.h"
 #include "APIOrdersApi.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
 #include "NFT/NFT_TableRowBase.h"
@@ -51,9 +51,9 @@ public:
 	 *
 	 * @return A pointer to an ImmutablezkEVMAPI::APIStacksApi instance.
 	 */
-	ImmutablezkEVMAPI::APIStacksApi* GetStacksAPI()
+	ImmutablezkEVMAPI::APIMetadataSearchApi* GetStacksAPI()
 	{
-		return StacksAPI.Get();
+		return MetadataSearchAPI.Get();
 	}
 	
 	/**
@@ -181,7 +181,7 @@ protected:
 private:
 	TUniquePtr<ImmutablezkEVMAPI::HttpRetryManager> HttpRetryManager;
 
-	TUniquePtr<ImmutablezkEVMAPI::APIStacksApi> StacksAPI;
+	TUniquePtr<ImmutablezkEVMAPI::APIMetadataSearchApi> MetadataSearchAPI;
 	TUniquePtr<ImmutablezkEVMAPI::APIOrdersApi> OrdersAPI;
 
 	TUniquePtr<ImmutableOrderbook::APIOrderbookApi> TsSdkAPI;

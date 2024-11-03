@@ -3,7 +3,7 @@
 #include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
-#include "APIStacksApiOperations.h"
+#include "APIMetadataSearchApiOperations.h"
 #include "UIGameplayTags.h"
 #include "Base/AWStackWithControlPanels.h"
 #include "UI/Marketplace/MarketplacePolicy.h"
@@ -66,7 +66,7 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	 *
 	 * The search request is sent using the ImmutablezkEVMAPI::APIStacksApi, and the response is bound to the USearchStacksWidget::OnSearchStacksResponse method.
 	 */
-	ImmutablezkEVMAPI::APIStacksApi::SearchStacksRequest SearchStacksRequest;
+	ImmutablezkEVMAPI::APIMetadataSearchApi::SearchStacksRequest SearchStacksRequest;
 
 	SearchStacksRequest.PageSize = ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows();
 	SearchStacksRequest.PageCursor = PageCursor;
@@ -86,7 +86,7 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 		SearchStacksRequest.Traits = Policy->GetTraits();
 	}
 	
-	Policy->GetStacksAPI()->SearchStacks(SearchStacksRequest, ImmutablezkEVMAPI::APIStacksApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
+	Policy->GetStacksAPI()->SearchStacks(SearchStacksRequest, ImmutablezkEVMAPI::APIMetadataSearchApi::FSearchStacksDelegate::CreateUObject(this, &USearchStacksWidget::OnSearchStacksResponse));
 }
 
 void USearchStacksWidget::Refresh()
@@ -113,7 +113,7 @@ void USearchStacksWidget::OnWidgetRebuilt()
 	Super::OnWidgetRebuilt();
 }
 
-void USearchStacksWidget::OnSearchStacksResponse(const ImmutablezkEVMAPI::APIStacksApi::SearchStacksResponse& Response)
+void USearchStacksWidget::OnSearchStacksResponse(const ImmutablezkEVMAPI::APIMetadataSearchApi::SearchStacksResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
@@ -209,14 +209,14 @@ void USearchStacksWidget::HandlePageData(const ImmutablezkEVMAPI::APIPage& PageD
 	}
 }
 
-void USearchStacksWidget::HandleSorting(TOptional<ImmutablezkEVMAPI::APIStacksApi::SearchStacksRequest::SortByEnum>& Sorting)
+void USearchStacksWidget::HandleSorting(TOptional<ImmutablezkEVMAPI::APIMetadataSearchApi::SearchStacksRequest::SortByEnum>& Sorting)
 {
 	switch (GetSortCategory())
 	{
 	case ESearchStacks_SortCategories::Price:
 		if (GetSortOrder())
 		{
-			Sorting = ImmutablezkEVMAPI::APIStacksApi::SearchStacksRequest::SortByEnum::CheapestFirst;	
+			Sorting = ImmutablezkEVMAPI::APIMetadataSearchApi::SearchStacksRequest::SortByEnum::CheapestFirst;	
 		}
 		else
 		{

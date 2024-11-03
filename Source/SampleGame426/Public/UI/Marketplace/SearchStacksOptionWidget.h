@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "APIStacksApiOperations.h"
+#include "APIMetadataSearchApiOperations.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Data/NFTMetadataAttributeDataAsset.h"
 #include "Interfaces/IItemListInterface.h"
@@ -72,7 +72,7 @@ public:
 
 protected:
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
-	void OnListFiltersResponse(const ImmutablezkEVMAPI::APIStacksApi::ListFiltersResponse& Response);
+	void OnListFiltersResponse(const ImmutablezkEVMAPI::APIMetadataSearchApi::ListFiltersResponse& Response);
 
 protected:
 	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Metadata")

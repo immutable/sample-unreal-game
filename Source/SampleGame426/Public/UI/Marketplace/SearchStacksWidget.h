@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include "APIPage.h"
-#include "APIStacksApi.h"
-#include "APIStacksApiOperations.h"
+#include "APIMetadataSearchApi.h"
+#include "APIMetadataSearchApiOperations.h"
 #include "Base/ActivatableWidgetWithControlPanels.h"
 #include "Base/ItemListWidget.h"
 #include "UI/Interfaces/IItemListInterface.h"
@@ -63,7 +63,7 @@ protected:
 	 *
 	 * @param Response The response object from the Search Stacks API.
 	 */
-	void OnSearchStacksResponse(const ImmutablezkEVMAPI::APIStacksApi::SearchStacksResponse& Response);
+	void OnSearchStacksResponse(const ImmutablezkEVMAPI::APIMetadataSearchApi::SearchStacksResponse& Response);
 
 	/* UActivatableWidgetWithControlPanels interface */
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
@@ -73,7 +73,7 @@ private:
 	// Pagination handler
 	void HandlePageData(const ImmutablezkEVMAPI::APIPage& PageData);
 	// Sorting handler
-	void HandleSorting(TOptional<ImmutablezkEVMAPI::APIStacksApi::SearchStacksRequest::SortByEnum>& Sorting);
+	void HandleSorting(TOptional<ImmutablezkEVMAPI::APIMetadataSearchApi::SearchStacksRequest::SortByEnum>& Sorting);
 	// Item selection handler
 	void ItemSelectionChange(bool IsSelected, UItemWidget* ItemWidget);
 	// Control panel button handler such Buy, Sell, etc.

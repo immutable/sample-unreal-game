@@ -1,15 +1,18 @@
 name: Release with Submodules
 
 on:
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Tag Release"]
+    types:
+      - completed
 
 jobs:
   release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository with submodules
-        uses: ./.github/actions/checkout  # Reference the local copy
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           submodules: recursive
           fetch-depth: 0

@@ -1,19 +1,18 @@
 name: Release with Submodules
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository with submodules
         uses: actions/checkout@v2
         with:
-          submodules: recursive  # Initialize and update submodules
-          fetch-depth: 0         # Ensure full history
+          submodules: recursive  # Ensures all submodules are included
+          fetch-depth: 0         # Fetches full history for correct release packaging
 
       - name: Create release archive with submodules
         run: zip -r release-with-submodules.zip .

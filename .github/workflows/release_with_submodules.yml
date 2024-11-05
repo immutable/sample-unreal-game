@@ -1,0 +1,27 @@
+name: Release with Submodules
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive  # Initialize and update submodules
+          fetch-depth: 0         # Ensure full history
+
+      - name: Create release archive with submodules
+        run: zip -r release-with-submodules.zip .
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./release-with-submodules.zip
+          asset_name: release-with-submodules.zip
+          asset_content_type: application/zip

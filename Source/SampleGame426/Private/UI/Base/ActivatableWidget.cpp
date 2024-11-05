@@ -63,7 +63,7 @@ bool UActivatableWidget::Initialize()
 {
 	const bool bResult = Super::Initialize();
 
-#if UE_5_1_OR_LATER
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1
 	bWidgetInitialized = true;
 #endif
 

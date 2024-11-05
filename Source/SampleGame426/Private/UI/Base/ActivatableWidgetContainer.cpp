@@ -263,7 +263,7 @@ void UActivatableWidgetContainer::HandleActiveIndexChanged(int32 ActiveWidgetInd
 		if (UWorld* MyWorld = GetWorld())
 		{
 			FTimerManager& TimerManager = MyWorld->GetTimerManager();
-			TimerManager.SetTimerForNextTick(FSimpleDelegate::CreateWeakLambda(this, [this]() { InvalidateLayoutAndVolatility(); }));
+			TimerManager.SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]() { InvalidateLayoutAndVolatility(); }));
 		}
 	}
 	else
@@ -313,7 +313,7 @@ void UActivatableWidgetContainer::ReleaseWidget(const TSharedRef<SWidget>& Widge
 		ReleasedWidgets.Add(WidgetToRelease);
 		if (ReleasedWidgets.Num() == 1)
 		{
-#if UE_5_3_OR_LATER
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 0
 			FTSTicker::
 #else
 			FTicker::

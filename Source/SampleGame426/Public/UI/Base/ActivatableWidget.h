@@ -80,7 +80,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Activation", Meta = (EditCondition = "bSetVisibilityOnDeactivated"))
 	ESlateVisibility DeactivatedVisibility = ESlateVisibility::Collapsed;
 
-#if UE_5_1_OR_LATER
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1
 	bool bWidgetInitialized = false;
 #endif
 

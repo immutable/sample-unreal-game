@@ -1,0 +1,58 @@
+name: Release with Submodules
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Enter the tag to release (e.g., v1.0.0)'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository without submodules
+        run: |
+          git clone --recurse-submodules https://github.com/${{ github.repository }} .
+          git fetch --tags --force  # Ensure all tags are fetched
+
+      - name: Verify tag exists
+        id: verify_tag
+        run: |
+          if git rev-parse "refs/tags/${{ github.event.inputs.tag_name }}" >/dev/null 2>&1; then
+            echo "Tag found: ${{ github.event.inputs.tag_name }}"
+          else
+            echo "Error: Tag ${{ github.event.inputs.tag_name }} does not exist."
+            exit 1
+          fi
+
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
+
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Create release package
+        run: |
+          zip -r release-with-submodules.zip .  # Package all files including submodules
+
+      - name: Install GitHub CLI
+        run: |
+          curl -sL https://github.com/cli/cli/releases/latest/download/gh_$(uname -s)_amd64.tar.gz | tar xz
+          sudo mv gh_*/bin/gh /usr/local/bin
+
+      - name: Authenticate GitHub CLI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+
+      - name: Create GitHub Release and Upload Asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.event.inputs.tag_name }}" release-with-submodules.zip --title "Release ${{ github.event.inputs.tag_name }}" --notes "Release for ${{ github.event.inputs.tag_name }}"

@@ -6,6 +6,7 @@
 #include "Base/AWStackWithControlPanels.h"
 #include "Base/ItemWidget.h"
 #include "Components/GridPanel.h"
+#include "Immutable/ImmutableUtilities.h"
 #include "Marketplace/MarketplacePolicy.h"
 
 
@@ -55,14 +56,14 @@ void USearchStacksContractSelectWidget::Refresh()
 
 void USearchStacksContractSelectWidget::LoadContracts()
 {
-	UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
+	UApplicationConfig* ImmutableConfig = FImmutableUtilities::GetDefaultApplicationConfig();
 
-	if (!Policy || !GridPanel)
+	if (!GridPanel || !ImmutableConfig)
 	{
 		return;
 	}
 
-	auto& Contracts = Policy->GetContracts();
+	auto& Contracts = ImmutableConfig->GetNFTContractAddresses();
 
 	for (auto Contract : Contracts)
 	{

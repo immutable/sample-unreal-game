@@ -5,26 +5,29 @@
 #include "APIMetadataSearchApiOperations.h"
 #include "Dialog/DialogSubsystem.h"
 #include "Engine/DataTable.h"
+#include "Immutable/ImmutableUtilities.h"
 
 
 void UMarketplacePolicy::PostInitProperties()
 {
 	UObject::PostInitProperties();
 
+	UApplicationConfig* ImmutableConfig = FImmutableUtilities::GetDefaultApplicationConfig();
+
 	HttpRetryManager = MakeUnique<ImmutablezkEVMAPI::HttpRetryManager>(RetryLimitCount, RetryTimeoutRelativeSeconds);
 
 	MetadataSearchAPI = MakeUnique<ImmutablezkEVMAPI::APIMetadataSearchApi>();
-	MetadataSearchAPI->SetURL(ImmutableAPIURL);
+	MetadataSearchAPI->SetURL(ImmutableConfig->GetzkEVMAPIURL());
 	MetadataSearchAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
 	MetadataSearchAPI->SetHttpRetryManager(*HttpRetryManager);
 
 	OrdersAPI = MakeUnique<ImmutablezkEVMAPI::APIOrdersApi>();
-	OrdersAPI->SetURL(ImmutableAPIURL);
+	OrdersAPI->SetURL(ImmutableConfig->GetzkEVMAPIURL());
 	OrdersAPI->AddHeaderParam(TEXT("Accept"), TEXT("application/json"));
 	OrdersAPI->SetHttpRetryManager(*HttpRetryManager);
 	
 	TsSdkAPI = MakeUnique<ImmutableOrderbook::APIOrderbookApi>();
-	TsSdkAPI->SetURL(TsSdkAPIURL);
+	TsSdkAPI->SetURL(ImmutableConfig->GetOrderbookAPIURL());
 }
 
 UDataTable* UMarketplacePolicy::GetNFTDatatable()
@@ -35,11 +38,6 @@ UDataTable* UMarketplacePolicy::GetNFTDatatable()
 ImmutableOrderbook::APIOrderbookApi* UMarketplacePolicy::GetTsSdkAPI()
 {
 	return TsSdkAPI.Get();
-}
-
-FString UMarketplacePolicy::GetBalanceContractAddress() const
-{
-	return BalanceContractAddress;
 }
 
 void UMarketplacePolicy::SetKeyword(const FString& Keyword)

@@ -6,14 +6,16 @@
 #include "GameUIPolicy.h"
 #include "UIGameplayTags.h"
 #include "Base/AWStackWithControlPanels.h"
+#include "Immutable/ImmutableUtilities.h"
 #include "Marketplace/MarketplacePolicy.h"
 
 
 void USearchStacksOptionWidget::RefreshItemList(TOptional<FString> PageCursor)
 {
 	UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
+	UApplicationConfig* ImmutableConfig = FImmutableUtilities::GetDefaultApplicationConfig();
 
-	if (!Policy)
+	if (!Policy || !ImmutableConfig)
 	{
 		return;
 	}
@@ -21,7 +23,7 @@ void USearchStacksOptionWidget::RefreshItemList(TOptional<FString> PageCursor)
 	ImmutablezkEVMAPI::APIMetadataSearchApi::ListFiltersRequest ListFiltersRequest;
 	
 	ListFiltersRequest.ContractAddress = Policy->GetSelectedContractAddress();
-	ListFiltersRequest.ChainName = Policy->GetChainName();
+	ListFiltersRequest.ChainName = ImmutableConfig->GetzkEVMAPIChainName();
 
 	Policy->GetStacksAPI()->ListFilters(ListFiltersRequest, ImmutablezkEVMAPI::APIMetadataSearchApi::FListFiltersDelegate::CreateUObject(this, &USearchStacksOptionWidget::OnListFiltersResponse));	
 }

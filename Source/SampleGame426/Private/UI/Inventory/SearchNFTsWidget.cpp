@@ -10,6 +10,7 @@
 #include "UIGameplayTags.h"
 #include "Base/AWStackWithControlPanels.h"
 #include "Base/ItemWidget.h"
+#include "Immutable/ImmutableUtilities.h"
 #include "Marketplace/MarketplacePolicy.h"
 #include "Marketplace/SearchStacksListingWidget.h"
 #include "UI/Interfaces/IOpenAPIProcessorInterface.h"
@@ -40,6 +41,13 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 		return;
 	}
 
+	UApplicationConfig* ImmutableConfig = FImmutableUtilities::GetDefaultApplicationConfig();
+
+	if (!ImmutableConfig)
+	{
+		return;
+	}
+
 	/**
 	 * Step 1(Inventory display): In order to display items in the list panel of player's Inventory, we need to send a search request to the Immutable zkEVM API.
 	 * Some request parameters are populated based on the current state of the UI Marketplace policy settings.
@@ -59,11 +67,11 @@ void USearchNfTsWidget::RefreshItemList(TOptional<FString> PageCursor)
 	 */
 	ImmutablezkEVMAPI::APIMetadataSearchApi::SearchNFTsRequest SearchNFTsRequest;
 	
-	SearchNFTsRequest.ChainName = Policy->GetChainName();
+	SearchNFTsRequest.ChainName = ImmutableConfig->GetzkEVMAPIChainName();
 	SearchNFTsRequest.PageSize = (ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows());
 	SearchNFTsRequest.PageCursor = PageCursor;
 	SearchNFTsRequest.AccountAddress = GetOwningCustomLocalPLayer()->GetPassportWalletAddress();
-	SearchNFTsRequest.ContractAddress = Policy->GetContracts();
+	SearchNFTsRequest.ContractAddress = ImmutableConfig->GetNFTContractAddresses();
 	SearchNFTsRequest.OnlyIncludeOwnerListings = true;
 	
 	Policy->GetStacksAPI()->SearchNFTs(SearchNFTsRequest, ImmutablezkEVMAPI::APIMetadataSearchApi::FSearchNFTsDelegate::CreateUObject(this, &USearchNfTsWidget::OnSearchNFTsResponse));
@@ -255,6 +263,12 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 	ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchNfTsWidget::OnProcessDialogAction);	
 
 	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
+	UApplicationConfig* ImmutableConfig = FImmutableUtilities::GetDefaultApplicationConfig();
+
+	if (!ImmutableConfig)
+	{
+		return;
+	}
 	
 	/**
 	 * Step 1(Listing): Prepares a listing request for the Immutable Orderbook API.
@@ -277,7 +291,7 @@ void USearchNfTsWidget::OnPlayerConfirmedSell(UDialog* DialogPtr, EDialogResult 
 	ImmutableOrderbook::APIPrepareListingRequestSell SellData;
 
 	BuyData.Amount = FMathUtility::ConvertFloatValueStringToWeiString(18, Dialog->GetPrice());
-	BuyData.ContractAddress = Policy->GetBalanceContractAddress();
+	BuyData.ContractAddress = ImmutableConfig->GetTokenBalanceContractAddress();
 	BuyData.Type = ImmutableOrderbook::APIPrepareListingRequestBuy::TypeEnum::ERC20;
 
 	SellData.ContractAddress = SelectedItemWidget->GetContractAddress();
@@ -525,9 +539,16 @@ void USearchNfTsWidget::OnProcessDialogAction(UDialog* DialogPtr, EDialogResult 
 
 void USearchNfTsWidget::ConfirmListing(const FString& ListingId)
 {
+	UApplicationConfig* ImmutableConfig = FImmutableUtilities::GetDefaultApplicationConfig();
+
+	if (!ImmutableConfig)
+	{
+		return;
+	}
+	
 	ImmutablezkEVMAPI::APIOrdersApi::GetListingRequest ListingRequest;
 
-	ListingRequest.ChainName = Policy->GetChainName();
+	ListingRequest.ChainName = ImmutableConfig->GetzkEVMAPIChainName();
 	ListingRequest.ChainName = ListingId;
 
 	Policy->GetOrdersAPI()->GetListing(ListingRequest, ImmutablezkEVMAPI::APIOrdersApi::FGetListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnGetListing));

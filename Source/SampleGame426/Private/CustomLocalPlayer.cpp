@@ -6,6 +6,7 @@
 #include "APIOrderbookApiOperations.h"
 
 #include "Immutable/ImmutableSubsystem.h"
+#include "Immutable/ImmutableUtilities.h"
 
 #include "Settings/SampleGameSettings.h"
 #include "UI/CustomGameInstance.h"
@@ -130,8 +131,9 @@ void UCustomLocalPlayer::UpdateBalance()
 	}
 
 	UMarketplacePolicy* MarketplacePolicy = GetGameUIPolicy()->GetMarketplacePolicy();
+	UApplicationConfig* ImmutableConfig = FImmutableUtilities::GetDefaultApplicationConfig();
 
-	if (!MarketplacePolicy)
+	if (!MarketplacePolicy || !ImmutableConfig)
 	{
 		return;
 	}
@@ -139,7 +141,7 @@ void UCustomLocalPlayer::UpdateBalance()
 	ImmutableOrderbook::APIOrderbookApi::TokenBalanceRequest Request;
 
 	Request.WalletAddress = PassportWalletAddress;
-	Request.ContractAddress = MarketplacePolicy->GetBalanceContractAddress();
+	Request.ContractAddress = ImmutableConfig->GetTokenBalanceContractAddress();
 
 	MarketplacePolicy->GetTsSdkAPI()->TokenBalance(Request, ImmutableOrderbook::APIOrderbookApi::FTokenBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
 }
@@ -225,14 +227,15 @@ void UCustomLocalPlayer::OnPassportIsRunning(TWeakObjectPtr<class UImtblJSConnec
 
 	if (Passport.IsValid())
 	{
-		FImmutablePassportInitData Data;
+		// FImmutablePassportInitData Data;
+		//
+		// Data.clientId = Settings->ClientID;
+		// Data.logoutRedirectUri = Settings->RedirectURI;
+		// Data.logoutRedirectUri = Settings->LogoutURI;
+		// Data.environment = Settings->Environment;
 
-		Data.clientId = Settings->ClientID;
-		Data.logoutRedirectUri = Settings->RedirectURI;
-		Data.logoutRedirectUri = Settings->LogoutURI;
-		Data.environment = Settings->Environment;
-
-		Passport->Initialize(Data, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportInitialized));
+		// Passport->Initialize(Data, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportInitialized));
+		Passport->Initialize(UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportInitialized));
 	}
 }
 

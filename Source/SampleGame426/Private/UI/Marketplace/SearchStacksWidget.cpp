@@ -9,6 +9,7 @@
 #include "UI/Marketplace/MarketplacePolicy.h"
 #include "Base/ItemWidget.h"
 #include "Dialog/DialogSubsystem.h"
+#include "Immutable/ImmutableUtilities.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Marketplace/SearchStacksListingWidget.h"
 #include "Marketplace/SearchStacksItemWidget.h"
@@ -34,8 +35,9 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	ListPanel->ResetPanelItems();
 
 	UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
+	UApplicationConfig* ImmutableConfig = FImmutableUtilities::GetDefaultApplicationConfig();
 
-	if (!Policy)
+	if (!Policy || !ImmutableConfig)
 	{
 		return;
 	}
@@ -71,8 +73,8 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	SearchStacksRequest.PageSize = ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows();
 	SearchStacksRequest.PageCursor = PageCursor;
 	SearchStacksRequest.AccountAddress = GetOwningCustomLocalPLayer()->GetPassportWalletAddress();
-	SearchStacksRequest.ContractAddress = Policy->GetContracts();
-	SearchStacksRequest.ChainName = Policy->GetChainName();
+	SearchStacksRequest.ContractAddress = ImmutableConfig->GetNFTContractAddresses();
+	SearchStacksRequest.ChainName = ImmutableConfig->GetzkEVMAPIChainName();
 	SearchStacksRequest.OnlyIfHasActiveListings = true;
 
 	HandleSorting(SearchStacksRequest.SortBy);

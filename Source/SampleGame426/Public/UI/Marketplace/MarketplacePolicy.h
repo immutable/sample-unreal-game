@@ -68,26 +68,6 @@ public:
 	}
 
 	/**
-	 * Retrieves the name of the chain used to pass to the Immutable zkEVM API and Orderbook API.
-	 *
-	 * @return A constant reference to an FString containing the name of the chain.
-	 */
-	const FString& GetChainName()
-	{
-		return SearchAPIChainName;
-	}
-
-	/**
-	 * Retrieves the list of NFT contracts used in the APIs' queries.
-	 *
-	 * @return A constant reference to an array of strings representing the contracts.
-	 */
-	const TArray<FString>& GetContracts()
-	{
-		return StackContractAddress;
-	}
-	
-	/**
 	 * @brief Retrieves the instance of Orderbook API.
 	 * @see ImmutableOrderbook::APIOrderbookApi in ImmutableTsSdkApi plugin.
 	 *
@@ -95,13 +75,6 @@ public:
 	 */
 	ImmutableOrderbook::APIOrderbookApi* GetTsSdkAPI();
 	
-	/**
-	 * @brief Retrieves the cryptocurrency contract address associated with the user's wallet balance.
-	 *
-	 * @return A string representing the contract address.
-	 */
-	FString GetBalanceContractAddress() const; 
-
 	/**
 	 * Setter and getter of the cached keyword for the marketplace search.
 	 * @see USearchStacksOptionWidget for more details on how it is used.

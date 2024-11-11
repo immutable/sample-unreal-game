@@ -11,19 +11,19 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
+    - name: Check out code
+      uses: actions/checkout@v2
 
-      - name: Create release archive with submodules
-        run: zip -r release-with-submodules.zip .
-
-      - name: Upload release asset
-        uses: ./.github/actions/upload-release-asset  # Reference the local copy
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./release-with-submodules.zip
-          asset_name: release-with-submodules.zip
-          asset_content_type: application/zip
+    - name: Update submodules
+      run: |
+        git submodule update --init --recursive
+    
+    - name: Create release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.ref_name }}
+      run: |
+        gh release create "$tag" \
+            --repo="$GITHUB_REPOSITORY" \
+            --title="${tag#v}" \
+            --generate-notes

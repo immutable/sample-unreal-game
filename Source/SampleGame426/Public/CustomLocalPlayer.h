@@ -36,6 +36,7 @@ public:
 
 	/** ULocalPlayer: Interface Begin */
 	virtual void PlayerAdded(UGameViewportClient* InViewportClient, int32 InControllerID) override;
+	virtual void PlayerAdded(UGameViewportClient* InViewportClient, FPlatformUserId InUserId) override;
 	/** ULocalPlayer: Interface End */
 
 	FDelegateHandle CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate);

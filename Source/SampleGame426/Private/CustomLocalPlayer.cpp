@@ -25,6 +25,13 @@ void UCustomLocalPlayer::PlayerAdded(class UGameViewportClient* InViewportClient
 	InitializePassport();
 }
 
+void UCustomLocalPlayer::PlayerAdded(UGameViewportClient* InViewportClient, FPlatformUserId InUserId)
+{
+	Super::PlayerAdded(InViewportClient, InUserId);
+
+	InitializePassport();
+}
+
 FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate)
 {
 	APlayerController* PC = GetPlayerController(GetWorld());

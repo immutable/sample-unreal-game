@@ -19,6 +19,7 @@ public class SampleGame426 : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore",
+			"WebBrowserWidget",
 			"Immutable",
 			"ImmutableOrderbook", 
 			"ImmutablezkEVMAPI",

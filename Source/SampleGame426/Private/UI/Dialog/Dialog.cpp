@@ -1,5 +1,6 @@
 #include "Dialog/Dialog.h"
 
+#include "CustomLocalPlayer.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
 
@@ -60,4 +61,17 @@ FString USellDialog::GetPrice() const
 {
 	// return FCString::Atof(*PriceEditableTextBox->GetText().ToString());
 	return PriceEditableTextBox->GetText().ToString();
+}
+
+void UTransakDialog::NativeOnActivated()
+{
+	Super::NativeOnActivated();
+
+	if (WebBrowser)
+	{
+		FString WalletAddres = GetOwningCustomLocalPLayer()->GetPassportWalletAddress();
+		FString Email = GetOwningCustomLocalPLayer()->GetPassportEmail();
+		
+		WebBrowser->Load(WalletAddres, Email, TEXT("buy"), TEXT("Add funds"));
+	}
 }

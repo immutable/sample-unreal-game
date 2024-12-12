@@ -86,6 +86,16 @@ UProcessDialogDescriptor* UDialogSubsystem::CreateProcessDescriptor(const FStrin
 	return Descriptor;
 }
 
+UDialogDescriptor_OneAction* UDialogSubsystem::CreateTransakDescriptor()
+{
+	UDialogDescriptor_OneAction* Descriptor = NewObject<UDialogDescriptor_OneAction>();
+	
+	Descriptor->Action.Result = EDialogResult::Closed;
+	Descriptor->Action.ActionText = FText::FromString("Close");
+
+	return Descriptor;
+}
+
 UDialog* UDialogSubsystem::ShowDialog(const FGameplayTag& DialogType, UDialogDescriptor* Descriptor)
 {
 	auto DialogData = GetDialogType(DialogType);

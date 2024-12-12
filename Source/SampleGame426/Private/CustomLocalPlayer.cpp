@@ -3,15 +3,16 @@
 #include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "APIOrderbookApiOperations.h"
-
-#include "Immutable/ImmutableSubsystem.h"
-
 #include "Settings/SampleGameSettings.h"
+
+#include "APIOrderbookApiOperations.h"
+#include "Immutable/ImmutableSubsystem.h"
 #include "UI/CustomGameInstance.h"
 #include "UI/Dialog/DialogSubsystem.h"
 #include "UI/GameUIManagerSubsystem.h"
 #include "UI/UIGameplayTags.h"
+#include "UI/Utility/MathUtility.h"
+
 
 UCustomLocalPlayer::UCustomLocalPlayer() :
 	Super(FObjectInitializer::Get())
@@ -99,9 +100,19 @@ FString UCustomLocalPlayer::GetPassportWalletAddress()
 	return PassportWalletAddress;
 }
 
-float UCustomLocalPlayer::GetBalance()
+FString UCustomLocalPlayer::GetPassportEmail()
 {
-	return PassportWalletBalance;
+	return PassportEmail;
+}
+
+float UCustomLocalPlayer::GetIMRBalance()
+{
+	return PassportWalletBalanceIMR;
+}
+
+float UCustomLocalPlayer::GetIMXBalance()
+{
+	return PassportWalletBalanceIMX;
 }
 
 void UCustomLocalPlayer::LoginPassport()
@@ -148,7 +159,13 @@ void UCustomLocalPlayer::UpdateBalance()
 	Request.WalletAddress = PassportWalletAddress;
 	Request.ContractAddress = MarketplacePolicy->GetBalanceContractAddress();
 
-	MarketplacePolicy->GetTsSdkAPI()->TokenBalance(Request, ImmutableOrderbook::APIOrderbookApi::FTokenBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnBalanceUpdateResponse));
+	MarketplacePolicy->GetTsSdkAPI()->TokenBalance(Request, ImmutableOrderbook::APIOrderbookApi::FTokenBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnIMRBalanceUpdateResponse));
+
+	FImmutablePassportZkEvmGetBalanceData IMXRequest;
+
+	IMXRequest.address = PassportWalletAddress;
+	
+	Passport->ZkEvmGetBalance(IMXRequest, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnIMXBalanceUpdateResponse));
 }
 
 void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Data, TFunction<void(FString TransactionHash, FString Status)> Callback)
@@ -281,17 +298,31 @@ void UCustomLocalPlayer::OnPassportLoggedOut(FImmutablePassportResult Result)
 	}
 }
 
-void UCustomLocalPlayer::OnBalanceUpdateResponse(const ImmutableOrderbook::APIOrderbookApi::TokenBalanceResponse& Response)
+void UCustomLocalPlayer::OnIMRBalanceUpdateResponse(const ImmutableOrderbook::APIOrderbookApi::TokenBalanceResponse& Response)
 {
 	if (!Response.IsSuccessful())
 	{
-		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update balance"), Response.GetResponseString()));
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update IMR balance"), Response.GetResponseString()));
 
 		return;
 	}
 
-	PassportWalletBalance = FCString::Atof(*Response.Content.Quantity);
-	OnBalanceUpdated.Broadcast(PassportWalletBalance);
+	PassportWalletBalanceIMR = FCString::Atof(*Response.Content.Quantity);
+	OnIMRBalanceUpdated.Broadcast(PassportWalletBalanceIMR);
+}
+
+void UCustomLocalPlayer::OnIMXBalanceUpdateResponse(FImmutablePassportResult Result)
+{
+	if (!Result.Success)
+	{
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update IMX balance"), Result.Error));
+
+		return;
+	}
+	
+	FString Price = FMathUtility::ConvertWeiStringToFloatValueString(18, UImmutablePassport::GetResponseResultAsString(Result.Response));
+	
+	OnIMXBalanceUpdated.Broadcast(Price);
 }
 
 void UCustomLocalPlayer::CollectPassportData()
@@ -313,7 +344,20 @@ void UCustomLocalPlayer::CollectPassportData()
 					}
 					else
 					{
-						UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to obtain Immutable Passport data"), Result.Error));
+						UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to obtain Immutable Passport Wallet Address"), Result.Error));
+					}
+				}));
+
+				Passport->GetEmail(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
+				{
+					if (Result.Success)
+					{
+						PassportEmail = UImmutablePassport::GetResponseResultAsString(Result.Response);
+						NotifyIfAllPassportDataObtained();
+					}
+					else
+					{
+						UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to obtain Immutable Passport Email"), Result.Error));
 					}
 				}));
 			}
@@ -323,7 +367,7 @@ void UCustomLocalPlayer::CollectPassportData()
 
 bool UCustomLocalPlayer::CheckAllPassportDataObtained()
 {
-	if (PassportWalletAddress.IsEmpty())
+	if (PassportWalletAddress.IsEmpty() || PassportEmail.IsEmpty())
 	{
 		return false;
 	}
@@ -335,8 +379,6 @@ void UCustomLocalPlayer::NotifyIfAllPassportDataObtained()
 {
 	if (!CheckAllPassportDataObtained())
 	{
-		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorSimple, UDialogSubsystem::CreateErrorSimpleDescriptor(TEXT("Error"), TEXT("Some Immutable Passport data is missing")));
-
 		return;
 	}
 

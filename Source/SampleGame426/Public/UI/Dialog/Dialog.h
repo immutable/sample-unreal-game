@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameplayTagContainer.h"
+#include "Immutable/Transak/TransakWebBrowser.h"
 
 #include "UI/Base/ActivatableWidget.h"
 #include "UI/Dialog/DialogButton.h"
@@ -70,4 +71,23 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly, Meta=(BindWidget))
 	UEditableTextBox* PriceEditableTextBox;
+};
+
+
+/**
+ * @class UTransakDialog
+ * @breif Dialog used for Transak Widget
+ */
+UCLASS(Abstract)
+class SAMPLEGAME426_API UTransakDialog : public UDialog
+{
+	GENERATED_BODY()
+protected:
+	/** UActivatableWidget: Interface Begin */
+	virtual void NativeOnActivated() override;
+	/** UActivatableWidget: Interface Begin */
+
+protected:
+	UPROPERTY(BlueprintReadOnly, Meta=(BindWidget))
+	UTransakWebBrowser* WebBrowser = nullptr;
 };

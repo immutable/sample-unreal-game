@@ -29,7 +29,8 @@ public:
 	DECLARE_MULTICAST_DELEGATE(FPlayerPassportDataObtained);
 
 	/* Immutalbe related */
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBalanceUpdatedDelegate, float, TokenBalance);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnIMRBalanceUpdatedDelegate, float, TokenBalance);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnIMXBalanceUpdatedDelegate, FString, TokenBalance);
 
 public:
 	UCustomLocalPlayer();
@@ -54,7 +55,13 @@ public:
 	FString GetPassportWalletAddress();
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
-	float GetBalance();
+	FString GetPassportEmail();
+
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	float GetIMRBalance();
+
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	float GetIMXBalance();
 
 	/* Immutalbe related */
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
@@ -75,7 +82,8 @@ private:
 	void OnPassportInitialized(FImmutablePassportResult Result);
 	void OnPassportLoggedIn(FImmutablePassportResult Result);
 	void OnPassportLoggedOut(FImmutablePassportResult Result);
-	void OnBalanceUpdateResponse(const ImmutableOrderbook::APIOrderbookApi::TokenBalanceResponse& Response);
+	void OnIMRBalanceUpdateResponse(const ImmutableOrderbook::APIOrderbookApi::TokenBalanceResponse& Response);
+	void OnIMXBalanceUpdateResponse(FImmutablePassportResult Result);
 
 	void CollectPassportData();
 	bool CheckAllPassportDataObtained();
@@ -83,7 +91,10 @@ private:
 
 public:
 	UPROPERTY(BlueprintAssignable)
-	FOnBalanceUpdatedDelegate OnBalanceUpdated;
+	FOnIMRBalanceUpdatedDelegate OnIMRBalanceUpdated;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnIMXBalanceUpdatedDelegate OnIMXBalanceUpdated;
 
 protected:
 	/** Called when the local player is assigned a player controller */
@@ -104,5 +115,7 @@ private:
 	bool IsPassportInitialized = false;
 	bool IsLocalPlayerLoggedIn = false;
 	FString PassportWalletAddress;
-	float PassportWalletBalance = 0.0f;
+	FString PassportEmail;
+	float PassportWalletBalanceIMR = 0.0f;
+	float PassportWalletBalanceIMX = 0.0f;
 };

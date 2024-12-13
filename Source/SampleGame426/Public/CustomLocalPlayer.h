@@ -30,14 +30,14 @@ public:
 
 	/* Immutalbe related */
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnIMRBalanceUpdatedDelegate, float, TokenBalance);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnIMXBalanceUpdatedDelegate, FString, TokenBalance);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnIMXBalanceUpdatedDelegate, const FString&, TokenBalance);
 
 public:
 	UCustomLocalPlayer();
 
 	/** ULocalPlayer: Interface Begin */
 	virtual void PlayerAdded(UGameViewportClient* InViewportClient, int32 InControllerID) override;
-	virtual void PlayerAdded(UGameViewportClient* InViewportClient, FPlatformUserId InUserId) override;
+	// virtual void PlayerAdded(UGameViewportClient* InViewportClient, FPlatformUserId InUserId) override;
 	/** ULocalPlayer: Interface End */
 
 	FDelegateHandle CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate);

@@ -13,6 +13,7 @@ void UBalanceWidget::NativeConstruct()
 		OwningCustomLocalPLayer->OnIMRBalanceUpdated.AddUniqueDynamic(this, &UBalanceWidget::OnIMRBalanceUpdated);
 		OwningCustomLocalPLayer->OnIMXBalanceUpdated.AddUniqueDynamic(this, &UBalanceWidget::OnIMXBalanceUpdated);
 	}
+	Refresh();
 }
 
 void UBalanceWidget::ShowAddFundsWidget()

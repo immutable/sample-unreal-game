@@ -13,6 +13,8 @@ class SAMPLEGAME426_API UInformationSubsystem : public ULocalPlayerSubsystem
 
 public:
 	UFUNCTION(BlueprintCallable)
+	void SetDisplayMessageBlock(UTextBlock* TextBlock);
+	UFUNCTION(BlueprintCallable)
 	void ShowDisplayMessage(const FString& Message);
 
 protected:

@@ -37,7 +37,9 @@ public:
 
 	/** ULocalPlayer: Interface Begin */
 	virtual void PlayerAdded(UGameViewportClient* InViewportClient, int32 InControllerID) override;
-	// virtual void PlayerAdded(UGameViewportClient* InViewportClient, FPlatformUserId InUserId) override;
+#if (ENGINE_MAJOR_VERSION >= 5 && ENGINE_MINOR_VERSION >= 1)
+	virtual void PlayerAdded(UGameViewportClient* InViewportClient, FPlatformUserId InUserId) override;
+#endif
 	/** ULocalPlayer: Interface End */
 
 	FDelegateHandle CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate);
@@ -51,10 +53,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
 	bool IsPassportLoggedIn();
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	UFUNCTION(BlueprintPure)
 	FString GetPassportWalletAddress();
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic)
+	UFUNCTION(BlueprintPure)
 	FString GetPassportEmail();
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic)

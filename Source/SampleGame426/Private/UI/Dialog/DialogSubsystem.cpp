@@ -120,6 +120,7 @@ UDialog* UDialogSubsystem::ShowDialog(const FGameplayTag& DialogType, UDialogDes
 	}
 
 	Dialog->SetupDialog(Descriptor);
+	Dialog->ActivateWidget();
 
 	return Dialog;
 }

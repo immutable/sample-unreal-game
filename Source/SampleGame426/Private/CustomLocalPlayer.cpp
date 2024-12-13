@@ -26,12 +26,14 @@ void UCustomLocalPlayer::PlayerAdded(class UGameViewportClient* InViewportClient
 	InitializePassport();
 }
 
-// void UCustomLocalPlayer::PlayerAdded(UGameViewportClient* InViewportClient, FPlatformUserId InUserId)
-// {
-// 	Super::PlayerAdded(InViewportClient, InUserId);
-//
-// 	InitializePassport();
-// }
+#if (ENGINE_MAJOR_VERSION >= 5 && ENGINE_MINOR_VERSION >= 1)
+void UCustomLocalPlayer::PlayerAdded(UGameViewportClient* InViewportClient, FPlatformUserId InUserId)
+{
+	Super::PlayerAdded(InViewportClient, InUserId);
+
+	InitializePassport();
+}
+#endif
 
 FDelegateHandle UCustomLocalPlayer::CallAndRegister_OnPlayerControllerSet(FPlayerControllerSetDelegate::FDelegate Delegate)
 {

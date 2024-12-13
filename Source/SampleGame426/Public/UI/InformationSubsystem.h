@@ -15,9 +15,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowDisplayMessage(const FString& Message);
 
-	UFUNCTION(BlueprintCallable)
-	void SetDisplayMessageBlock(UTextBlock* TextBlock);
-
 protected:
 	UPROPERTY(Transient)
 	TWeakObjectPtr<UTextBlock> MessageBlock;

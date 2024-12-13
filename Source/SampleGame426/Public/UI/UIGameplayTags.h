@@ -19,6 +19,7 @@ struct SAMPLEGAME426_API FNativeUIGameplayTags : public FGameplayTagNativeAdder
 	FGameplayTag UI_Dialog_Message;
 	FGameplayTag UI_Dialog_Sell;
 	FGameplayTag UI_Dialog_Process;
+	FGameplayTag UI_Dialog_Transak;
 
 	FGameplayTag UI_ControlPanel_Button_Empty;
 	FGameplayTag UI_ControlPanel_Button_NextPage;

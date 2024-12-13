@@ -11,11 +11,3 @@ void UInformationSubsystem::ShowDisplayMessage(const FString& Message)
 
 	MessageBlock->SetText(FText::FromString(Message));
 }
-
-void UInformationSubsystem::SetDisplayMessageBlock(UTextBlock* TextBlock)
-{
-	if (TextBlock)
-	{
-		MessageBlock = TextBlock;
-	}
-}

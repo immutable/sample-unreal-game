@@ -29,8 +29,6 @@ public:
 	static UDialogDescriptor_TwoActions* CreateConfirmMessageDescriptor(const FString& Header, const FString& Body);
 	static UDialogDescriptor_TwoActions* CreateSellDescriptor(const FString& Header, const FString& Body);
 	static UProcessDialogDescriptor* CreateProcessDescriptor(const FString& Header, const FString& Body, const FDialogAction& Action, bool IsInProgress = true);
-
-	UFUNCTION(BlueprintCallable)
 	static UDialogDescriptor_OneAction* CreateTransakDescriptor();
 
 public:

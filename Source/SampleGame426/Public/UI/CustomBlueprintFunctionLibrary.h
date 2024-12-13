@@ -1,13 +1,12 @@
 ﻿#pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
-
 #include "Data/NFTMetadataAttributeDataAsset.h"
 
-#include "UIBlueprintFunctionLibrary.generated.h"
+#include "CustomBlueprintFunctionLibrary.generated.h"
 
 UCLASS()
-class SAMPLEGAME426_API UUIBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
+class SAMPLEGAME426_API UCustomBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
@@ -23,4 +22,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Immutable Utility")
 	static void HideThrobber(const ULocalPlayer* LocalPlayer);
+
+	UFUNCTION(BlueprintCallable, Category = "Immutable Utility")
+	static void ShowTransakWidget(const ULocalPlayer* LocalPlayer);
 };

@@ -36,9 +36,10 @@ public:
 	UCustomLocalPlayer();
 
 	/** ULocalPlayer: Interface Begin */
-	virtual void PlayerAdded(UGameViewportClient* InViewportClient, int32 InControllerID) override;
 #if (ENGINE_MAJOR_VERSION >= 5 && ENGINE_MINOR_VERSION >= 1)
 	virtual void PlayerAdded(UGameViewportClient* InViewportClient, FPlatformUserId InUserId) override;
+#else
+	virtual void PlayerAdded(UGameViewportClient* InViewportClient, int32 InControllerID) override;
 #endif
 	/** ULocalPlayer: Interface End */
 

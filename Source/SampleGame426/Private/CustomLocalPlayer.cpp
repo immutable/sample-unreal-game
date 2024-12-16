@@ -19,17 +19,17 @@ UCustomLocalPlayer::UCustomLocalPlayer() :
 {
 }
 
-void UCustomLocalPlayer::PlayerAdded(class UGameViewportClient* InViewportClient, int32 InControllerID)
-{
-	Super::PlayerAdded(InViewportClient, InControllerID);
-
-	InitializePassport();
-}
-
 #if (ENGINE_MAJOR_VERSION >= 5 && ENGINE_MINOR_VERSION >= 1)
 void UCustomLocalPlayer::PlayerAdded(UGameViewportClient* InViewportClient, FPlatformUserId InUserId)
 {
 	Super::PlayerAdded(InViewportClient, InUserId);
+
+	InitializePassport();
+}
+#else
+void UCustomLocalPlayer::PlayerAdded(class UGameViewportClient* InViewportClient, int32 InControllerID)
+{
+	Super::PlayerAdded(InViewportClient, InControllerID);
 
 	InitializePassport();
 }
@@ -206,14 +206,6 @@ void UCustomLocalPlayer::SignData(const FString& SingableMessageJson, TFunction<
 		UCustomGameInstance::SendDisplayMessage(this, TEXT("CreateListing: Input json string is empty!"));
 		return;
 	}
-
-	// FZkEvmSignTypedDataV4Request Request;
-	//
-	// if (!FJsonObjectConverter::JsonObjectStringToUStruct(SingableMessageJson, &Request, 0, 0))
-	// {
-	// 	UCustomGameInstance::SendRunningLineMessage(this, TEXT("CreateListing: Failed to convert json string to sign type data structure!"));
-	// 	return;
-	// }
 
 	Passport->ZkEvmSignTypedDataV4(SingableMessageJson, UImmutablePassport::FImtblPassportResponseDelegate::CreateWeakLambda(this, [this, Callback](FImmutablePassportResult Result)
 	{

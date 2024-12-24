@@ -13,7 +13,7 @@
 
 # Unreal Engine Sample Game
 
-This Unreal Engine sample game demoes features provided by the <https://github.com/immutable/unreal-immutable-sdk> plugin. It is built with Unreal Engine 4.26 (the min Unreal Engine version the Unreal SDK supports), so the sample blueprints are compatible with newer versions of Unreal Engine.
+This Unreal Engine sample game demos features provided by the <https://github.com/immutable/unreal-immutable-sdk> plugin. It is built with Unreal Engine 4.26 (the min Unreal Engine version the Unreal SDK supports), so the sample blueprints are compatible with newer versions of Unreal Engine.
 
 ## Cloning this Repo
 
@@ -80,7 +80,7 @@ After cloning the repo, double click the `SampleGame426` uproject file in the fi
 
 ## Enable Plugin Content
 
-![How to view plugin conent in Content Browser](Docs/how-to-view-plugin-conent.png)
+![How to view plugin content in Content Browser](Docs/how-to-view-plugin-conent.png)
 
 * Open the `Content Browser`
 * Click on `View Options` button in the bottom right corner of the `Content Browser` window

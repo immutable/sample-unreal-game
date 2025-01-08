@@ -53,7 +53,6 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 	 *
 	 * @param SearchStacksRequest The request object to be passed to SearchStacks method of the Immutable zkEVM API.
 	 * Must-be parameters:
-	 * - AccountAddress: The wallet address of the owning custom local player.
 	 * - ContractAddress: The contract address of NFT we are searching for, retrieved from the policy.
 	 * - ChainName: The name of the blockchain chain .
 	 * Optional parameters:
@@ -70,7 +69,6 @@ void USearchStacksWidget::RefreshItemList(TOptional<FString> PageCursor)
 
 	SearchStacksRequest.PageSize = ListPanel->GetNumberOfColumns() * ListPanel->GetNumberOfRows();
 	SearchStacksRequest.PageCursor = PageCursor;
-	SearchStacksRequest.AccountAddress = GetOwningCustomLocalPLayer()->GetPassportWalletAddress();
 	SearchStacksRequest.ContractAddress = Policy->GetContracts();
 	SearchStacksRequest.ChainName = Policy->GetChainName();
 	SearchStacksRequest.OnlyIfHasActiveListings = true;

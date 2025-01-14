@@ -79,16 +79,14 @@ void USearchStacksListingWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Da
 
 	if (StackBundle.Stack.Attributes.IsSet())
 	{
-		for (auto Attribute : StackBundle.Stack.Attributes.GetValue())
+		for (const ImmutablezkEVMAPI::APINFTMetadataAttribute& Attribute : StackBundle.Stack.Attributes.GetValue())
 		{
-			FString JsonBody;
+			const FString* AttributeValue = Attribute.Value.OneOf.TryGet<FString>();
 
-			ImmutablezkEVMAPI::JsonWriter JsonWriter = TJsonWriterFactory<>::Create(&JsonBody);
-
-			Attribute.Value.WriteJson(JsonWriter);
-			JsonWriter->Close();
-
-			AddMetadataAttribute(Attribute.TraitType, JsonBody);
+			if (ensureAlways(AttributeValue))
+			{
+				AddMetadataAttribute(Attribute.TraitType, *AttributeValue);
+			}
 		}
 	}
 

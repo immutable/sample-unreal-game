@@ -85,13 +85,28 @@ void USearchStacksItemWidget::SetName(const FString& Name)
 
 void USearchStacksItemWidget::SetPrice(const ImmutablezkEVMAPI::APIMarketPriceDetails& PriceDetails)
 {
-	if (NFTLowestPrice && PriceDetails.Token.Decimals.IsSet())
+	if (!NFTLowestPrice)
 	{
-		FString Price = FMathUtility::ConvertWeiStringToFloatValueString(PriceDetails.Token.Decimals.GetValue(), PriceDetails.Amount);  
+		return;
+	}
 
-		NFTLowestPrice->SetText(FText::FromString(Price));
+	if (const ImmutablezkEVMAPI::APIMarketPriceERC20Token* APIMarketPriceERC20Token = PriceDetails.Token.OneOf.TryGet<ImmutablezkEVMAPI::APIMarketPriceERC20Token>())
+	{
+		const TOptional<int32>& Decimals = APIMarketPriceERC20Token->Decimals;
 
-		SetPriceTokenName(PriceDetails.Token.Symbol.GetValue());
+		if (Decimals.IsSet())
+		{
+			FString Price = FMathUtility::ConvertWeiStringToFloatValueString(Decimals.GetValue(), PriceDetails.Amount);
+
+			NFTLowestPrice->SetText(FText::FromString(Price));
+		}
+
+		const TOptional<FString>& Symbol = APIMarketPriceERC20Token->Symbol;
+
+		if (Symbol.IsSet())
+		{
+			SetPriceTokenName(Symbol.GetValue());
+		}
 	}
 }
 

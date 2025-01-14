@@ -161,8 +161,14 @@ void UCustomLocalPlayer::UpdateBalance()
 	Request.WalletAddress = PassportWalletAddress;
 	Request.ContractAddress = MarketplacePolicy->GetBalanceContractAddress();
 
+	// IMR
 	MarketplacePolicy->GetTsSdkAPI()->TokenBalance(Request, ImmutableOrderbook::APIOrderbookApi::FTokenBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnIMRBalanceUpdateResponse));
 
+	// USDC
+	Request.ContractAddress = TEXT("0x3B2d8A1931736Fc321C24864BceEe981B11c3c57");
+	MarketplacePolicy->GetTsSdkAPI()->TokenBalance(Request, ImmutableOrderbook::APIOrderbookApi::FTokenBalanceDelegate::CreateUObject(this, &UCustomLocalPlayer::OnUSDCBalanceUpdateResponse));
+
+	// IMX
 	FImmutablePassportZkEvmGetBalanceData IMXRequest;
 
 	IMXRequest.address = PassportWalletAddress;
@@ -317,6 +323,21 @@ void UCustomLocalPlayer::OnIMXBalanceUpdateResponse(FImmutablePassportResult Res
 	FString Price = FMathUtility::ConvertWeiStringToFloatValueString(18, UImmutablePassport::GetResponseResultAsString(Result.Response));
 	
 	OnIMXBalanceUpdated.Broadcast(Price);
+}
+
+void UCustomLocalPlayer::OnUSDCBalanceUpdateResponse(const ImmutableOrderbook::APIOrderbookApi::TokenBalanceResponse& Response)
+{
+	if (!Response.IsSuccessful())
+	{
+		UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_ErrorFull, UDialogSubsystem::CreateErrorDescriptorWithErrorText(TEXT("Error"), TEXT("Failed to update IMR balance"), Response.GetResponseString()));
+
+		return;
+	}
+	float RawAmount = FCString::Atof(*Response.Content.Quantity);
+
+	PassportWalletBalanceUSDC = RawAmount * FMath::Pow(10.f, 12);
+
+	OnUSDCBalanceUpdated.Broadcast(PassportWalletBalanceUSDC);
 }
 
 void UCustomLocalPlayer::CollectPassportData()

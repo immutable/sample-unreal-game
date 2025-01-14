@@ -12,6 +12,7 @@ void UBalanceWidget::NativeConstruct()
 	{
 		OwningCustomLocalPLayer->OnIMRBalanceUpdated.AddUniqueDynamic(this, &UBalanceWidget::OnIMRBalanceUpdated);
 		OwningCustomLocalPLayer->OnIMXBalanceUpdated.AddUniqueDynamic(this, &UBalanceWidget::OnIMXBalanceUpdated);
+		OwningCustomLocalPLayer->OnUSDCBalanceUpdated.AddUniqueDynamic(this, &UBalanceWidget::OnUSDCBalanceUpdated);
 	}
 	Refresh();
 }
@@ -29,6 +30,7 @@ void UBalanceWidget::Refresh()
 		UpdateBalanceInProgress();
 		bIsIMRBalanceUpdateInProgress = true;
 		bIsIMXBalanceUpdateInProgress = true;
+		bIsUSDCBalanceUpdateInProgress = true;
 	}
 	CurrentBalanceUpdateTimerDuration = 0.0f;
 }
@@ -40,6 +42,7 @@ void UBalanceWidget::Tick(float DeltaTime)
 	if (CurrentBalanceUpdateTimerDuration > AutoBalanceRefreshRate)
 	{
 		Refresh();
+		CurrentBalanceUpdateTimerDuration = 0.f;
 	}
 }
 
@@ -53,8 +56,8 @@ void UBalanceWidget::OnIMRBalanceUpdated(float TokenBalance)
 	if (IMRBalance)
 	{
 		const FNumberFormattingOptions FormatOptions = FNumberFormattingOptions()
-			.SetMinimumFractionalDigits(3)
-			.SetMaximumFractionalDigits(3);
+			.SetMinimumFractionalDigits(2)
+			.SetMaximumFractionalDigits(2);
 	
 		IMRBalance->SetText(FText::AsNumber(TokenBalance, &FormatOptions));
 	}
@@ -72,9 +75,23 @@ void UBalanceWidget::OnIMXBalanceUpdated(const FString& TokenBalance)
 	CheckBalanceInProgress();
 }
 
+void UBalanceWidget::OnUSDCBalanceUpdated(float TokenBalance)
+{
+	if (USDCBalance)
+	{
+		const FNumberFormattingOptions FormatOptions = FNumberFormattingOptions()
+			.SetMinimumFractionalDigits(2)
+			.SetMaximumFractionalDigits(2);
+	
+		USDCBalance->SetText(FText::AsNumber(TokenBalance, &FormatOptions));
+	}
+	bIsUSDCBalanceUpdateInProgress = false;
+	CheckBalanceInProgress();
+}
+
 void UBalanceWidget::CheckBalanceInProgress()
 {
-	if (bIsIMRBalanceUpdateInProgress || bIsIMRBalanceUpdateInProgress)
+	if (bIsIMRBalanceUpdateInProgress || bIsIMRBalanceUpdateInProgress || bIsUSDCBalanceUpdateInProgress)
 	{
 		return;
 	}
@@ -82,7 +99,3 @@ void UBalanceWidget::CheckBalanceInProgress()
 	UpdateBalanceFinished();
 }
 
-void UBalanceWidget::StartTimer()
-{
-	
-}

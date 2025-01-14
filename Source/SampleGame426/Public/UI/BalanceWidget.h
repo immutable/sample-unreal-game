@@ -39,10 +39,11 @@ protected:
 	void OnIMRBalanceUpdated(float TokenBalance);
 	UFUNCTION()
 	void OnIMXBalanceUpdated(const FString& TokenBalance);
+	UFUNCTION()
+	void OnUSDCBalanceUpdated(float TokenBalance);
 
 private:
 	void CheckBalanceInProgress();
-	void StartTimer();
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
@@ -51,12 +52,14 @@ protected:
 	UTextBlock* IMRBalance = nullptr;
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	UTextBlock* IMXBalance = nullptr;
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UTextBlock* USDCBalance = nullptr;
 
 private:
 	FTimerHandle AutoRefreshBalanceTimerHandle;
 	bool bIsIMRBalanceUpdateInProgress = false;
 	bool bIsIMXBalanceUpdateInProgress = false;
+	bool bIsUSDCBalanceUpdateInProgress = false;
 
 	float CurrentBalanceUpdateTimerDuration = 0.f;
 };
-

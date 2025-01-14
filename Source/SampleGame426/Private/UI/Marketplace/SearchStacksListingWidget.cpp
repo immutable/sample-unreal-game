@@ -79,11 +79,14 @@ void USearchStacksListingWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Da
 
 	if (StackBundle.Stack.Attributes.IsSet())
 	{
-		for (auto Attribute : StackBundle.Stack.Attributes.GetValue())
+		for (const ImmutablezkEVMAPI::APINFTMetadataAttribute& Attribute : StackBundle.Stack.Attributes.GetValue())
 		{
-			TSharedPtr<FJsonValue> Value;
+			const FString* AttributeValue = Attribute.Value.OneOf.TryGet<FString>();
 
-			AddMetadataAttribute(Attribute.TraitType, Attribute.Value);
+			if (ensureAlways(AttributeValue))
+			{
+				AddMetadataAttribute(Attribute.TraitType, *AttributeValue);
+			}
 		}
 	}
 

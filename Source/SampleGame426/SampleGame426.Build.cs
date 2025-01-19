@@ -22,6 +22,7 @@ public class SampleGame426 : ModuleRules
 			"Immutable",
 			"ImmutableOrderbook", 
 			"ImmutablezkEVMAPI",
+			"ImmutableMarketplace",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 

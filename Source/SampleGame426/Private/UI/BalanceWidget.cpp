@@ -19,7 +19,7 @@ void UBalanceWidget::NativeConstruct()
 
 void UBalanceWidget::ShowAddFundsWidget()
 {
-	UCustomBlueprintFunctionLibrary::ShowTransakWidget(GetOwningCustomLocalPLayer());
+	UCustomBlueprintFunctionLibrary::ShowOnRampWidget(GetOwningCustomLocalPLayer());
 }
 
 void UBalanceWidget::Refresh()

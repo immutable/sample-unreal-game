@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameplayTagContainer.h"
-#include "Immutable/Transak/TransakWebBrowser.h"
+#include "OnRampWebBrowserWidget.h"
 
 #include "UI/Base/ActivatableWidget.h"
 #include "UI/Dialog/DialogButton.h"
@@ -89,5 +89,5 @@ protected:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Meta=(BindWidget))
-	UTransakWebBrowser* WebBrowser = nullptr;
+	UOnRampWidget* OnRampWidget = nullptr;
 };

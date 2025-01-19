@@ -24,5 +24,5 @@ public:
 	static void HideThrobber(const ULocalPlayer* LocalPlayer);
 
 	UFUNCTION(BlueprintCallable, Category = "Immutable Utility")
-	static void ShowTransakWidget(const ULocalPlayer* LocalPlayer);
+	static void ShowOnRampWidget(const ULocalPlayer* LocalPlayer);
 };

@@ -86,7 +86,7 @@ UProcessDialogDescriptor* UDialogSubsystem::CreateProcessDescriptor(const FStrin
 	return Descriptor;
 }
 
-UDialogDescriptor_OneAction* UDialogSubsystem::CreateTransakDescriptor()
+UDialogDescriptor_OneAction* UDialogSubsystem::CreateOnRampDescriptor()
 {
 	UDialogDescriptor_OneAction* Descriptor = NewObject<UDialogDescriptor_OneAction>();
 	

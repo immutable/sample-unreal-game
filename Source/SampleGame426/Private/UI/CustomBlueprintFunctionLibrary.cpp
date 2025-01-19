@@ -51,7 +51,7 @@ void UCustomBlueprintFunctionLibrary::HideThrobber(const ULocalPlayer* LocalPlay
 	}
 }
 
-void UCustomBlueprintFunctionLibrary::ShowTransakWidget(const ULocalPlayer* LocalPlayer)
+void UCustomBlueprintFunctionLibrary::ShowOnRampWidget(const ULocalPlayer* LocalPlayer)
 {
 	if (!LocalPlayer)
 	{
@@ -62,6 +62,6 @@ void UCustomBlueprintFunctionLibrary::ShowTransakWidget(const ULocalPlayer* Loca
 
 	if (UDialogSubsystem* DialogSubsystem = LocalPlayer->GetSubsystem<UDialogSubsystem>())
 	{
-		DialogSubsystem->ShowDialog(NativeUIGameplayTags.UI_Dialog_Transak, UDialogSubsystem::CreateTransakDescriptor());
+		DialogSubsystem->ShowDialog(NativeUIGameplayTags.UI_Dialog_OnRamp, UDialogSubsystem::CreateOnRampDescriptor());
 	}
 }

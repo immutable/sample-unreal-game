@@ -6,6 +6,7 @@
 
 #include "LogSampleGame.h"
 
+
 UDialog::UDialog(const FObjectInitializer& Initializer) :
 	Super(Initializer)
 {
@@ -67,11 +68,11 @@ void UTransakDialog::NativeOnActivated()
 {
 	Super::NativeOnActivated();
 
-	if (WebBrowser)
+	if (OnRampWidget)
 	{
 		FString WalletAddres = GetOwningCustomLocalPLayer()->GetPassportWalletAddress();
 		FString Email = GetOwningCustomLocalPLayer()->GetPassportEmail();
 		
-		WebBrowser->Load(WalletAddres, Email, TEXT("buy"), TEXT("Add funds"));
+		OnRampWidget->Load(WalletAddres, Email, TEXT("buy"), TEXT("Add funds"));
 	}
 }

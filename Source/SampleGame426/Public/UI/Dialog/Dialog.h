@@ -75,11 +75,11 @@ protected:
 
 
 /**
- * @class UTransakDialog
+ * @class UOnRampDialog
  * @breif Dialog used for Transak Widget
  */
 UCLASS(Abstract)
-class SAMPLEGAME426_API UTransakDialog : public UDialog
+class SAMPLEGAME426_API UOnRampDialog : public UDialog
 {
 	GENERATED_BODY()
 protected:

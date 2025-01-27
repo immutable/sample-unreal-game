@@ -64,7 +64,7 @@ FString USellDialog::GetPrice() const
 	return PriceEditableTextBox->GetText().ToString();
 }
 
-void UTransakDialog::NativeOnActivated()
+void UOnRampDialog::NativeOnActivated()
 {
 	Super::NativeOnActivated();
 

@@ -17,7 +17,7 @@ void FNativeUIGameplayTags::AddTags()
 	UI_Dialog_Message						= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.Message"));
 	UI_Dialog_Sell							= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.Sell"));
 	UI_Dialog_Process						= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.Process"));
-	UI_Dialog_OnRamp						= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.Transak"));
+	UI_Dialog_OnRamp						= Manager.AddNativeGameplayTag(TEXT("UI.Dialog.OnRamp"));
 
 	UI_ControlPanel_Button_Empty			= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.Empty"));
 	UI_ControlPanel_Button_NextPage			= Manager.AddNativeGameplayTag(TEXT("UI.ControlPanel.Button.NextPage"));

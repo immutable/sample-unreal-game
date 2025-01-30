@@ -6,7 +6,6 @@
 
 #include "LogSampleGame.h"
 
-
 UDialog::UDialog(const FObjectInitializer& Initializer) :
 	Super(Initializer)
 {
@@ -72,7 +71,7 @@ void UOnRampDialog::NativeOnActivated()
 	{
 		FString WalletAddres = GetOwningCustomLocalPLayer()->GetPassportWalletAddress();
 		FString Email = GetOwningCustomLocalPLayer()->GetPassportEmail();
-		
-		OnRampWidget->Load(WalletAddres, Email, TEXT("buy"), TEXT("Add funds"));
+
+		OnRampWidget->Load(WalletAddres, Email);
 	}
 }

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "GameplayTagContainer.h"
-#include "OnRampWebBrowserWidget.h"
+
+#include "OnRamp/ImmutableMarketplaceOnRampWidget.h"
 
 #include "UI/Base/ActivatableWidget.h"
 #include "UI/Dialog/DialogButton.h"
@@ -89,5 +90,5 @@ protected:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Meta=(BindWidget))
-	UOnRampWidget* OnRampWidget = nullptr;
+	UImmutableMarketplaceOnRampWidget* OnRampWidget = nullptr;
 };

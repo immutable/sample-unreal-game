@@ -1,16 +1,9 @@
 ﻿#include "CustomBlueprintFunctionLibrary.h"
 
-#include "LogSampleGame.h"
-#include "UIGameplayTags.h"
 #include "Dialog/DialogSubsystem.h"
-#include "UI/Data/NFTMetadataAttributeDataAsset.h"
 #include "UI/GameUIManagerSubsystem.h"
-
-
-FNFTMetadataAttribute_TraitType UCustomBlueprintFunctionLibrary::MakeNFTMetadataAttribute_TraitType(FString TraitType, TArray<FString> Values)
-{
-	return FNFTMetadataAttribute_TraitType({TraitType, Values});
-}
+#include "UI/UIGameplayTags.h"
+#include "LogSampleGame.h"
 
 void UCustomBlueprintFunctionLibrary::LogError(const FString& ErrorMessage)
 {
@@ -56,7 +49,7 @@ void UCustomBlueprintFunctionLibrary::ShowOnRampWidget(const ULocalPlayer* Local
 	if (!LocalPlayer)
 	{
 		UE_LOG(LogSampleGame, Error, TEXT("LocalPlayer is null"));
-		
+
 		return;
 	}
 

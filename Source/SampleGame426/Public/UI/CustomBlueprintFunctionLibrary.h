@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Data/NFTMetadataAttributeDataAsset.h"
 
 #include "CustomBlueprintFunctionLibrary.generated.h"
 
@@ -11,9 +10,6 @@ class SAMPLEGAME426_API UCustomBlueprintFunctionLibrary : public UBlueprintFunct
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, Category = "Immutable Marketplace", meta = (NativeMakeFunc))
-	static FNFTMetadataAttribute_TraitType MakeNFTMetadataAttribute_TraitType(FString TraitType, TArray<FString> Values);
-
 	UFUNCTION(BlueprintCallable, Category = "Immutable Utility")
 	static void LogError(const FString& ErrorMessage);
 

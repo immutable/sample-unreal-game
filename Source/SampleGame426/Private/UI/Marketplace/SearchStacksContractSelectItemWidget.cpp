@@ -2,7 +2,7 @@
 
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
-
+#include "Engine/Texture2D.h"
 
 void USearchStacksContractSelectItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 {
@@ -13,7 +13,7 @@ void USearchStacksContractSelectItemWidget::SetTextureNFT(TSoftObjectPtr<UTextur
 		if (SourceTexturePtr)
 		{
 			NFTThumbnail->SetBrushFromTexture(SourceTexturePtr);
-		}	
+		}
 	}
 }
 

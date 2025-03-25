@@ -1,6 +1,9 @@
 #include "GameUIPolicy.h"
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Engine/Engine.h"
+#include "Engine/GameInstance.h"
+#include "Framework/Application/SlateApplication.h"
 
 #include "CustomLocalPlayer.h"
 #include "LogSampleGame.h"

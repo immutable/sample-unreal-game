@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Runtime/Launch/Resources/Version.h"
+
 #include "CustomUserWidget.h"
 
 #include "ActivatableWidget.generated.h"

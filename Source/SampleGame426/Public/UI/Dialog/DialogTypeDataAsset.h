@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
 
 #include "UI/Dialog/Dialog.h"

@@ -1,19 +1,20 @@
 ﻿#include "Inventory/SearchNFTsItemWidget.h"
 
+#include "Components/Button.h"
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
+#include "Engine/Texture2D.h"
+
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "LogSampleGame.h"
 #include "APINFTBundle.h"
-#include "Components/Button.h"
-#include "Components/Image.h"
-#include "Components/TextBlock.h"
 #include "Marketplace/MarketplacePolicy.h"
-
 
 void USearchNFTsItemWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Data)
 {
 	NFTBundle = MakeShareable(new ImmutablezkEVMAPI::APINFTBundle(static_cast<const ImmutablezkEVMAPI::APINFTBundle&>(Data)));
-	
+
 	if (!NFTBundle.IsValid())
 	{
 		return;
@@ -32,7 +33,7 @@ void USearchNFTsItemWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Data)
 	{
 		FName RowName = FName(*Name->Replace(TEXT(" "),TEXT("_")));
 		auto DatatableRow = Policy->FindNFTTextureRow(RowName);
-		
+
 		if (!DatatableRow)
 		{
 			UE_LOG(LogSampleGame, Error, TEXT("SearchNFTsItemWidget - No data row %s was not found"), *RowName.ToString());
@@ -76,7 +77,7 @@ FString USearchNFTsItemWidget::GetTokenId() const
 {
 	if (NFTBundle.IsValid())
 	{
-		return NFTBundle->NftWithStack.TokenId;	
+		return NFTBundle->NftWithStack.TokenId;
 	}
 
 	return TEXT("");
@@ -86,7 +87,7 @@ FString USearchNFTsItemWidget::GetContractAddress() const
 {
 	if (NFTBundle.IsValid())
 	{
-		return NFTBundle->NftWithStack.ContractAddress;	
+		return NFTBundle->NftWithStack.ContractAddress;
 	}
 
 	return TEXT("");
@@ -96,7 +97,7 @@ FString USearchNFTsItemWidget::GetListingId() const
 {
 	if (NFTBundle.IsValid() && NFTBundle->Listings.Num())
 	{
-		return NFTBundle->Listings[0].ListingId;	
+		return NFTBundle->Listings[0].ListingId;
 	}
 
 	return TEXT("");
@@ -111,7 +112,7 @@ void USearchNFTsItemWidget::SetTextureNFT(TSoftObjectPtr<UTexture2D> Texture)
 		if (SourceTexturePtr)
 		{
 			NFTThumbnail->SetBrushFromTexture(SourceTexturePtr);
-		}	
+		}
 	}
 }
 

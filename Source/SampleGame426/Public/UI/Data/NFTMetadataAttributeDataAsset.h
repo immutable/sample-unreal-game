@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Engine/DataAsset.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
 
 #include "NFTMetadataAttributeDataAsset.generated.h"
 

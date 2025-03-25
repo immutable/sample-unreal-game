@@ -1,6 +1,8 @@
 ﻿#include "Base/AWStackWithControlPanels.h"
 
+#include "Components/VerticalBox.h"
 #include "Widgets/Images/SImage.h"
+#include "Widgets/SOverlay.h"
 
 #include "Base/AWStackTopControlPanel.h"
 #include "Base/ActivatableWidget.h"

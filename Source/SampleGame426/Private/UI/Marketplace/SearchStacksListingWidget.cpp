@@ -1,26 +1,27 @@
 ﻿#include "Marketplace/SearchStacksListingWidget.h"
 
+#include "Engine/Texture2D.h"
+
+#include "APIFulfillOrderRequest.h"
+#include "APIListing.h"
+#include "APIOrderbookApiOperations.h"
+#include "APIStackBundle.h"
+#include "Base/AWStackWithControlPanels.h"
 #include "CustomGameInstance.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "LogSampleGame.h"
-#include "APIListing.h"
-#include "APIStackBundle.h"
-#include "UIGameplayTags.h"
 #include "Marketplace/MarketplacePolicy.h"
-#include "Marketplace/SearchStacksListing_ListingsWidget.h"
-#include "APIFulfillOrderRequest.h"
-#include "APIOrderbookApiOperations.h"
-#include "Base/AWStackWithControlPanels.h"
-#include "Marketplace/SearchStacksWidget.h"
 #include "Marketplace/SearchStacksItemWidget.h"
+#include "Marketplace/SearchStacksListing_ListingsWidget.h"
+#include "Marketplace/SearchStacksWidget.h"
+#include "UIGameplayTags.h"
 
 #define MP_DESCRIPTION_DESCRIPTION TEXT("Description")
 #define MP_DESCRIPTION_CREATED_AT TEXT("Created at")
 #define MP_DESCRIPTION_UPDATED_AT TEXT("Updated at")
 
 #define LOCTEXT_NAMESPACE "ImmutableUI"
-
 
 void USearchStacksListingWidget::SetupControlButtons(class UAWStackWithControlPanels* HostLayer)
 {
@@ -44,7 +45,7 @@ void USearchStacksListingWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Da
 
 	Listings->Reset();
 	BP_Reset();
-	
+
 	auto StackBundle = static_cast<const ImmutablezkEVMAPI::APIStackBundle&>(Data);
 
 	FString StackName = StackBundle.Stack.Name.GetValue();
@@ -54,25 +55,25 @@ void USearchStacksListingWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Da
 	{
 		FName RowName = FName(*StackName.Replace(TEXT(" "),TEXT("_")));
 		auto DatatableRow = Policy->FindNFTTextureRow(RowName);
-		
+
 		if (!DatatableRow)
 		{
 			UE_LOG(LogSampleGame, Error, TEXT("MarketplaceItemWidget - No data row %s was not found"), *RowName.ToString());
 			return;
 		}
-		
+
 		UTexture2D* SourceTexturePtr = DatatableRow->Thumbnail.LoadSynchronous();
 
 		if (SourceTexturePtr)
 		{
 			SetThumbnail(SourceTexturePtr);
-		}	
+		}
 		SetName(DatatableRow->Name);
 	}
 
 	// set nft info
 	FString Description = StackBundle.Stack.Description.IsSet() ? StackBundle.Stack.Description.GetValue() : TEXT("");
-	
+
 	AddDescriptionRecord(MP_DESCRIPTION_DESCRIPTION, Description);
 	AddDescriptionRecord(MP_DESCRIPTION_CREATED_AT, StackBundle.Stack.CreatedAt.ToString());
 	AddDescriptionRecord(MP_DESCRIPTION_UPDATED_AT, StackBundle.Stack.UpdatedAt.ToString());
@@ -101,7 +102,7 @@ void USearchStacksListingWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Da
 void USearchStacksListingWidget::Refresh()
 {
 	auto Group = GetOwningGroup();
-	
+
 	if (!Group)
 	{
 		return;
@@ -115,7 +116,7 @@ void USearchStacksListingWidget::Refresh()
 	}
 
 	USearchStacksItemWidget* ItemWidget = Cast<USearchStacksItemWidget>(ResultsWidget->GetSelectedItem());
-	
+
 	if (ItemWidget && ItemWidget->GetStackBundle().IsValid())
 	{
 		ProcessModel(*ItemWidget->GetStackBundle().Get());
@@ -147,7 +148,7 @@ void USearchStacksListingWidget::OnBuyButtonClicked(UDialog* DialogPtr, EDialogR
 	}
 
 	DialogPtr->KillDialog();
-	
+
 	UCustomLocalPlayer* LocalPlayer = Cast<UCustomLocalPlayer>(GetOwningLocalPlayer());
 	UMarketplacePolicy* Policy = LocalPlayer->GetGameUIPolicy()->GetMarketplacePolicy();
 
@@ -157,11 +158,11 @@ void USearchStacksListingWidget::OnBuyButtonClicked(UDialog* DialogPtr, EDialogR
 	}
 
 	auto ListingItemWidget = Cast<USearchStacksListing_ListingItemWidget>(SelectedItem);
-	
-	if(ListingItemWidget)
+
+	if (ListingItemWidget)
 	{
 		ProcessingDialog = UCustomGameInstance::SendDialogMessage(this, NativeUIGameplayTags.UI_Dialog_Process, UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying..."), TEXT("Started fulfilling order..."), {EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel")}));
-		ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchStacksListingWidget::OnProcessDialogAction);	
+		ProcessingDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchStacksListingWidget::OnProcessDialogAction);
 
 		/**
 		 * Step 1(Buying): Initiates the fulfillment of an order using the the Orderbook API.
@@ -180,7 +181,7 @@ void USearchStacksListingWidget::OnBuyButtonClicked(UDialog* DialogPtr, EDialogR
 		RequestData.TakerAddress = LocalPlayer->GetPassportWalletAddress();
 
 		Request.APIFulfillOrderRequest = RequestData;
-		
+
 		Policy->GetTsSdkAPI()->FulfillOrder(Request, ImmutableOrderbook::APIOrderbookApi::FFulfillOrderDelegate::CreateUObject(this, &USearchStacksListingWidget::OnFulfillOrder));
 	}
 }
@@ -201,7 +202,7 @@ void USearchStacksListingWidget::OnControlButtonClicked(FGameplayTag ButtonTag)
 
 		if (BuyDialog)
 		{
-			BuyDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchStacksListingWidget::OnBuyButtonClicked);	
+			BuyDialog->DialogResultDelegate.AddUniqueDynamic(this, &USearchStacksListingWidget::OnBuyButtonClicked);
 		}
 	}
 }
@@ -211,7 +212,7 @@ void USearchStacksListingWidget::OnFulfillOrder(const ImmutableOrderbook::APIOrd
 	if (!Response.IsSuccessful())
 	{
 		UE_LOG(LogSampleGame, Error, TEXT("OnFulfillOrder error: %s"), *Response.GetHttpResponse()->GetContentAsString());
-		ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying error!"), TEXT("Failed to fulfill your order"), { EDialogResult::Closed, LOCTEXT("Close", "Close") }, false));
+		ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying error!"), TEXT("Failed to fulfill your order"), {EDialogResult::Closed, LOCTEXT("Close", "Close")}, false));
 
 		return;
 	}
@@ -231,13 +232,13 @@ void USearchStacksListingWidget::OnFulfillOrder(const ImmutableOrderbook::APIOrd
 		*/
 		auto Actions = Response.Content.Actions.GetValue();
 
-		const auto* ApprovalAction = Actions.FindByPredicate([this](const ImmutableOrderbook::APITransactionAction& Action){ return Action.Purpose.GetValue().Value == ImmutableOrderbook::APITransactionPurpose::Values::Approval; });
-		const auto* FulfillOrderAction = Actions.FindByPredicate([this](const ImmutableOrderbook::APITransactionAction& Action){ return Action.Purpose.GetValue().Value == ImmutableOrderbook::APITransactionPurpose::Values::FulfillOrder; });
+		const auto* ApprovalAction = Actions.FindByPredicate([this](const ImmutableOrderbook::APITransactionAction& Action) { return Action.Purpose.GetValue().Value == ImmutableOrderbook::APITransactionPurpose::Values::Approval; });
+		const auto* FulfillOrderAction = Actions.FindByPredicate([this](const ImmutableOrderbook::APITransactionAction& Action) { return Action.Purpose.GetValue().Value == ImmutableOrderbook::APITransactionPurpose::Values::FulfillOrder; });
 
 		if (!FulfillOrderAction)
 		{
-			ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying error!"), TEXT("Failed to find fulfill order purpose in transaction actions"), { EDialogResult::Closed, LOCTEXT("Close", "Close") }, false));
-		
+			ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying error!"), TEXT("Failed to find fulfill order purpose in transaction actions"), {EDialogResult::Closed, LOCTEXT("Close", "Close")}, false));
+
 			return;
 		}
 
@@ -245,7 +246,7 @@ void USearchStacksListingWidget::OnFulfillOrder(const ImmutableOrderbook::APIOrd
 		{
 			GetOwningCustomLocalPLayer()->SignSubmitApproval(Action.PopulatedTransactions->To.GetValue(), Action.PopulatedTransactions->Data.GetValue(), [this](FString TransactionHash, FString Status)
 			{
-				ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying success!"), TEXT("Transaction complete successfully! Enjoy your new purchase!"), { EDialogResult::Closed, LOCTEXT("Close", "Close") }, false));
+				ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying success!"), TEXT("Transaction complete successfully! Enjoy your new purchase!"), {EDialogResult::Closed, LOCTEXT("Close", "Close")}, false));
 
 				if (USearchStacksListing_ListingItemWidget* ListingItemWidget = Cast<USearchStacksListing_ListingItemWidget>(SelectedItem))
 				{
@@ -254,12 +255,12 @@ void USearchStacksListingWidget::OnFulfillOrder(const ImmutableOrderbook::APIOrd
 				GetOwningCustomLocalPLayer()->UpdateBalance();
 			});
 		};
-		
+
 		if (ApprovalAction)
 		{
 			GetOwningCustomLocalPLayer()->SignSubmitApproval(ApprovalAction->PopulatedTransactions->To.GetValue(), ApprovalAction->PopulatedTransactions->Data.GetValue(), [this, FulfillOrderLambda](FString TransactionHash, FString Status)
 			{
-				ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying..."), TEXT("Approval for purchase is processed!"), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
+				ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Buying..."), TEXT("Approval for purchase is processed!"), {EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel")}));
 				FulfillOrderLambda();
 			});
 		}
@@ -269,4 +270,3 @@ void USearchStacksListingWidget::OnFulfillOrder(const ImmutableOrderbook::APIOrd
 		}
 	}
 }
-

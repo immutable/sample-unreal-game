@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Base/SAnimatedSwitcher.h"
 #include "Blueprint/UserWidgetPool.h"
 #include "Components/Widget.h"
 
-#include "Base/SAnimatedSwitcher.h"
-
 #include "ActivatableWidgetContainer.generated.h"
+
+class SAnimatedSwitcher;
+class SOverlay;
 
 /**
  * Base class with the functionality to manager N activatable widgets.

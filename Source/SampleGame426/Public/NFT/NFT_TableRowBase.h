@@ -4,6 +4,8 @@
 
 #include "NFT_TableRowBase.generated.h"
 
+class UTexture2D;
+
 USTRUCT(BlueprintType)
 struct SAMPLEGAME426_API FNFT_TableRowBase : public FTableRowBase
 {
@@ -11,8 +13,7 @@ struct SAMPLEGAME426_API FNFT_TableRowBase : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString Name;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UTexture2D> Thumbnail;
-
 };

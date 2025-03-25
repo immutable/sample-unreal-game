@@ -1,17 +1,18 @@
 ﻿#include "Marketplace/SearchStacksItemWidget.h"
 
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
+#include "Engine/Texture2D.h"
+#include "Math/BigInt.h"
+
+#include "APIStackBundle.h"
 #include "CustomLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "LogSampleGame.h"
-#include "APIStackBundle.h"
-#include "Components/Image.h"
-#include "Components/TextBlock.h"
 #include "Marketplace/MarketplacePolicy.h"
-#include "Math/BigInt.h"
 #include "Marketplace/SearchStacksListingWidget.h"
-#include "UI/Utility/MathUtility.h"
 #include "NFT/NFT_TableRowBase.h"
-
+#include "UI/Utility/MathUtility.h"
 
 void USearchStacksItemWidget::ProcessModel(const ImmutablezkEVMAPI::Model& Data)
 {

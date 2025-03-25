@@ -1,5 +1,7 @@
 #include "Base/ActivatableWidget.h"
 
+#include "Engine/GameInstance.h"
+
 #include "LogSampleGame.h"
 
 void UActivatableWidget::Reset()

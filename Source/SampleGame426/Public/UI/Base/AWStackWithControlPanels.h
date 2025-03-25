@@ -8,6 +8,8 @@
 
 #include "AWStackWithControlPanels.generated.h"
 
+class SVerticalBox;
+
 struct FActivatableWidgetWithControlPanelsGroup;
 
 class UAWStackTopControlPanel;

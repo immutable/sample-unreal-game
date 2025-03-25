@@ -374,9 +374,9 @@ void USearchNfTsWidget::OnPrepareListing(const ImmutableOrderbook::APIOrderbookA
 		{
 			ProcessingDialog->UpdateDialogDescriptor(UDialogSubsystem::CreateProcessDescriptor(TEXT("Listing..."), TEXT("Signed typed data for listing..."), { EDialogResult::Cancelled, LOCTEXT("Cancel", "Cancel") }));
 			
-			UMarketplacePolicy* Policy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
+			UMarketplacePolicy* MarketplacePolicy = GetOwningCustomLocalPLayer()->GetGameUIPolicy()->GetMarketplacePolicy();
 
-			if (!Policy)
+			if (!MarketplacePolicy)
 			{
 				return;
 			}
@@ -400,7 +400,7 @@ void USearchNfTsWidget::OnPrepareListing(const ImmutableOrderbook::APIOrderbookA
 			RequestData.OrderSignature = Signature;
 			Request.APICreateListingRequest = RequestData;
 			
-			Policy->GetTsSdkAPI()->CreateListing(Request, ImmutableOrderbook::APIOrderbookApi::FCreateListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnCreateListing));
+			MarketplacePolicy->GetTsSdkAPI()->CreateListing(Request, ImmutableOrderbook::APIOrderbookApi::FCreateListingDelegate::CreateUObject(this, &USearchNfTsWidget::OnCreateListing));
 		});
 	};
 

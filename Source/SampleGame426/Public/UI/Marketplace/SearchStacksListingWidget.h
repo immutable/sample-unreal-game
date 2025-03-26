@@ -7,7 +7,6 @@
 
 #include "SearchStacksListingWidget.generated.h"
 
-
 /**
  * @class USearchStacksListingWidget
  * @ingroup Marketplace
@@ -26,10 +25,10 @@ public:
 	/* IMarketplaceOpenAPIProcessorInterface interface */
 
 	/* UActivatableWidgetWithControlPanels interface */
-	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;	
+	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
 	virtual void Refresh() override;
 	/* UActivatableWidgetWithControlPanels interface */
-	
+
 protected:
 	/**
 	 * Adds a NFT general information such as description, dates etc.
@@ -124,12 +123,16 @@ private:
 	 */
 	void OnControlButtonClicked(FGameplayTag ButtonTag);
 
-	
 protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	class USearchStacksListing_ListingsWidget* Listings = nullptr;
 
-	UItemWidget* SelectedItem = nullptr;
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UItemWidget> SelectedItem = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
 	UControlPanelButton* BuyButton = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
 	UDialog* ProcessingDialog = nullptr;
 };

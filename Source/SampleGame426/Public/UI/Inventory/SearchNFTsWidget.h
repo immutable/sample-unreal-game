@@ -39,7 +39,7 @@ protected:
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnDeactivated() override;
 	/* UActivatableWidget interface */
-	
+
 	/* UActivatableWidgetWithControlPanels interface */
 	virtual void SetupControlButtons(class UAWStackWithControlPanels* HostLayer) override;
 	/* UActivatableWidgetWithControlPanels interface */
@@ -58,7 +58,7 @@ protected:
 	 * @param ItemWidget A pointer to the UItemWidget representing the item.
 	 */
 	void OnItemSelection(bool IsSelected, UItemWidget* ItemWidget);
-	
+
 private:
 	/**
 	 * Handles the pagination of inventory API query results.
@@ -118,7 +118,7 @@ private:
 	 */
 	UFUNCTION()
 	void OnProcessDialogAction(UDialog* DialogPtr, EDialogResult Result);
-	
+
 	void ConfirmListing(const FString& ListingId);
 	void OnGetListing(const ImmutablezkEVMAPI::APIOrdersApi::GetListingResponse& Response);
 
@@ -130,12 +130,20 @@ protected:
 	UPROPERTY(Transient)
 	UControlPanelButton* NextPageButton = nullptr;
 
-private:
+protected:
 	TWeakObjectPtr<UMarketplacePolicy> Policy;
-	USearchNFTsItemWidget* SelectedItemWidget = nullptr;
-	ImmutablezkEVMAPI::APIPage PageCursors;
-	UControlPanelButton* SellButton = nullptr;
-	UControlPanelButton* CancelSellButton = nullptr;
-	UDialog* ProcessingDialog = nullptr;
 
+	ImmutablezkEVMAPI::APIPage PageCursors;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<USearchNFTsItemWidget> SelectedItemWidget;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UControlPanelButton> SellButton;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UControlPanelButton> CancelSellButton;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UDialog> ProcessingDialog;
 };

@@ -15,7 +15,6 @@ enum class ESearchStacks_SortCategories : uint8
 	Price
 };
 
-
 /**
  * @class USearchStacksWidget
  * @ingroup Marketplace
@@ -33,7 +32,7 @@ public:
 	/* UActivatableWidgetWithControlPanels interface */
 	virtual void Refresh() override;
 	/* UActivatableWidgetWithControlPanels interface */
-	
+
 	/**
 	 * Refreshes the item list in the marketplace search stacks widget. Overrides IItemListInterface::RefreshItemList.
 	 *
@@ -41,7 +40,7 @@ public:
 	 *                   If provided, the item list will be refreshed starting from the specified page cursor.
 	 */
 	virtual void RefreshItemList(TOptional<FString> PageCursor) override;
-	
+
 	// Get the currently selected item widget
 	UItemWidget* GetSelectedItem() const { return SelectedItemWidget; }
 
@@ -89,14 +88,18 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Marketplace")
 	TSoftClassPtr<class USearchStacksListingWidget> SearchStacksListingWidgetClass;
 
-private:
+protected:
 	ImmutablezkEVMAPI::APIPage PageCursors;
-	UItemWidget* SelectedItemWidget = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UItemWidget> SelectedItemWidget;
+
 	UPROPERTY(Transient)
-	UControlPanelButton* PreviousPageButton = nullptr;
+	TObjectPtr<UControlPanelButton> PreviousPageButton;
+
 	UPROPERTY(Transient)
-	UControlPanelButton* NextPageButton = nullptr;
+	TObjectPtr<UControlPanelButton> NextPageButton;
+
 	UPROPERTY(Transient)
-	UControlPanelButton* NFTInfoButton = nullptr;
-	
+	TObjectPtr<UControlPanelButton> NFTInfoButton;
 };

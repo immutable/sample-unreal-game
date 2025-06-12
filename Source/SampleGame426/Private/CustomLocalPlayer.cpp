@@ -252,7 +252,7 @@ void UCustomLocalPlayer::OnPassportIsRunning(TWeakObjectPtr<class UImtblJSConnec
 		FImmutablePassportInitData Data;
 
 		Data.clientId = Settings->ClientID;
-		Data.logoutRedirectUri = Settings->RedirectURI;
+		Data.redirectUri = Settings->RedirectURI;
 		Data.logoutRedirectUri = Settings->LogoutURI;
 		Data.environment = Settings->Environment;
 

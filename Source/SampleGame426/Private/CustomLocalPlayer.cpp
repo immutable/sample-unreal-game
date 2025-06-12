@@ -123,7 +123,7 @@ void UCustomLocalPlayer::LoginPassport()
 	{
 		Passport->HasStoredCredentials(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
 		{
-			Passport->Connect(true, Result.Success, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));
+			Passport->Connect(true, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));
 		}));
 	}
 }
@@ -252,7 +252,7 @@ void UCustomLocalPlayer::OnPassportIsRunning(TWeakObjectPtr<class UImtblJSConnec
 		FImmutablePassportInitData Data;
 
 		Data.clientId = Settings->ClientID;
-		Data.logoutRedirectUri = Settings->RedirectURI;
+		Data.redirectUri = Settings->RedirectURI;
 		Data.logoutRedirectUri = Settings->LogoutURI;
 		Data.environment = Settings->Environment;
 

@@ -197,7 +197,7 @@ void UCustomLocalPlayer::SignSubmitApproval(const FString& To, const FString& Da
 
 		if (Receipt.IsSet())
 		{
-			TransactionHash = Receipt.GetValue().transactionHash;
+			TransactionHash = Receipt.GetValue().hash;
 			Status = Receipt.GetValue().status;
 		}
 

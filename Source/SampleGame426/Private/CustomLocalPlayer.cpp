@@ -123,7 +123,8 @@ void UCustomLocalPlayer::LoginPassport()
 	{
 		Passport->HasStoredCredentials(UImmutablePassport::FImtblPassportResponseDelegate::CreateLambda([this](FImmutablePassportResult Result)
 		{
-			Passport->Connect(true, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn));
+			FImmutableDirectLoginOptions DirectLoginOptions;
+			Passport->Connect(true, UImmutablePassport::FImtblPassportResponseDelegate::CreateUObject(this, &UCustomLocalPlayer::OnPassportLoggedIn), DirectLoginOptions);
 		}));
 	}
 }
